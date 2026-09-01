@@ -4,8 +4,8 @@ Last updated: 2026-09-01
 
 ## Current milestone
 
-Milestone 0: repository and environment scaffold. The scaffold is implemented
-and verified.
+Milestone 1: game and agent contracts. The contracts are implemented and
+verified, pending user review.
 
 ## Implemented
 
@@ -14,21 +14,25 @@ and verified.
 - Configuration for pytest, Ruff, and mypy.
 - A package-import smoke test.
 - Initial repository guidance and ignore rules.
+- A minimal deterministic, alternating, two-player game-state protocol.
+- An agent protocol with an explicit computation budget and caller-owned RNG.
+- Positive depth and node budget representations.
+- Documented conventions for state transitions, players, terminal returns,
+  actions, and randomness.
 
 ## Verification
 
-Verified on Windows with CPython 3.12.14 and `uv` 0.12.8:
+Milestone 1 was verified on Windows with CPython 3.12.14:
 
-- `uv sync`: passed; 18 locked packages are installed.
-- `uv run pytest`: passed; 1 test passed.
+- `uv run pytest`: passed; 12 tests passed.
 - `uv run ruff check .`: passed.
-- `uv run mypy src`: passed; no issues found in 1 source file.
+- `uv run mypy src`: passed; no issues found in 7 source files.
+- `uv run mypy src tests`: passed; no issues found in 9 source files.
 
 ## Planned, not implemented
 
-- Game-state and agent contracts.
 - A `python-chess` state adapter and chess correctness suite.
-- Search budgets, agents, match execution, and experiment logging.
+- Concrete agents, match execution, and experiment logging.
 - Classical search baselines.
 - Learned models, MCTS experiments, datasets, interfaces, and deployment.
 
