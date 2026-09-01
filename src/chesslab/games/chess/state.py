@@ -1,5 +1,7 @@
 """Immutable-looking chess state backed by :class:`chess.Board`."""
 
+from collections.abc import Mapping
+from types import MappingProxyType
 from typing import Self
 
 import chess
@@ -76,3 +78,7 @@ class ChessState:
     def to_fen(self) -> str:
         """Serialize the position fields; repetition history is not included."""
         return self.__board.fen(en_passant="fen")
+
+    def piece_map(self) -> Mapping[chess.Square, chess.Piece]:
+        """Return an immutable snapshot of the pieces by square."""
+        return MappingProxyType(self.__board.piece_map())
