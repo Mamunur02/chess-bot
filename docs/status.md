@@ -4,7 +4,7 @@ Last updated: 2026-09-01
 
 ## Current milestone
 
-Milestone 1: game and agent contracts. The contracts are implemented and
+Milestone 2: chess adapter and correctness suite. The adapter is implemented and
 verified, pending user review.
 
 ## Implemented
@@ -19,19 +19,25 @@ verified, pending user review.
 - Positive depth and node budget representations.
 - Documented conventions for state transitions, players, terminal returns,
   actions, and randomness.
+- A `python-chess` state adapter with private board ownership and
+  immutable-looking transitions.
+- Explicit chess player, terminal-outcome, optional-draw, and FEN-history
+  semantics.
+- Fast initial-position perft verification through depth 3.
+- Chess fixtures covering terminal outcomes, castling, en passant, promotion,
+  repetition, move-count draws, and illegal actions.
 
 ## Verification
 
-Milestone 1 was verified on Windows with CPython 3.12.14:
+Milestone 2 was verified on Windows with CPython 3.12.14:
 
-- `uv run pytest`: passed; 12 tests passed.
+- `uv run pytest`: passed; 36 tests passed.
 - `uv run ruff check .`: passed.
-- `uv run mypy src`: passed; no issues found in 7 source files.
-- `uv run mypy src tests`: passed; no issues found in 9 source files.
+- `uv run mypy src`: passed; no issues found in 10 source files.
+- `uv run mypy src tests`: passed; no issues found in 14 source files.
 
 ## Planned, not implemented
 
-- A `python-chess` state adapter and chess correctness suite.
 - Concrete agents, match execution, and experiment logging.
 - Classical search baselines.
 - Learned models, MCTS experiments, datasets, interfaces, and deployment.

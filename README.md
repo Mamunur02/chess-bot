@@ -5,10 +5,10 @@ of game-playing methods. The initial focus is trustworthy infrastructure and
 classical chess baselines; the longer-term research direction has not yet been
 selected.
 
-The project is at **Milestone 0**. It currently provides only a minimal Python
-package and its development tooling. It does not yet implement a game model,
-chess engine, search algorithm, learned model, experiment runner, or user
-interface.
+The project has completed **Milestone 2**. It provides typed game and agent
+contracts, explicit search budgets, and a tested `python-chess` state adapter.
+It does not yet implement a concrete agent, search algorithm, learned model,
+experiment runner, or user interface.
 
 ## Development setup
 
