@@ -4,9 +4,9 @@ Last updated: 2026-09-10
 
 ## Current milestone
 
-Milestone 12: fixed-budget benchmark harness. Caller-supplied position
-configuration, raw per-case measurements, structured failures, configuration
-digests, environment provenance, and JSON output are implemented and verified.
+Milestone 13: material-greedy comparator. A deterministic one-ply
+chess-specific baseline and explicit benchmark agent selection are implemented
+and verified.
 
 ## Implemented
 
@@ -105,14 +105,21 @@ digests, environment provenance, and JSON output are implemented and verified.
 - Result overwrite protection.
 - No committed substantive benchmark dataset or claimed experimental result.
 
+- A deterministic one-ply material-greedy chess agent.
+- Terminal scores taking precedence over immediate material.
+- Stable legal-action-order tie breaking.
+- Explicit independence from caller budget and RNG.
+- A `material_greedy` benchmark agent kind.
+- Rejection of alpha-beta-only switches for greedy benchmark runs.
+
 ## Verification
 
-Milestone 12 was verified on Windows with CPython 3.12.14:
+Milestone 13 was verified on Windows with CPython 3.12.14:
 
-- `uv run pytest`: passed; 121 tests passed.
+- `uv run pytest`: passed; 129 tests passed.
 - `uv run ruff check .`: passed.
-- `uv run mypy src`: passed; no issues found in 23 source files.
-- `uv run mypy src tests`: passed; no issues found in 35 source files.
+- `uv run mypy src`: passed; no issues found in 24 source files.
+- `uv run mypy src tests`: passed; no issues found in 37 source files.
 
 ## Planned, not implemented
 

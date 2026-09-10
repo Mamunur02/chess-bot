@@ -15,6 +15,7 @@ from typing import Literal
 import chess
 
 from chesslab.agents.material_alpha_beta import MaterialAlphaBetaAgent
+from chesslab.agents.material_greedy import MaterialGreedyAgent
 from chesslab.games.chess import ChessState
 from chesslab.search import DepthBudget, NodeBudget, SearchBudget, TimeBudget
 from chesslab.search.results import SearchResult
@@ -58,19 +59,30 @@ class BenchmarkAgentConfig:
     capture_ordering: bool = False
     transposition_table: bool = False
     quiescence_depth: int = 0
+    kind: Literal["material_alpha_beta", "material_greedy"] = "material_alpha_beta"
 
     def __post_init__(self) -> None:
         if not isinstance(self.capture_ordering, bool):
             raise ValueError("capture_ordering must be a boolean")
         if not isinstance(self.transposition_table, bool):
             raise ValueError("transposition_table must be a boolean")
+        if self.kind not in {"material_alpha_beta", "material_greedy"}:
+            raise ValueError("unsupported benchmark agent kind")
+        if self.kind == "material_greedy" and (
+            self.capture_ordering
+            or self.transposition_table
+            or self.quiescence_depth != 0
+        ):
+            raise ValueError("material_greedy does not accept search switches")
         MaterialAlphaBetaAgent(
             capture_ordering=self.capture_ordering,
             transposition_table=self.transposition_table,
             quiescence_depth=self.quiescence_depth,
         )
 
-    def build(self) -> MaterialAlphaBetaAgent:
+    def build(self) -> MaterialAlphaBetaAgent | MaterialGreedyAgent:
+        if self.kind == "material_greedy":
+            return MaterialGreedyAgent()
         return MaterialAlphaBetaAgent(
             capture_ordering=self.capture_ordering,
             transposition_table=self.transposition_table,
@@ -79,6 +91,7 @@ class BenchmarkAgentConfig:
 
     def to_dict(self) -> dict[str, object]:
         return {
+            "kind": self.kind,
             "capture_ordering": self.capture_ordering,
             "transposition_table": self.transposition_table,
             "quiescence_depth": self.quiescence_depth,

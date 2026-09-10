@@ -4,6 +4,7 @@ import argparse
 import json
 from collections.abc import Mapping, Sequence
 from pathlib import Path
+from typing import Literal
 
 from chesslab.eval.benchmarks import (
     BenchmarkAgentConfig,
@@ -54,6 +55,14 @@ def _budget(value: object) -> SearchBudget:
 
 def _agent(value: object) -> BenchmarkAgentConfig:
     data = _mapping(value, "agent")
+    kind = _string(data.get("kind", "material_alpha_beta"), "agent.kind")
+    agent_kind: Literal["material_alpha_beta", "material_greedy"]
+    if kind == "material_alpha_beta":
+        agent_kind = "material_alpha_beta"
+    elif kind == "material_greedy":
+        agent_kind = "material_greedy"
+    else:
+        raise ValueError("agent.kind must be material_alpha_beta or material_greedy")
     return BenchmarkAgentConfig(
         capture_ordering=_boolean(
             data.get("capture_ordering", False), "agent.capture_ordering"
@@ -64,6 +73,7 @@ def _agent(value: object) -> BenchmarkAgentConfig:
         quiescence_depth=_integer(
             data.get("quiescence_depth", 0), "agent.quiescence_depth"
         ),
+        kind=agent_kind,
     )
 
 

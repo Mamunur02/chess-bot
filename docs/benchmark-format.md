@@ -21,6 +21,7 @@ configuration for any result intended to support a research claim.
     "value": 10000
   },
   "agent": {
+    "kind": "material_alpha_beta",
     "capture_ordering": false,
     "transposition_table": false,
     "quiescence_depth": 0
@@ -46,6 +47,9 @@ the harness does not infer them.
 
 Agent switches default to the values shown. Change one switch at a time for a
 simple ablation unless a reviewed experiment design says otherwise.
+Agent kind may be `material_alpha_beta` or `material_greedy`. The greedy
+baseline always performs one-ply material evaluation and rejects alpha-beta
+search switches. The default kind is `material_alpha_beta`.
 
 ## Output
 

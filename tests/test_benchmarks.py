@@ -187,6 +187,37 @@ def test_benchmark_requires_named_unique_positions(
         )
 
 
+def test_material_greedy_can_run_as_explicit_benchmark_baseline() -> None:
+    spec = BenchmarkSpec(
+        name="greedy-smoke",
+        seed=0,
+        budget=NodeBudget(1),
+        agent=BenchmarkAgentConfig(kind="material_greedy"),
+        positions=(
+            BenchmarkPosition(
+                "free-queen",
+                FREE_QUEEN_FEN,
+                expected_moves=("a1a7",),
+            ),
+        ),
+    )
+
+    result = run_benchmark(
+        spec,
+        fixed_provenance(spec.digest),
+        clock=StepClock(0.1),
+    )
+
+    assert result.cases[0].expected_move_match is True
+    assert result.cases[0].decision is not None
+    assert result.cases[0].decision.nodes == 13
+
+
+def test_material_greedy_rejects_alpha_beta_switches() -> None:
+    with pytest.raises(ValueError, match="does not accept"):
+        BenchmarkAgentConfig(kind="material_greedy", capture_ordering=True)
+
+
 def test_expected_moves_must_be_legal_in_the_position() -> None:
     with pytest.raises(ValueError, match="not legal"):
         BenchmarkPosition(
@@ -213,6 +244,7 @@ def test_json_configuration_parser_builds_explicit_switches() -> None:
 
     assert spec.budget == NodeBudget(12)
     assert spec.agent == BenchmarkAgentConfig(True, True, 1)
+    assert spec.agent.kind == "material_alpha_beta"
     assert spec.positions == (BenchmarkPosition("free-queen", FREE_QUEEN_FEN),)
 
 
