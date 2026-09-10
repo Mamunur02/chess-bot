@@ -178,3 +178,41 @@ def test_fen_does_not_reconstruct_repetition_history() -> None:
 
     assert fivefold.is_terminal()
     assert not restored.is_terminal()
+
+
+def test_transposition_key_is_reproducible_and_includes_history() -> None:
+    moves = ["e2e4", "e7e5", "g1f3"]
+    first = play_uci_moves(ChessState(), moves)
+    repeated = play_uci_moves(ChessState(), moves)
+    restored_without_history = ChessState.from_fen(first.to_fen())
+
+    assert first.transposition_key() == repeated.transposition_key()
+    assert first.transposition_key() != restored_without_history.transposition_key()
+
+
+def test_transposed_positions_with_different_histories_have_different_keys() -> None:
+    knights_first = play_uci_moves(
+        ChessState(),
+        ["g1f3", "g8f6", "b1c3", "b8c6"],
+    )
+    queenside_first = play_uci_moves(
+        ChessState(),
+        ["b1c3", "b8c6", "g1f3", "g8f6"],
+    )
+
+    assert knights_first.to_fen() == queenside_first.to_fen()
+    assert knights_first.transposition_key() != queenside_first.transposition_key()
+
+
+def test_transposition_key_ignores_history_before_irreversible_move() -> None:
+    kingside_cycle = play_uci_moves(
+        ChessState(),
+        ["g1f3", "g8f6", "f3g1", "f6g8", "e2e4"],
+    )
+    queenside_cycle = play_uci_moves(
+        ChessState(),
+        ["b1c3", "b8c6", "c3b1", "c6b8", "e2e4"],
+    )
+
+    assert kingside_cycle.to_fen() == queenside_cycle.to_fen()
+    assert kingside_cycle.transposition_key() == queenside_cycle.transposition_key()

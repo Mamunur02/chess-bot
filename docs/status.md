@@ -4,8 +4,8 @@ Last updated: 2026-09-10
 
 ## Current milestone
 
-Milestone 7: generic transposition-table baseline. Per-search caching with
-depth-aware keys, bound handling, and hit statistics is implemented and
+Milestone 8: repetition-aware chess caching. A history-sensitive chess
+transposition key and opt-in material-agent integration are implemented and
 verified, pending user review.
 
 ## Implemented
@@ -54,12 +54,17 @@ verified, pending user review.
 - Depth-aware exact, lower-bound, and upper-bound cache entries.
 - Measured transposition-table hits included in search results.
 - A diamond-tree correctness fixture comparing cached and uncached search.
+- A public chess transposition key containing normalized position identity,
+  the halfmove clock, and repetition counts since the last irreversible move.
+- Opt-in transposition-table use by the material alpha-beta agent.
+- Key tests covering reconstructed states, reversible move-order transpositions,
+  and irrelevant history before an irreversible move.
 
 ## Verification
 
-Milestone 7 was verified on Windows with CPython 3.12.14:
+Milestone 8 was verified on Windows with CPython 3.12.14:
 
-- `uv run pytest`: passed; 76 tests passed.
+- `uv run pytest`: passed; 80 tests passed.
 - `uv run ruff check .`: passed.
 - `uv run mypy src`: passed; no issues found in 20 source files.
 - `uv run mypy src tests`: passed; no issues found in 30 source files.
@@ -67,8 +72,7 @@ Milestone 7 was verified on Windows with CPython 3.12.14:
 ## Planned, not implemented
 
 - Stronger classical search and full experiment logging.
-- Repetition-safe chess transposition keys, quiescence search, and time-budget
-  stopping.
+- Quiescence search and time-budget stopping.
 - Learned models, MCTS experiments, datasets, interfaces, and deployment.
 
 ## Open decisions

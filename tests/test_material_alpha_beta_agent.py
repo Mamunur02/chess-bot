@@ -93,6 +93,29 @@ def test_capture_ordering_changes_only_the_tiny_budget_fallback_order() -> None:
     assert (unordered.nodes, ordered.nodes) == (1, 1)
 
 
+def test_repetition_safe_transposition_table_preserves_chess_decision() -> None:
+    state = ChessState.from_fen(FREE_QUEEN_FEN)
+
+    uncached = MaterialAlphaBetaAgent().select_action(
+        state, DepthBudget(2), random.Random(0)
+    )
+    cached = MaterialAlphaBetaAgent(transposition_table=True).select_action(
+        state, DepthBudget(2), random.Random(0)
+    )
+
+    assert (
+        cached.action,
+        cached.value,
+        cached.depth,
+        cached.principal_variation,
+    ) == (
+        uncached.action,
+        uncached.value,
+        uncached.depth,
+        uncached.principal_variation,
+    )
+
+
 def test_agent_rejects_terminal_state() -> None:
     with pytest.raises(ValueError, match="terminal state"):
         MaterialAlphaBetaAgent().select_action(

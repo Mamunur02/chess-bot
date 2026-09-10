@@ -1,5 +1,6 @@
 """Immutable-looking chess state backed by :class:`chess.Board`."""
 
+from collections import Counter
 from collections.abc import Mapping
 from types import MappingProxyType
 from typing import Self
@@ -7,6 +8,16 @@ from typing import Self
 import chess
 
 from chesslab.games import Player, TerminalReturns
+
+type ChessTranspositionKey = tuple[
+    str,
+    int,
+    tuple[tuple[str, int], ...],
+]
+
+
+def _position_key(board: chess.Board) -> str:
+    return " ".join(board.fen(en_passant="legal").split()[:4])
 
 
 class ChessState:
@@ -84,6 +95,22 @@ class ChessState:
     def to_fen(self) -> str:
         """Serialize the position fields; repetition history is not included."""
         return self.__board.fen(en_passant="fen")
+
+    def transposition_key(self) -> ChessTranspositionKey:
+        """Return a conservative key including repetition-relevant history."""
+        replay = self.__board.copy(stack=True)
+        historical_positions = [_position_key(replay)]
+        while replay.move_stack:
+            move = replay.pop()
+            if replay.is_irreversible(move):
+                break
+            historical_positions.append(_position_key(replay))
+        position_counts = Counter(historical_positions)
+        return (
+            _position_key(self.__board),
+            self.__board.halfmove_clock,
+            tuple(sorted(position_counts.items())),
+        )
 
     def piece_map(self) -> Mapping[chess.Square, chess.Piece]:
         """Return an immutable snapshot of the pieces by square."""

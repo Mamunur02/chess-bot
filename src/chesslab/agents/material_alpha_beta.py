@@ -8,7 +8,7 @@ import chess
 
 from chesslab.engine.evaluation import material_score
 from chesslab.games import GameState, Player
-from chesslab.games.chess import ChessState
+from chesslab.games.chess import ChessState, ChessTranspositionKey
 from chesslab.search import SearchBudget
 from chesslab.search.classical import iterative_deepening_search
 from chesslab.search.results import SearchResult
@@ -28,11 +28,18 @@ def _capture_first(
     return tuple(sorted(actions, key=state.is_capture, reverse=True))
 
 
+def _transposition_key(state: GameState[chess.Move]) -> ChessTranspositionKey:
+    if not isinstance(state, ChessState):
+        raise TypeError("chess transposition key requires ChessState")
+    return state.transposition_key()
+
+
 @dataclass(frozen=True, slots=True)
 class MaterialAlphaBetaAgent:
     """Select chess moves with iterative material alpha-beta search."""
 
     capture_ordering: bool = False
+    transposition_table: bool = False
 
     def select_action(
         self,
@@ -49,4 +56,7 @@ class MaterialAlphaBetaAgent:
             budget,
             _evaluate_chess_state,
             action_orderer=_capture_first if self.capture_ordering else None,
+            transposition_key=(
+                _transposition_key if self.transposition_table else None
+            ),
         )
