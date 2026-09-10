@@ -14,6 +14,7 @@ CHECKMATE_FEN = "rnb1kbnr/pppp1ppp/8/4p3/6Pq/5P2/PPPPP2P/RNBQKBNR w KQkq - 1 3"
 STALEMATE_FEN = "7k/5Q2/6K1/8/8/8/8/8 b - - 0 1"
 FREE_QUEEN_FEN = "7k/q7/8/8/8/8/8/R1K5 w - - 0 1"
 MATE_OR_CAPTURE_FEN = "7k/8/5KQ1/8/8/8/8/1r6 w - - 0 1"
+POISONED_PAWN_FEN = "r6k/p7/8/8/8/8/8/R1K5 w - - 0 1"
 
 
 def require_agent(
@@ -114,6 +115,29 @@ def test_repetition_safe_transposition_table_preserves_chess_decision() -> None:
         uncached.depth,
         uncached.principal_variation,
     )
+
+
+def test_quiescence_search_avoids_a_horizon_capture_blunder() -> None:
+    state = ChessState.from_fen(POISONED_PAWN_FEN)
+
+    plain = MaterialAlphaBetaAgent().select_action(
+        state, DepthBudget(1), random.Random(0)
+    )
+    quiet = MaterialAlphaBetaAgent(quiescence_depth=1).select_action(
+        state, DepthBudget(1), random.Random(0)
+    )
+
+    assert plain.action == chess.Move.from_uci("a1a7")
+    assert plain.value == 0
+    assert quiet.action != plain.action
+    assert quiet.value == -100
+    assert quiet.quiescence_nodes > 0
+
+
+@pytest.mark.parametrize("depth", [-1, True])
+def test_agent_rejects_invalid_quiescence_depth(depth: int) -> None:
+    with pytest.raises(ValueError, match="non-negative integer"):
+        MaterialAlphaBetaAgent(quiescence_depth=depth)
 
 
 def test_agent_rejects_terminal_state() -> None:

@@ -3,6 +3,8 @@
 from chesslab.search.classical.minimax import (
     MATE_SCORE,
     ActionOrderer,
+    QuiescenceExpansion,
+    QuiescenceSelector,
     StateEvaluator,
     StateKey,
     alpha_beta_search,
@@ -14,6 +16,8 @@ from chesslab.search.classical.minimax import (
 __all__ = [
     "ActionOrderer",
     "MATE_SCORE",
+    "QuiescenceExpansion",
+    "QuiescenceSelector",
     "StateEvaluator",
     "StateKey",
     "alpha_beta_search",

@@ -8,6 +8,7 @@ from chesslab.games import GameState, Player, TerminalReturns
 from chesslab.search import DepthBudget, NodeBudget
 from chesslab.search.classical import (
     MATE_SCORE,
+    QuiescenceExpansion,
     alpha_beta_search,
     exhaustive_search,
     iterative_deepening_search,
@@ -254,3 +255,70 @@ def test_search_requires_positive_depth(depth: int) -> None:
 def test_search_rejects_terminal_root() -> None:
     with pytest.raises(ValueError, match="terminal state"):
         alpha_beta_search(TreeState("a1"), 1, tree_evaluator)
+
+
+def test_quiescence_configuration_requires_selector_and_positive_depth() -> None:
+    def selector(state: GameState[str]) -> QuiescenceExpansion[str]:
+        return QuiescenceExpansion(state.legal_actions(), allow_stand_pat=True)
+
+    with pytest.raises(ValueError, match="requires a selector"):
+        alpha_beta_search(TreeState("root"), 1, tree_evaluator, quiescence_depth=1)
+    with pytest.raises(ValueError, match="requires a positive depth"):
+        alpha_beta_search(
+            TreeState("root"), 1, tree_evaluator, quiescence_selector=selector
+        )
+
+
+def test_quiescence_search_extends_the_principal_variation() -> None:
+    def forced_tactical_action(
+        state: GameState[str],
+    ) -> QuiescenceExpansion[str]:
+        return QuiescenceExpansion(state.legal_actions(), allow_stand_pat=False)
+
+    result = alpha_beta_search(
+        TreeState("horizon0"),
+        1,
+        tree_evaluator,
+        quiescence_selector=forced_tactical_action,
+        quiescence_depth=1,
+    )
+
+    assert (result.action, result.value) == ("high", 0)
+    assert result.principal_variation == ("high", "continue")
+    assert result.quiescence_nodes == 4
+
+
+def test_quiescence_work_obeys_the_shared_exact_node_budget() -> None:
+    def forced_tactical_action(
+        state: GameState[str],
+    ) -> QuiescenceExpansion[str]:
+        return QuiescenceExpansion(state.legal_actions(), allow_stand_pat=False)
+
+    result = iterative_deepening_search(
+        TreeState("root"),
+        NodeBudget(3),
+        tree_evaluator,
+        quiescence_selector=forced_tactical_action,
+        quiescence_depth=1,
+    )
+
+    assert result.action == "A"
+    assert result.depth == 0
+    assert result.iterations == 0
+    assert result.nodes == 3
+    assert result.quiescence_nodes == 2
+
+
+def test_quiescence_selector_must_return_legal_unique_actions() -> None:
+    def invalid_selector(state: GameState[str]) -> QuiescenceExpansion[str]:
+        del state
+        return QuiescenceExpansion(("continue", "continue"), True)
+
+    with pytest.raises(ValueError, match="unknown or duplicate"):
+        alpha_beta_search(
+            TreeState("horizon0"),
+            1,
+            tree_evaluator,
+            quiescence_selector=invalid_selector,
+            quiescence_depth=1,
+        )

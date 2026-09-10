@@ -17,6 +17,19 @@ type ActionOrderer[ActionT] = Callable[
 type StateKey[ActionT] = Callable[[GameState[ActionT]], Hashable]
 
 
+@dataclass(frozen=True, slots=True)
+class QuiescenceExpansion[ActionT]:
+    """Tactical actions and whether static stand-pat evaluation is legal."""
+
+    actions: Sequence[ActionT]
+    allow_stand_pat: bool
+
+
+type QuiescenceSelector[ActionT] = Callable[
+    [GameState[ActionT]], QuiescenceExpansion[ActionT]
+]
+
+
 class _Bound(Enum):
     EXACT = auto()
     LOWER = auto()
@@ -46,6 +59,7 @@ class _SearchCounter:
         self.nodes = 0
         self.cutoffs = 0
         self.transposition_hits = 0
+        self.quiescence_nodes = 0
 
     def visit(self) -> None:
         if self.node_limit is not None and self.nodes >= self.node_limit:
@@ -163,6 +177,102 @@ def exhaustive_search[ActionT](
     )
 
 
+def _validated_subset[ActionT](
+    legal_actions: Sequence[ActionT],
+    selected_actions: Sequence[ActionT],
+) -> tuple[ActionT, ...]:
+    selected = tuple(selected_actions)
+    remaining = list(legal_actions)
+    for action in selected:
+        try:
+            remaining.remove(action)
+        except ValueError as error:
+            raise ValueError(
+                "quiescence selector returned an unknown or duplicate action"
+            ) from error
+    return selected
+
+
+def _quiescence_value[ActionT](
+    state: GameState[ActionT],
+    remaining_depth: int,
+    evaluator: StateEvaluator[ActionT],
+    perspective: Player,
+    alpha: int | None,
+    beta: int | None,
+    counter: _SearchCounter,
+    action_orderer: ActionOrderer[ActionT] | None,
+    selector: QuiescenceSelector[ActionT],
+    *,
+    count_node: bool,
+) -> tuple[int, tuple[ActionT, ...], bool]:
+    if count_node:
+        counter.visit()
+    counter.quiescence_nodes += 1
+    if state.is_terminal():
+        return terminal_score(state, perspective), (), True
+
+    stand_pat = evaluator(state, perspective)
+    if remaining_depth == 0:
+        return stand_pat, (), False
+
+    expansion = selector(state)
+    legal_actions = state.legal_actions()
+    actions = _validated_subset(legal_actions, expansion.actions)
+    actions = _ordered_actions(state, actions, action_orderer)
+    maximizing = state.current_player == perspective
+    best_value: int | None = stand_pat if expansion.allow_stand_pat else None
+    best_line: tuple[ActionT, ...] = ()
+
+    if expansion.allow_stand_pat:
+        if maximizing:
+            if beta is not None and stand_pat >= beta:
+                counter.cutoffs += 1
+                return stand_pat, (), False
+            alpha = stand_pat if alpha is None else max(alpha, stand_pat)
+        else:
+            if alpha is not None and stand_pat <= alpha:
+                counter.cutoffs += 1
+                return stand_pat, (), False
+            beta = stand_pat if beta is None else min(beta, stand_pat)
+    elif not actions:
+        raise ValueError(
+            "quiescence selector disabled stand pat without returning actions"
+        )
+
+    for action in actions:
+        value, child_line, _ = _quiescence_value(
+            state.apply(action),
+            remaining_depth - 1,
+            evaluator,
+            perspective,
+            alpha,
+            beta,
+            counter,
+            action_orderer,
+            selector,
+            count_node=True,
+        )
+        if best_value is None or (maximizing and value > best_value):
+            best_value = value
+            best_line = (action, *child_line)
+        elif not maximizing and value < best_value:
+            best_value = value
+            best_line = (action, *child_line)
+
+        if maximizing:
+            alpha = best_value if alpha is None else max(alpha, best_value)
+        else:
+            beta = best_value if beta is None else min(beta, best_value)
+        if alpha is not None and beta is not None and alpha >= beta:
+            counter.cutoffs += 1
+            break
+
+    if best_value is None:  # pragma: no cover - guarded above
+        raise AssertionError("quiescence search did not produce a value")
+    return best_value, best_line, False
+
+
 def _alpha_beta_value[ActionT](
     state: GameState[ActionT],
     depth: int,
@@ -174,11 +284,26 @@ def _alpha_beta_value[ActionT](
     action_orderer: ActionOrderer[ActionT] | None,
     transposition_key: StateKey[ActionT] | None,
     table: _TranspositionTable[ActionT] | None,
+    quiescence_selector: QuiescenceSelector[ActionT] | None,
+    quiescence_depth: int,
 ) -> tuple[int, tuple[ActionT, ...], bool]:
     counter.visit()
     if state.is_terminal():
         return terminal_score(state, perspective), (), True
     if depth == 0:
+        if quiescence_selector is not None:
+            return _quiescence_value(
+                state,
+                quiescence_depth,
+                evaluator,
+                perspective,
+                alpha,
+                beta,
+                counter,
+                action_orderer,
+                quiescence_selector,
+                count_node=False,
+            )
         return evaluator(state, perspective), (), False
 
     original_alpha = alpha
@@ -219,6 +344,8 @@ def _alpha_beta_value[ActionT](
             action_orderer,
             transposition_key,
             table,
+            quiescence_selector,
+            quiescence_depth,
         )
         if best_value is None or (maximizing and value > best_value):
             best_value = value
@@ -262,6 +389,8 @@ def _alpha_beta_iteration[ActionT](
     action_orderer: ActionOrderer[ActionT] | None,
     transposition_key: StateKey[ActionT] | None,
     table: _TranspositionTable[ActionT] | None,
+    quiescence_selector: QuiescenceSelector[ActionT] | None,
+    quiescence_depth: int,
 ) -> tuple[ActionT, int, tuple[ActionT, ...], bool]:
     actions = _ordered_actions(state, _require_searchable(state, depth), action_orderer)
     perspective = state.current_player
@@ -284,6 +413,8 @@ def _alpha_beta_iteration[ActionT](
             action_orderer,
             transposition_key,
             table,
+            quiescence_selector,
+            quiescence_depth,
         )
         if best_value is None or value > best_value:
             best_action = action
@@ -297,6 +428,18 @@ def _alpha_beta_iteration[ActionT](
     return best_action, best_value, best_line, solved
 
 
+def _validate_quiescence_config[ActionT](
+    selector: QuiescenceSelector[ActionT] | None,
+    depth: int,
+) -> None:
+    if isinstance(depth, bool) or depth < 0:
+        raise ValueError("quiescence depth must be a non-negative integer")
+    if depth == 0 and selector is not None:
+        raise ValueError("quiescence selector requires a positive depth")
+    if depth > 0 and selector is None:
+        raise ValueError("positive quiescence depth requires a selector")
+
+
 def alpha_beta_search[ActionT](
     state: GameState[ActionT],
     depth: int,
@@ -304,14 +447,25 @@ def alpha_beta_search[ActionT](
     *,
     action_orderer: ActionOrderer[ActionT] | None = None,
     transposition_key: StateKey[ActionT] | None = None,
+    quiescence_selector: QuiescenceSelector[ActionT] | None = None,
+    quiescence_depth: int = 0,
 ) -> SearchResult[ActionT]:
     """Choose an action with deterministic depth-limited alpha-beta search."""
+    _validate_quiescence_config(quiescence_selector, quiescence_depth)
     counter = _SearchCounter()
     table: _TranspositionTable[ActionT] | None = (
         {} if transposition_key is not None else None
     )
     best_action, best_value, principal_variation, _ = _alpha_beta_iteration(
-        state, depth, evaluator, counter, action_orderer, transposition_key, table
+        state,
+        depth,
+        evaluator,
+        counter,
+        action_orderer,
+        transposition_key,
+        table,
+        quiescence_selector,
+        quiescence_depth,
     )
     return SearchResult(
         action=best_action,
@@ -321,6 +475,7 @@ def alpha_beta_search[ActionT](
         principal_variation=principal_variation,
         cutoffs=counter.cutoffs,
         transposition_hits=counter.transposition_hits,
+        quiescence_nodes=counter.quiescence_nodes,
     )
 
 
@@ -331,6 +486,8 @@ def iterative_deepening_search[ActionT](
     *,
     action_orderer: ActionOrderer[ActionT] | None = None,
     transposition_key: StateKey[ActionT] | None = None,
+    quiescence_selector: QuiescenceSelector[ActionT] | None = None,
+    quiescence_depth: int = 0,
 ) -> SearchResult[ActionT]:
     """Search complete depths in order without exceeding the supplied budget.
 
@@ -339,6 +496,7 @@ def iterative_deepening_search[ActionT](
     static root value. Partial iterations affect node and cutoff counts but do
     not replace the last fully completed decision.
     """
+    _validate_quiescence_config(quiescence_selector, quiescence_depth)
     actions = _ordered_actions(state, _require_searchable(state, 1), action_orderer)
     perspective = state.current_player
     if isinstance(budget, DepthBudget):
@@ -366,6 +524,8 @@ def iterative_deepening_search[ActionT](
                 action_orderer,
                 transposition_key,
                 table,
+                quiescence_selector,
+                quiescence_depth,
             )
         except _NodeLimitReached:
             break
@@ -378,6 +538,7 @@ def iterative_deepening_search[ActionT](
             cutoffs=counter.cutoffs,
             iterations=depth,
             transposition_hits=counter.transposition_hits,
+            quiescence_nodes=counter.quiescence_nodes,
         )
         if requested_depth is None and solved:
             break
@@ -393,6 +554,7 @@ def iterative_deepening_search[ActionT](
             cutoffs=counter.cutoffs,
             iterations=completed.iterations,
             transposition_hits=counter.transposition_hits,
+            quiescence_nodes=counter.quiescence_nodes,
         )
 
     # One root node is always affordable because NodeBudget is positive.
@@ -407,4 +569,5 @@ def iterative_deepening_search[ActionT](
         cutoffs=counter.cutoffs,
         iterations=0,
         transposition_hits=counter.transposition_hits,
+        quiescence_nodes=counter.quiescence_nodes,
     )

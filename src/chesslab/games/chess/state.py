@@ -77,6 +77,10 @@ class ChessState:
             raise ValueError(f"illegal move: {action.uci()}")
         return self.__board.is_capture(action)
 
+    def is_in_check(self) -> bool:
+        """Return whether the side to move is in check."""
+        return self.__board.is_check()
+
     def is_terminal(self) -> bool:
         """Return whether an automatic standard-chess outcome exists."""
         return self.__board.outcome(claim_draw=False) is not None

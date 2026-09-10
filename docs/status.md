@@ -4,9 +4,9 @@ Last updated: 2026-09-10
 
 ## Current milestone
 
-Milestone 8: repetition-aware chess caching. A history-sensitive chess
-transposition key and opt-in material-agent integration are implemented and
-verified, pending user review.
+Milestone 9: bounded quiescence search. Generic opt-in tactical horizon
+extensions and capture-and-promotion material-agent integration are implemented
+and verified.
 
 ## Implemented
 
@@ -59,12 +59,24 @@ verified, pending user review.
 - Opt-in transposition-table use by the material alpha-beta agent.
 - Key tests covering reconstructed states, reversible move-order transpositions,
   and irrelevant history before an irreversible move.
+- A generic bounded quiescence hook with caller-selected tactical actions and
+  explicit stand-pat legality.
+- Tactical actions validated as a duplicate-free subset of legal actions.
+- Terminal evaluation before heuristic stand-pat evaluation throughout
+  quiescence search.
+- Quiescence work included in the same exact node budget as ordinary search.
+- Separately reported quiescence-node counts and extended principal variations.
+- Public chess check status for safe handling of forced evasions.
+- Opt-in material-agent quiescence over captures and promotions.
+- All legal evasions searched when the side to move is in check, with stand pat
+  disabled.
+- A poisoned-pawn regression for a one-ply material horizon error.
 
 ## Verification
 
-Milestone 8 was verified on Windows with CPython 3.12.14:
+Milestone 9 was verified on Windows with CPython 3.12.14:
 
-- `uv run pytest`: passed; 80 tests passed.
+- `uv run pytest`: passed; 88 tests passed.
 - `uv run ruff check .`: passed.
 - `uv run mypy src`: passed; no issues found in 20 source files.
 - `uv run mypy src tests`: passed; no issues found in 30 source files.
@@ -72,7 +84,9 @@ Milestone 8 was verified on Windows with CPython 3.12.14:
 ## Planned, not implemented
 
 - Stronger classical search and full experiment logging.
-- Quiescence search and time-budget stopping.
+- Time-budget stopping.
+- Richer quiescence policies such as check generation, delta pruning, or
+  selective-depth adaptation.
 - Learned models, MCTS experiments, datasets, interfaces, and deployment.
 
 ## Open decisions

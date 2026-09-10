@@ -12,6 +12,7 @@ EN_PASSANT_FEN = "4k3/8/8/3pP3/8/8/8/4K3 w - d6 0 2"
 PROMOTION_FEN = "4k3/P7/8/8/8/8/8/4K3 w - - 0 1"
 FIFTY_MOVE_FEN = "7k/8/8/8/8/8/8/KR6 w - - 100 51"
 SEVENTY_FIVE_MOVE_FEN = "7k/8/8/8/8/8/8/KR6 w - - 150 76"
+CHECK_FEN = "7k/8/8/8/8/8/7r/7K w - - 0 1"
 
 
 def require_game_state(state: GameState[chess.Move]) -> GameState[chess.Move]:
@@ -40,6 +41,13 @@ def test_black_maps_to_player_one() -> None:
     state = ChessState().apply(chess.Move.from_uci("e2e4"))
 
     assert state.current_player == 1
+
+
+def test_check_status_is_exposed_without_changing_state() -> None:
+    checked = ChessState.from_fen(CHECK_FEN)
+
+    assert checked.is_in_check()
+    assert not ChessState().is_in_check()
 
 
 def test_apply_preserves_parent_and_move_history() -> None:

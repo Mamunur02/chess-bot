@@ -16,3 +16,4 @@ class SearchResult[ActionT](AgentDecision[ActionT]):
     cutoffs: int = 0
     iterations: int = 1
     transposition_hits: int = 0
+    quiescence_nodes: int = 0
