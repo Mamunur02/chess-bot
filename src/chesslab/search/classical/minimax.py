@@ -1,6 +1,8 @@
 """Depth-limited minimax and alpha-beta search with explicit perspective."""
 
-from collections.abc import Callable, Sequence
+from collections.abc import Callable, Hashable, Sequence
+from dataclasses import dataclass
+from enum import Enum, auto
 
 from chesslab.games import GameState, Player
 from chesslab.search.budgets import DepthBudget, NodeBudget, SearchBudget
@@ -11,6 +13,26 @@ MATE_SCORE = 1_000_000
 type StateEvaluator[ActionT] = Callable[[GameState[ActionT], Player], int]
 type ActionOrderer[ActionT] = Callable[
     [GameState[ActionT], Sequence[ActionT]], Sequence[ActionT]
+]
+type StateKey[ActionT] = Callable[[GameState[ActionT]], Hashable]
+
+
+class _Bound(Enum):
+    EXACT = auto()
+    LOWER = auto()
+    UPPER = auto()
+
+
+@dataclass(frozen=True, slots=True)
+class _TranspositionEntry[ActionT]:
+    value: int
+    principal_variation: tuple[ActionT, ...]
+    solved: bool
+    bound: _Bound
+
+
+type _TranspositionTable[ActionT] = dict[
+    tuple[Hashable, int], _TranspositionEntry[ActionT]
 ]
 
 
@@ -23,6 +45,7 @@ class _SearchCounter:
         self.node_limit = node_limit
         self.nodes = 0
         self.cutoffs = 0
+        self.transposition_hits = 0
 
     def visit(self) -> None:
         if self.node_limit is not None and self.nodes >= self.node_limit:
@@ -149,12 +172,31 @@ def _alpha_beta_value[ActionT](
     beta: int | None,
     counter: _SearchCounter,
     action_orderer: ActionOrderer[ActionT] | None,
+    transposition_key: StateKey[ActionT] | None,
+    table: _TranspositionTable[ActionT] | None,
 ) -> tuple[int, tuple[ActionT, ...], bool]:
     counter.visit()
     if state.is_terminal():
         return terminal_score(state, perspective), (), True
     if depth == 0:
         return evaluator(state, perspective), (), False
+
+    original_alpha = alpha
+    original_beta = beta
+    cache_key: tuple[Hashable, int] | None = None
+    if transposition_key is not None and table is not None:
+        cache_key = (transposition_key(state), depth)
+        entry = table.get(cache_key)
+        if entry is not None:
+            counter.transposition_hits += 1
+            if entry.bound is _Bound.EXACT:
+                return entry.value, entry.principal_variation, entry.solved
+            if entry.bound is _Bound.LOWER:
+                alpha = entry.value if alpha is None else max(alpha, entry.value)
+            else:
+                beta = entry.value if beta is None else min(beta, entry.value)
+            if alpha is not None and beta is not None and alpha >= beta:
+                return entry.value, entry.principal_variation, False
 
     actions = state.legal_actions()
     if not actions:
@@ -175,6 +217,8 @@ def _alpha_beta_value[ActionT](
             beta,
             counter,
             action_orderer,
+            transposition_key,
+            table,
         )
         if best_value is None or (maximizing and value > best_value):
             best_value = value
@@ -194,6 +238,19 @@ def _alpha_beta_value[ActionT](
 
     if best_value is None:  # pragma: no cover - guarded by the actions check
         raise AssertionError("search node did not produce a value")
+    if cache_key is not None and table is not None:
+        if original_alpha is not None and best_value <= original_alpha:
+            bound = _Bound.UPPER
+        elif original_beta is not None and best_value >= original_beta:
+            bound = _Bound.LOWER
+        else:
+            bound = _Bound.EXACT
+        table[cache_key] = _TranspositionEntry(
+            value=best_value,
+            principal_variation=best_line,
+            solved=solved,
+            bound=bound,
+        )
     return best_value, best_line, solved
 
 
@@ -203,6 +260,8 @@ def _alpha_beta_iteration[ActionT](
     evaluator: StateEvaluator[ActionT],
     counter: _SearchCounter,
     action_orderer: ActionOrderer[ActionT] | None,
+    transposition_key: StateKey[ActionT] | None,
+    table: _TranspositionTable[ActionT] | None,
 ) -> tuple[ActionT, int, tuple[ActionT, ...], bool]:
     actions = _ordered_actions(state, _require_searchable(state, depth), action_orderer)
     perspective = state.current_player
@@ -223,6 +282,8 @@ def _alpha_beta_iteration[ActionT](
             None,
             counter,
             action_orderer,
+            transposition_key,
+            table,
         )
         if best_value is None or value > best_value:
             best_action = action
@@ -242,11 +303,15 @@ def alpha_beta_search[ActionT](
     evaluator: StateEvaluator[ActionT],
     *,
     action_orderer: ActionOrderer[ActionT] | None = None,
+    transposition_key: StateKey[ActionT] | None = None,
 ) -> SearchResult[ActionT]:
     """Choose an action with deterministic depth-limited alpha-beta search."""
     counter = _SearchCounter()
+    table: _TranspositionTable[ActionT] | None = (
+        {} if transposition_key is not None else None
+    )
     best_action, best_value, principal_variation, _ = _alpha_beta_iteration(
-        state, depth, evaluator, counter, action_orderer
+        state, depth, evaluator, counter, action_orderer, transposition_key, table
     )
     return SearchResult(
         action=best_action,
@@ -255,6 +320,7 @@ def alpha_beta_search[ActionT](
         depth=depth,
         principal_variation=principal_variation,
         cutoffs=counter.cutoffs,
+        transposition_hits=counter.transposition_hits,
     )
 
 
@@ -264,6 +330,7 @@ def iterative_deepening_search[ActionT](
     evaluator: StateEvaluator[ActionT],
     *,
     action_orderer: ActionOrderer[ActionT] | None = None,
+    transposition_key: StateKey[ActionT] | None = None,
 ) -> SearchResult[ActionT]:
     """Search complete depths in order without exceeding the supplied budget.
 
@@ -283,13 +350,22 @@ def iterative_deepening_search[ActionT](
     else:
         raise ValueError(f"unsupported search budget: {type(budget).__name__}")
     counter = _SearchCounter(node_limit)
+    table: _TranspositionTable[ActionT] | None = (
+        {} if transposition_key is not None else None
+    )
     completed: SearchResult[ActionT] | None = None
     depth = 1
 
     while requested_depth is None or depth <= requested_depth:
         try:
             action, value, line, solved = _alpha_beta_iteration(
-                state, depth, evaluator, counter, action_orderer
+                state,
+                depth,
+                evaluator,
+                counter,
+                action_orderer,
+                transposition_key,
+                table,
             )
         except _NodeLimitReached:
             break
@@ -301,6 +377,7 @@ def iterative_deepening_search[ActionT](
             principal_variation=line,
             cutoffs=counter.cutoffs,
             iterations=depth,
+            transposition_hits=counter.transposition_hits,
         )
         if requested_depth is None and solved:
             break
@@ -315,6 +392,7 @@ def iterative_deepening_search[ActionT](
             principal_variation=completed.principal_variation,
             cutoffs=counter.cutoffs,
             iterations=completed.iterations,
+            transposition_hits=counter.transposition_hits,
         )
 
     # One root node is always affordable because NodeBudget is positive.
@@ -328,4 +406,5 @@ def iterative_deepening_search[ActionT](
         principal_variation=(actions[0],),
         cutoffs=counter.cutoffs,
         iterations=0,
+        transposition_hits=counter.transposition_hits,
     )

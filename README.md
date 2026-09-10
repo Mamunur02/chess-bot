@@ -5,13 +5,15 @@ of game-playing methods. The initial focus is trustworthy infrastructure and
 classical chess baselines; the longer-term research direction has not yet been
 selected.
 
-The project has completed **Milestone 6**. It provides typed game and agent
+The project has completed **Milestone 7**. It provides typed game and agent
 contracts, a tested `python-chess` state adapter, deterministic match execution,
 and a transparent material-based alpha-beta baseline checked against exhaustive
 shallow minimax. The baseline supports iterative deepening under depth or exact
 node budgets, reports principal variations and cutoff counts, and offers
-opt-in deterministic capture-first move ordering. It does not yet implement a
-transposition table, learned model, experiment suite, or user interface.
+opt-in deterministic capture-first move ordering. Generic alpha-beta search also
+supports a caller-keyed, per-search transposition table with hit statistics.
+Chess transposition caching remains disabled until it has a repetition-safe
+key. No learned model, experiment suite, or user interface is implemented.
 
 ## Development setup
 

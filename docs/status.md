@@ -4,9 +4,9 @@ Last updated: 2026-09-10
 
 ## Current milestone
 
-Milestone 6: baseline move ordering. An opt-in generic ordering hook and
-deterministic capture-first chess ordering are implemented and verified,
-pending user review.
+Milestone 7: generic transposition-table baseline. Per-search caching with
+depth-aware keys, bound handling, and hit statistics is implemented and
+verified, pending user review.
 
 ## Implemented
 
@@ -50,12 +50,16 @@ pending user review.
 - An opt-in action-ordering hook that validates the reordered legal actions.
 - Safe chess capture classification, including en passant.
 - Stable capture-first ordering in the material agent behind an explicit flag.
+- An opt-in, per-search transposition table using caller-defined stable keys.
+- Depth-aware exact, lower-bound, and upper-bound cache entries.
+- Measured transposition-table hits included in search results.
+- A diamond-tree correctness fixture comparing cached and uncached search.
 
 ## Verification
 
-Milestone 6 was verified on Windows with CPython 3.12.14:
+Milestone 7 was verified on Windows with CPython 3.12.14:
 
-- `uv run pytest`: passed; 75 tests passed.
+- `uv run pytest`: passed; 76 tests passed.
 - `uv run ruff check .`: passed.
 - `uv run mypy src`: passed; no issues found in 20 source files.
 - `uv run mypy src tests`: passed; no issues found in 30 source files.
@@ -63,7 +67,8 @@ Milestone 6 was verified on Windows with CPython 3.12.14:
 ## Planned, not implemented
 
 - Stronger classical search and full experiment logging.
-- Transposition tables, quiescence search, and time-budget stopping.
+- Repetition-safe chess transposition keys, quiescence search, and time-budget
+  stopping.
 - Learned models, MCTS experiments, datasets, interfaces, and deployment.
 
 ## Open decisions

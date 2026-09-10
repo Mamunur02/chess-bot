@@ -17,6 +17,8 @@ from chesslab.search.classical import (
 TRANSITIONS: Mapping[str, Mapping[str, str]] = {
     "root": {"A": "a", "B": "b"},
     "badroot": {"B": "b", "A": "a"},
+    "diamond": {"left": "shared", "right": "shared"},
+    "shared": {"win": "a1", "draw": "b1"},
     "a": {"A1": "a1", "A2": "a2"},
     "b": {"B1": "b1", "B2": "b2"},
     "horizon0": {"high": "high", "low": "low"},
@@ -30,6 +32,8 @@ TRANSITIONS: Mapping[str, Mapping[str, str]] = {
 PLAYERS: Mapping[str, Player] = {
     "root": 0,
     "badroot": 0,
+    "diamond": 0,
+    "shared": 1,
     "a": 1,
     "b": 1,
     "a1": 0,
@@ -93,6 +97,12 @@ def tree_evaluator(state: GameState[str], perspective: Player) -> int:
     else:
         player_zero_value = HEURISTICS[state.node]
     return player_zero_value if perspective == 0 else -player_zero_value
+
+
+def tree_key(state: GameState[str]) -> str:
+    if not isinstance(state, TreeState):
+        raise TypeError("tree key requires TreeState")
+    return state.node
 
 
 def test_depth_one_evaluates_immediate_children_from_root_perspective() -> None:
@@ -162,6 +172,28 @@ def test_action_orderer_must_return_every_legal_action_once() -> None:
         alpha_beta_search(
             TreeState("root"), 2, tree_evaluator, action_orderer=omit_action
         )
+
+
+def test_transposition_table_preserves_result_and_avoids_repeated_subtree() -> None:
+    uncached = alpha_beta_search(TreeState("diamond"), 2, tree_evaluator)
+    cached = alpha_beta_search(
+        TreeState("diamond"),
+        2,
+        tree_evaluator,
+        transposition_key=tree_key,
+    )
+
+    assert (
+        cached.action,
+        cached.value,
+        cached.principal_variation,
+    ) == (
+        uncached.action,
+        uncached.value,
+        uncached.principal_variation,
+    )
+    assert (uncached.nodes, cached.nodes) == (7, 5)
+    assert (uncached.transposition_hits, cached.transposition_hits) == (0, 1)
 
 
 def test_iterative_deepening_reports_total_work_across_depths() -> None:

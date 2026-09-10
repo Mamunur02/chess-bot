@@ -15,3 +15,4 @@ class SearchResult[ActionT](AgentDecision[ActionT]):
     principal_variation: tuple[ActionT, ...] = ()
     cutoffs: int = 0
     iterations: int = 1
+    transposition_hits: int = 0
