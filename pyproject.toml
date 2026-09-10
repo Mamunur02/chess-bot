@@ -8,6 +8,9 @@ dependencies = [
     "python-chess>=1.999",
 ]
 
+[project.scripts]
+chesslab-uci = "chesslab.uci:main"
+
 [dependency-groups]
 dev = [
     "mypy>=1.17.1",

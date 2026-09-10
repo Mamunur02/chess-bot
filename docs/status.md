@@ -4,9 +4,9 @@ Last updated: 2026-09-10
 
 ## Current milestone
 
-Milestone 10: time-budget stopping. Positive millisecond budgets,
-deadline-aware iterative deepening, elapsed-time reporting, and injectable-clock
-tests are implemented and verified.
+Milestone 11: minimal synchronous UCI interface. Core engine identification,
+position setup, fixed-budget search commands, protocol output, and console
+entry-point tests are implemented and verified.
 
 ## Implemented
 
@@ -82,18 +82,29 @@ tests are implemented and verified.
 - Millisecond budget kind and value in match metadata.
 - Material alpha-beta agent support for wall-clock budgets.
 
+- A `chesslab-uci` console entry point over standard input and output.
+- UCI identification, readiness, new-game, stop, and quit commands.
+- Atomic `position startpos` and six-field `position fen` setup with optional
+  legal UCI move sequences.
+- `go depth`, `go nodes`, and `go movetime` budget mapping.
+- UCI centipawn and mate score fields, search statistics, principal variation,
+  and best-move output.
+- Null best moves and diagnostic information for invalid searches.
+- Session-level error handling that preserves the command loop.
+- Stream and installed console-entry smoke coverage.
+
 ## Verification
 
-Milestone 10 was verified on Windows with CPython 3.12.14:
+Milestone 11 was verified on Windows with CPython 3.12.14:
 
-- `uv run pytest`: passed; 95 tests passed.
+- `uv run pytest`: passed; 106 tests passed.
 - `uv run ruff check .`: passed.
-- `uv run mypy src`: passed; no issues found in 20 source files.
-- `uv run mypy src tests`: passed; no issues found in 30 source files.
+- `uv run mypy src`: passed; no issues found in 21 source files.
+- `uv run mypy src tests`: passed; no issues found in 32 source files.
 
 ## Planned, not implemented
 
-- UCI engine integration and fixed-budget benchmark tooling.
+- Fixed-budget benchmark tooling.
 - Full experiment configuration and logging.
 - Richer quiescence policies such as check generation, delta pruning, or
   selective-depth adaptation.
