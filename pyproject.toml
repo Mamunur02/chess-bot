@@ -9,6 +9,7 @@ dependencies = [
 ]
 
 [project.scripts]
+chesslab-benchmark = "chesslab.benchmark:main"
 chesslab-uci = "chesslab.uci:main"
 
 [dependency-groups]

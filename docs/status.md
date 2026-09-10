@@ -4,9 +4,9 @@ Last updated: 2026-09-10
 
 ## Current milestone
 
-Milestone 11: minimal synchronous UCI interface. Core engine identification,
-position setup, fixed-budget search commands, protocol output, and console
-entry-point tests are implemented and verified.
+Milestone 12: fixed-budget benchmark harness. Caller-supplied position
+configuration, raw per-case measurements, structured failures, configuration
+digests, environment provenance, and JSON output are implemented and verified.
 
 ## Implemented
 
@@ -93,19 +93,30 @@ entry-point tests are implemented and verified.
 - Session-level error handling that preserves the command loop.
 - Stream and installed console-entry smoke coverage.
 
+- A `chesslab-benchmark` console entry point using JSON input and output.
+- Caller-supplied named FEN positions with optional accepted UCI moves.
+- Explicit material-agent switches and depth, node, or millisecond budgets.
+- Stable SHA-256 configuration digests and deterministic per-position seeds.
+- Git commit, dirty state, timestamp, Python, platform, machine, and processor
+  provenance.
+- Raw per-position decisions, search statistics, timings, failures, and seeds.
+- Exact aggregate completion, failure, accepted-move, and node counts.
+- Digest matching between benchmark specification and provenance.
+- Result overwrite protection.
+- No committed substantive benchmark dataset or claimed experimental result.
+
 ## Verification
 
-Milestone 11 was verified on Windows with CPython 3.12.14:
+Milestone 12 was verified on Windows with CPython 3.12.14:
 
-- `uv run pytest`: passed; 106 tests passed.
+- `uv run pytest`: passed; 121 tests passed.
 - `uv run ruff check .`: passed.
-- `uv run mypy src`: passed; no issues found in 21 source files.
-- `uv run mypy src tests`: passed; no issues found in 32 source files.
+- `uv run mypy src`: passed; no issues found in 23 source files.
+- `uv run mypy src tests`: passed; no issues found in 35 source files.
 
 ## Planned, not implemented
 
-- Fixed-budget benchmark tooling.
-- Full experiment configuration and logging.
+- Experiment manifests, artifact layout, and multi-run comparison summaries.
 - Richer quiescence policies such as check generation, delta pruning, or
   selective-depth adaptation.
 - Learned models, MCTS experiments, datasets, interfaces, and deployment.
