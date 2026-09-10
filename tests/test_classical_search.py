@@ -5,7 +5,7 @@ from typing import Self
 import pytest
 
 from chesslab.games import GameState, Player, TerminalReturns
-from chesslab.search import DepthBudget, NodeBudget
+from chesslab.search import DepthBudget, NodeBudget, TimeBudget
 from chesslab.search.classical import (
     MATE_SCORE,
     QuiescenceExpansion,
@@ -104,6 +104,17 @@ def tree_key(state: GameState[str]) -> str:
     if not isinstance(state, TreeState):
         raise TypeError("tree key requires TreeState")
     return state.node
+
+
+class StepClock:
+    def __init__(self, step: float) -> None:
+        self.current = 0.0
+        self.step = step
+
+    def __call__(self) -> float:
+        value = self.current
+        self.current += self.step
+        return value
 
 
 def test_depth_one_evaluates_immediate_children_from_root_perspective() -> None:
@@ -237,7 +248,48 @@ def test_tiny_node_budget_uses_documented_legal_fallback() -> None:
     assert result.iterations == 0
 
 
+def test_time_budget_keeps_the_last_complete_iteration() -> None:
+    result = iterative_deepening_search(
+        TreeState("root"),
+        TimeBudget(4),
+        tree_evaluator,
+        clock=StepClock(0.001),
+    )
+
+    assert result.action == "A"
+    assert result.value == 10
+    assert result.depth == 1
+    assert result.iterations == 1
+    assert result.nodes == 3
+    assert result.elapsed_seconds == pytest.approx(0.005)
+
+
+def test_time_budget_can_expire_before_entering_the_root() -> None:
+    result = iterative_deepening_search(
+        TreeState("root"),
+        TimeBudget(1),
+        tree_evaluator,
+        clock=StepClock(0.002),
+    )
+
+    assert result.action == "A"
+    assert result.value == 0
+    assert result.depth == 0
+    assert result.iterations == 0
+    assert result.nodes == 0
+    assert result.elapsed_seconds == pytest.approx(0.004)
+
+
+def test_non_time_budgets_do_not_sample_the_clock() -> None:
+    result = iterative_deepening_search(
+        TreeState("root"), DepthBudget(1), tree_evaluator, clock=StepClock(1.0)
+    )
+
+    assert result.elapsed_seconds is None
+
+
 def test_terminal_scores_use_fixed_perspective() -> None:
+
     win = TreeState("a1")
     draw = TreeState("b1")
 

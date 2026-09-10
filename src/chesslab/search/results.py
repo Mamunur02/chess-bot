@@ -7,7 +7,7 @@ from chesslab.agents.protocols import AgentDecision
 
 @dataclass(frozen=True, slots=True)
 class SearchResult[ActionT](AgentDecision[ActionT]):
-    """An action choice and directly measured deterministic search data."""
+    """An action choice and directly measured search data."""
 
     value: int
     nodes: int
@@ -17,3 +17,4 @@ class SearchResult[ActionT](AgentDecision[ActionT]):
     iterations: int = 1
     transposition_hits: int = 0
     quiescence_nodes: int = 0
+    elapsed_seconds: float | None = None

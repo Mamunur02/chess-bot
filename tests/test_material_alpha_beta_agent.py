@@ -7,7 +7,7 @@ from chesslab.agents import Agent
 from chesslab.agents.material_alpha_beta import MaterialAlphaBetaAgent
 from chesslab.games import GameState
 from chesslab.games.chess import ChessState
-from chesslab.search import DepthBudget, NodeBudget
+from chesslab.search import DepthBudget, NodeBudget, TimeBudget
 from chesslab.search.classical import MATE_SCORE, terminal_score
 
 CHECKMATE_FEN = "rnb1kbnr/pppp1ppp/8/4p3/6Pq/5P2/PPPPP2P/RNBQKBNR w KQkq - 1 3"
@@ -76,6 +76,23 @@ def test_agent_honors_node_budget() -> None:
     assert result.action in state.legal_actions()
     assert result.nodes == 4
     assert result.depth == 0
+
+
+def test_agent_forwards_time_budget_to_injected_clock() -> None:
+    state = ChessState.from_fen(FREE_QUEEN_FEN)
+    timestamps = iter((0.0, 0.002, 0.004))
+    agent = MaterialAlphaBetaAgent(clock=lambda: next(timestamps))
+
+    result = agent.select_action(
+        state,
+        TimeBudget(1),
+        random.Random(0),
+    )
+
+    assert result.action in state.legal_actions()
+    assert result.depth == 0
+    assert result.nodes == 0
+    assert result.elapsed_seconds == pytest.approx(0.004)
 
 
 def test_capture_ordering_changes_only_the_tiny_budget_fallback_order() -> None:

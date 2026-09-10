@@ -9,7 +9,7 @@ import pytest
 from chesslab.agents import AgentDecision, RandomAgent
 from chesslab.eval import FailureKind, MatchResult, MatchStatus, run_match
 from chesslab.games import GameState, Player, TerminalReturns
-from chesslab.search import DepthBudget, NodeBudget, SearchBudget
+from chesslab.search import DepthBudget, NodeBudget, SearchBudget, TimeBudget
 
 
 @dataclass(frozen=True, slots=True)
@@ -147,6 +147,20 @@ def test_player_rng_streams_are_independent_and_recorded() -> None:
     assert seed_zero != seed_one
     assert player_zero.draws == [expected_zero.getrandbits(32) for _ in range(2)]
     assert player_one.draws == [expected_one.getrandbits(32) for _ in range(2)]
+
+
+def test_time_budget_is_recorded_in_match_metadata() -> None:
+    result = run_match(
+        CountdownState(remaining=1),
+        (RandomAgent[int](), RandomAgent[int]()),
+        TimeBudget(25),
+        seed=0,
+        max_plies=2,
+        encode_action=str,
+    )
+
+    assert result.metadata.budget_kind == "milliseconds"
+    assert result.metadata.budget_value == 25
 
 
 def test_initial_terminal_state_completes_without_agent_calls() -> None:

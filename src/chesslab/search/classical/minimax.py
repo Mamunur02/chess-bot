@@ -3,9 +3,10 @@
 from collections.abc import Callable, Hashable, Sequence
 from dataclasses import dataclass
 from enum import Enum, auto
+from time import perf_counter
 
 from chesslab.games import GameState, Player
-from chesslab.search.budgets import DepthBudget, NodeBudget, SearchBudget
+from chesslab.search.budgets import DepthBudget, NodeBudget, SearchBudget, TimeBudget
 from chesslab.search.results import SearchResult
 
 MATE_SCORE = 1_000_000
@@ -15,6 +16,7 @@ type ActionOrderer[ActionT] = Callable[
     [GameState[ActionT], Sequence[ActionT]], Sequence[ActionT]
 ]
 type StateKey[ActionT] = Callable[[GameState[ActionT]], Hashable]
+type Clock = Callable[[], float]
 
 
 @dataclass(frozen=True, slots=True)
@@ -49,13 +51,20 @@ type _TranspositionTable[ActionT] = dict[
 ]
 
 
-class _NodeLimitReached(Exception):
-    """Internal control flow used to stop before exceeding a node budget."""
+class _SearchLimitReached(Exception):
+    """Internal control flow used to stop before exceeding a search budget."""
 
 
 class _SearchCounter:
-    def __init__(self, node_limit: int | None = None) -> None:
+    def __init__(
+        self,
+        node_limit: int | None = None,
+        deadline: float | None = None,
+        clock: Clock | None = None,
+    ) -> None:
         self.node_limit = node_limit
+        self.deadline = deadline
+        self.clock = clock
         self.nodes = 0
         self.cutoffs = 0
         self.transposition_hits = 0
@@ -63,7 +72,12 @@ class _SearchCounter:
 
     def visit(self) -> None:
         if self.node_limit is not None and self.nodes >= self.node_limit:
-            raise _NodeLimitReached
+            raise _SearchLimitReached
+        if self.deadline is not None:
+            if self.clock is None:  # pragma: no cover - internal invariant
+                raise AssertionError("a deadline requires a clock")
+            if self.clock() >= self.deadline:
+                raise _SearchLimitReached
         self.nodes += 1
 
 
@@ -488,26 +502,37 @@ def iterative_deepening_search[ActionT](
     transposition_key: StateKey[ActionT] | None = None,
     quiescence_selector: QuiescenceSelector[ActionT] | None = None,
     quiescence_depth: int = 0,
+    clock: Clock = perf_counter,
 ) -> SearchResult[ActionT]:
     """Search complete depths in order without exceeding the supplied budget.
 
-    Node budgets include all work across iterations. If depth one cannot be
-    completed, the first legal action is returned with a depth of zero and the
-    static root value. Partial iterations affect node and cutoff counts but do
-    not replace the last fully completed decision.
+    Node and time budgets include all work across iterations. If depth one
+    cannot be completed, the first legal action is returned with a depth of
+    zero and the static root value. A time budget can expire before the root is
+    entered, in which case the node count is zero. Partial iterations affect
+    statistics but do not replace the last fully completed decision.
     """
     _validate_quiescence_config(quiescence_selector, quiescence_depth)
-    actions = _ordered_actions(state, _require_searchable(state, 1), action_orderer)
-    perspective = state.current_player
+    started_at: float | None = None
+    deadline: float | None = None
     if isinstance(budget, DepthBudget):
         node_limit = None
         requested_depth: int | None = budget.depth
     elif isinstance(budget, NodeBudget):
         node_limit = budget.nodes
         requested_depth = None
+    elif isinstance(budget, TimeBudget):
+        node_limit = None
+        requested_depth = None
+        started_at = clock()
+        deadline = started_at + budget.milliseconds / 1000
     else:
         raise ValueError(f"unsupported search budget: {type(budget).__name__}")
-    counter = _SearchCounter(node_limit)
+    actions = _ordered_actions(state, _require_searchable(state, 1), action_orderer)
+    perspective = state.current_player
+    counter = _SearchCounter(
+        node_limit, deadline, clock if deadline is not None else None
+    )
     table: _TranspositionTable[ActionT] | None = (
         {} if transposition_key is not None else None
     )
@@ -527,7 +552,7 @@ def iterative_deepening_search[ActionT](
                 quiescence_selector,
                 quiescence_depth,
             )
-        except _NodeLimitReached:
+        except _SearchLimitReached:
             break
         completed = SearchResult(
             action=action,
@@ -555,10 +580,13 @@ def iterative_deepening_search[ActionT](
             iterations=completed.iterations,
             transposition_hits=counter.transposition_hits,
             quiescence_nodes=counter.quiescence_nodes,
+            elapsed_seconds=(
+                None if started_at is None else max(0.0, clock() - started_at)
+            ),
         )
 
-    # One root node is always affordable because NodeBudget is positive.
-    if counter.nodes == 0:
+    # One root node is always affordable under a positive node budget.
+    if counter.nodes == 0 and deadline is None:
         counter.visit()
     return SearchResult(
         action=actions[0],
@@ -570,4 +598,7 @@ def iterative_deepening_search[ActionT](
         iterations=0,
         transposition_hits=counter.transposition_hits,
         quiescence_nodes=counter.quiescence_nodes,
+        elapsed_seconds=(
+            None if started_at is None else max(0.0, clock() - started_at)
+        ),
     )

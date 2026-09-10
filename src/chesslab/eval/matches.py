@@ -8,9 +8,9 @@ from typing import Literal
 
 from chesslab.agents import Agent
 from chesslab.games import GameState, Player, TerminalReturns
-from chesslab.search import DepthBudget, NodeBudget, SearchBudget
+from chesslab.search import DepthBudget, NodeBudget, SearchBudget, TimeBudget
 
-type BudgetKind = Literal["depth", "nodes"]
+type BudgetKind = Literal["depth", "nodes", "milliseconds"]
 type AgentPair[ActionT] = tuple[
     Agent[GameState[ActionT], ActionT],
     Agent[GameState[ActionT], ActionT],
@@ -130,6 +130,8 @@ def _budget_details(budget: SearchBudget) -> tuple[BudgetKind, int]:
         return ("depth", budget.depth)
     if isinstance(budget, NodeBudget):
         return ("nodes", budget.nodes)
+    if isinstance(budget, TimeBudget):
+        return ("milliseconds", budget.milliseconds)
     raise ValueError(f"unsupported search budget: {type(budget).__name__}")
 
 

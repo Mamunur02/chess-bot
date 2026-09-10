@@ -1,8 +1,9 @@
-"""A deterministic iterative-deepening agent using material evaluation."""
+"""An iterative-deepening agent using material evaluation."""
 
 import random
-from collections.abc import Sequence
-from dataclasses import dataclass
+from collections.abc import Callable, Sequence
+from dataclasses import dataclass, field
+from time import perf_counter
 
 import chess
 
@@ -57,6 +58,7 @@ class MaterialAlphaBetaAgent:
     capture_ordering: bool = False
     transposition_table: bool = False
     quiescence_depth: int = 0
+    clock: Callable[[], float] = field(default=perf_counter, repr=False, compare=False)
 
     def __post_init__(self) -> None:
         """Validate the optional bounded quiescence depth."""
@@ -69,7 +71,7 @@ class MaterialAlphaBetaAgent:
         budget: SearchBudget,
         rng: random.Random,
     ) -> SearchResult[chess.Move]:
-        """Search deterministically using a depth or node budget."""
+        """Search using the supplied depth, node, or wall-clock budget."""
         del rng
         if not isinstance(state, ChessState):
             raise TypeError("MaterialAlphaBetaAgent requires ChessState")
@@ -85,4 +87,5 @@ class MaterialAlphaBetaAgent:
                 _quiescence_expansion if self.quiescence_depth > 0 else None
             ),
             quiescence_depth=self.quiescence_depth,
+            clock=self.clock,
         )

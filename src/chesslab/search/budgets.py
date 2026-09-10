@@ -1,4 +1,4 @@
-"""Explicit, reproducible limits for agent computation."""
+"""Explicit limits for agent computation."""
 
 from dataclasses import dataclass
 
@@ -28,4 +28,14 @@ class NodeBudget:
         _require_positive_integer(self.nodes, "nodes")
 
 
-type SearchBudget = DepthBudget | NodeBudget
+@dataclass(frozen=True, slots=True)
+class TimeBudget:
+    """Limit search to a positive number of wall-clock milliseconds."""
+
+    milliseconds: int
+
+    def __post_init__(self) -> None:
+        _require_positive_integer(self.milliseconds, "milliseconds")
+
+
+type SearchBudget = DepthBudget | NodeBudget | TimeBudget

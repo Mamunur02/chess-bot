@@ -7,7 +7,7 @@ import pytest
 
 from chesslab.agents import Agent, AgentDecision
 from chesslab.games import GameState, Player, TerminalReturns
-from chesslab.search import DepthBudget, NodeBudget, SearchBudget
+from chesslab.search import DepthBudget, NodeBudget, SearchBudget, TimeBudget
 
 
 @dataclass(frozen=True, slots=True)
@@ -113,10 +113,18 @@ def test_non_terminal_returns_fail_clearly() -> None:
 
 @pytest.mark.parametrize(
     "budget_type, value",
-    [(DepthBudget, 0), (DepthBudget, -1), (NodeBudget, 0), (NodeBudget, -1)],
+    [
+        (DepthBudget, 0),
+        (DepthBudget, -1),
+        (NodeBudget, 0),
+        (NodeBudget, -1),
+        (TimeBudget, 0),
+        (TimeBudget, -1),
+    ],
 )
 def test_budgets_require_positive_integers(
-    budget_type: type[DepthBudget] | type[NodeBudget], value: int
+    budget_type: type[DepthBudget] | type[NodeBudget] | type[TimeBudget],
+    value: int,
 ) -> None:
     with pytest.raises(ValueError, match="positive integer"):
         budget_type(value)
@@ -125,6 +133,8 @@ def test_budgets_require_positive_integers(
 def test_bool_is_not_accepted_as_an_integer_budget() -> None:
     with pytest.raises(ValueError, match="positive integer"):
         DepthBudget(True)
+    with pytest.raises(ValueError, match="positive integer"):
+        TimeBudget(True)
 
 
 def test_agent_randomness_is_owned_by_the_caller() -> None:

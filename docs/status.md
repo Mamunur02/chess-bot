@@ -4,9 +4,9 @@ Last updated: 2026-09-10
 
 ## Current milestone
 
-Milestone 9: bounded quiescence search. Generic opt-in tactical horizon
-extensions and capture-and-promotion material-agent integration are implemented
-and verified.
+Milestone 10: time-budget stopping. Positive millisecond budgets,
+deadline-aware iterative deepening, elapsed-time reporting, and injectable-clock
+tests are implemented and verified.
 
 ## Implemented
 
@@ -72,19 +72,29 @@ and verified.
   disabled.
 - A poisoned-pawn regression for a one-ply material horizon error.
 
+- A positive integer millisecond time-budget contract.
+- Monotonic-clock deadline checks before every ordinary and quiescence node.
+- Last-completed-iteration decisions when a deadline interrupts deeper search.
+- A legal depth-zero fallback when time expires before root entry.
+- Measured elapsed seconds on time-budget search results.
+- No clock sampling or result changes for depth and node budgets.
+- Injectable clocks for deterministic deadline tests.
+- Millisecond budget kind and value in match metadata.
+- Material alpha-beta agent support for wall-clock budgets.
+
 ## Verification
 
-Milestone 9 was verified on Windows with CPython 3.12.14:
+Milestone 10 was verified on Windows with CPython 3.12.14:
 
-- `uv run pytest`: passed; 88 tests passed.
+- `uv run pytest`: passed; 95 tests passed.
 - `uv run ruff check .`: passed.
 - `uv run mypy src`: passed; no issues found in 20 source files.
 - `uv run mypy src tests`: passed; no issues found in 30 source files.
 
 ## Planned, not implemented
 
-- Stronger classical search and full experiment logging.
-- Time-budget stopping.
+- UCI engine integration and fixed-budget benchmark tooling.
+- Full experiment configuration and logging.
 - Richer quiescence policies such as check generation, delta pruning, or
   selective-depth adaptation.
 - Learned models, MCTS experiments, datasets, interfaces, and deployment.
