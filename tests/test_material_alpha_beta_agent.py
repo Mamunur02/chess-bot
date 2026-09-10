@@ -66,11 +66,31 @@ def test_terminal_chess_scores_override_material() -> None:
     assert terminal_score(stalemate, 1) == 0
 
 
-def test_agent_rejects_node_budget() -> None:
-    with pytest.raises(ValueError, match="DepthBudget"):
-        MaterialAlphaBetaAgent().select_action(
-            ChessState(), NodeBudget(100), random.Random(0)
-        )
+def test_agent_honors_node_budget() -> None:
+    state = ChessState.from_fen(FREE_QUEEN_FEN)
+    result = MaterialAlphaBetaAgent().select_action(
+        state, NodeBudget(4), random.Random(0)
+    )
+
+    assert result.action in state.legal_actions()
+    assert result.nodes == 4
+    assert result.depth == 0
+
+
+def test_capture_ordering_changes_only_the_tiny_budget_fallback_order() -> None:
+    state = ChessState.from_fen(FREE_QUEEN_FEN)
+
+    unordered = MaterialAlphaBetaAgent().select_action(
+        state, NodeBudget(1), random.Random(0)
+    )
+    ordered = MaterialAlphaBetaAgent(capture_ordering=True).select_action(
+        state, NodeBudget(1), random.Random(0)
+    )
+
+    assert unordered.action == chess.Move.from_uci("c1d2")
+    assert ordered.action == chess.Move.from_uci("a1a7")
+    assert state.is_capture(ordered.action)
+    assert (unordered.nodes, ordered.nodes) == (1, 1)
 
 
 def test_agent_rejects_terminal_state() -> None:

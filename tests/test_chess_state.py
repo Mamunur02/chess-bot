@@ -120,6 +120,15 @@ def test_en_passant_capture() -> None:
     assert board.piece_at(chess.D5) is None
 
 
+def test_capture_classification_includes_en_passant_and_rejects_illegal_moves() -> None:
+    state = ChessState.from_fen(EN_PASSANT_FEN)
+
+    assert state.is_capture(chess.Move.from_uci("e5d6"))
+    assert not state.is_capture(chess.Move.from_uci("e5e6"))
+    with pytest.raises(ValueError, match="illegal move"):
+        state.is_capture(chess.Move.from_uci("e5e7"))
+
+
 def test_promotion_actions_and_piece_placement() -> None:
     state = ChessState.from_fen(PROMOTION_FEN)
     promotions = {

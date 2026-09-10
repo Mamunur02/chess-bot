@@ -60,6 +60,12 @@ class ChessState:
         child_board.push(action)
         return type(self)._from_owned_board(child_board)
 
+    def is_capture(self, action: chess.Move) -> bool:
+        """Return whether a legal action captures, including en passant."""
+        if self.is_terminal() or not self.__board.is_legal(action):
+            raise ValueError(f"illegal move: {action.uci()}")
+        return self.__board.is_capture(action)
+
     def is_terminal(self) -> bool:
         """Return whether an automatic standard-chess outcome exists."""
         return self.__board.outcome(claim_draw=False) is not None

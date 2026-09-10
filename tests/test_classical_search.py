@@ -5,15 +5,18 @@ from typing import Self
 import pytest
 
 from chesslab.games import GameState, Player, TerminalReturns
+from chesslab.search import DepthBudget, NodeBudget
 from chesslab.search.classical import (
     MATE_SCORE,
     alpha_beta_search,
     exhaustive_search,
+    iterative_deepening_search,
     terminal_score,
 )
 
 TRANSITIONS: Mapping[str, Mapping[str, str]] = {
     "root": {"A": "a", "B": "b"},
+    "badroot": {"B": "b", "A": "a"},
     "a": {"A1": "a1", "A2": "a2"},
     "b": {"B1": "b1", "B2": "b2"},
     "horizon0": {"high": "high", "low": "low"},
@@ -26,6 +29,7 @@ TRANSITIONS: Mapping[str, Mapping[str, str]] = {
 }
 PLAYERS: Mapping[str, Player] = {
     "root": 0,
+    "badroot": 0,
     "a": 1,
     "b": 1,
     "a1": 0,
@@ -80,7 +84,14 @@ class TreeState:
 def tree_evaluator(state: GameState[str], perspective: Player) -> int:
     if not isinstance(state, TreeState):
         raise TypeError("tree evaluator requires TreeState")
-    player_zero_value = HEURISTICS[state.node]
+    if state.node in {"root", "badroot"}:
+        player_zero_value = 0
+    elif state.node == "a":
+        player_zero_value = 10
+    elif state.node == "b":
+        player_zero_value = -10
+    else:
+        player_zero_value = HEURISTICS[state.node]
     return player_zero_value if perspective == 0 else -player_zero_value
 
 
@@ -123,6 +134,74 @@ def test_alpha_beta_matches_reference_and_measures_pruning() -> None:
         6,
         2,
     )
+    assert pruned.principal_variation == ("A", "A1")
+    assert pruned.cutoffs == 1
+
+
+def test_action_ordering_preserves_value_and_reduces_nodes() -> None:
+    unordered = alpha_beta_search(TreeState("badroot"), 2, tree_evaluator)
+
+    def best_first(state: GameState[str], actions: Sequence[str]) -> Sequence[str]:
+        del state
+        return tuple(sorted(actions, key=lambda action: action == "A", reverse=True))
+
+    ordered = alpha_beta_search(
+        TreeState("badroot"), 2, tree_evaluator, action_orderer=best_first
+    )
+
+    assert (ordered.action, ordered.value) == (unordered.action, unordered.value)
+    assert (unordered.nodes, ordered.nodes) == (7, 6)
+
+
+def test_action_orderer_must_return_every_legal_action_once() -> None:
+    def omit_action(state: GameState[str], actions: Sequence[str]) -> Sequence[str]:
+        del state
+        return actions[:1]
+
+    with pytest.raises(ValueError, match="omitted"):
+        alpha_beta_search(
+            TreeState("root"), 2, tree_evaluator, action_orderer=omit_action
+        )
+
+
+def test_iterative_deepening_reports_total_work_across_depths() -> None:
+    result = iterative_deepening_search(
+        TreeState("root"), DepthBudget(2), tree_evaluator
+    )
+
+    assert result.action == "A"
+    assert result.value == MATE_SCORE
+    assert result.depth == 2
+    assert result.principal_variation == ("A", "A1")
+    assert result.nodes == 9
+    assert result.cutoffs == 1
+    assert result.iterations == 2
+
+
+def test_node_budget_keeps_last_complete_iteration_and_exact_node_count() -> None:
+    result = iterative_deepening_search(
+        TreeState("root"), NodeBudget(8), tree_evaluator
+    )
+
+    assert result.action == "A"
+    assert result.value == 10
+    assert result.depth == 1
+    assert result.principal_variation == ("A",)
+    assert result.nodes == 8
+    assert result.iterations == 1
+
+
+def test_tiny_node_budget_uses_documented_legal_fallback() -> None:
+    result = iterative_deepening_search(
+        TreeState("root"), NodeBudget(1), tree_evaluator
+    )
+
+    assert result.action == "A"
+    assert result.value == 0
+    assert result.depth == 0
+    assert result.principal_variation == ("A",)
+    assert result.nodes == 1
+    assert result.iterations == 0
 
 
 def test_terminal_scores_use_fixed_perspective() -> None:

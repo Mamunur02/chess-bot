@@ -1,12 +1,12 @@
 # Project status
 
-Last updated: 2026-09-02
+Last updated: 2026-09-10
 
 ## Current milestone
 
-Milestone 4: first classical baseline. Material evaluation, exhaustive shallow
-minimax, and alpha-beta search are implemented and verified, pending user
-review.
+Milestone 6: baseline move ordering. An opt-in generic ordering hook and
+deterministic capture-first chess ordering are implemented and verified,
+pending user review.
 
 ## Implemented
 
@@ -38,15 +38,24 @@ review.
 - Deterministic alpha-beta search with documented depth and node semantics.
 - Fixed mate and draw scores that take precedence over heuristic evaluation.
 - Search results containing action, value, visited nodes, and completed depth.
-- A material alpha-beta chess agent supporting explicit depth budgets.
+- A material alpha-beta chess agent supporting explicit depth and node budgets.
 - Artificial-tree tests that compare alpha-beta with exhaustive search and
   measure pruning, plus focused tactical chess fixtures.
+- Deterministic iterative deepening that preserves legal-action order.
+- Exact cumulative node-budget stopping across completed and partial
+  iterations.
+- Last-completed-iteration decisions with a documented depth-zero fallback
+  when a node budget cannot complete depth one.
+- Principal-variation, cutoff, and completed-iteration search statistics.
+- An opt-in action-ordering hook that validates the reordered legal actions.
+- Safe chess capture classification, including en passant.
+- Stable capture-first ordering in the material agent behind an explicit flag.
 
 ## Verification
 
-Milestone 4 was verified on Windows with CPython 3.12.14:
+Milestone 6 was verified on Windows with CPython 3.12.14:
 
-- `uv run pytest`: passed; 68 tests passed.
+- `uv run pytest`: passed; 75 tests passed.
 - `uv run ruff check .`: passed.
 - `uv run mypy src`: passed; no issues found in 20 source files.
 - `uv run mypy src tests`: passed; no issues found in 30 source files.
@@ -54,8 +63,7 @@ Milestone 4 was verified on Windows with CPython 3.12.14:
 ## Planned, not implemented
 
 - Stronger classical search and full experiment logging.
-- Iterative deepening, principal variations, move ordering, transposition
-  tables, quiescence search, and fixed-node stopping.
+- Transposition tables, quiescence search, and time-budget stopping.
 - Learned models, MCTS experiments, datasets, interfaces, and deployment.
 
 ## Open decisions

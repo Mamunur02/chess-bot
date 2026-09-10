@@ -2,16 +2,20 @@
 
 from chesslab.search.classical.minimax import (
     MATE_SCORE,
+    ActionOrderer,
     StateEvaluator,
     alpha_beta_search,
     exhaustive_search,
+    iterative_deepening_search,
     terminal_score,
 )
 
 __all__ = [
+    "ActionOrderer",
     "MATE_SCORE",
     "StateEvaluator",
     "alpha_beta_search",
     "exhaustive_search",
+    "iterative_deepening_search",
     "terminal_score",
 ]

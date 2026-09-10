@@ -7,8 +7,11 @@ from chesslab.agents.protocols import AgentDecision
 
 @dataclass(frozen=True, slots=True)
 class SearchResult[ActionT](AgentDecision[ActionT]):
-    """A fixed-depth action choice and its directly measured search data."""
+    """An action choice and directly measured deterministic search data."""
 
     value: int
     nodes: int
     depth: int
+    principal_variation: tuple[ActionT, ...] = ()
+    cutoffs: int = 0
+    iterations: int = 1
