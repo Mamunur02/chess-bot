@@ -40,7 +40,8 @@ def _boolean(value: object, label: str) -> bool:
     return value
 
 
-def _budget(value: object) -> SearchBudget:
+def search_budget_from_dict(value: object) -> SearchBudget:
+    """Validate the shared JSON depth, node, or millisecond budget format."""
     data = _mapping(value, "budget")
     kind = _string(data.get("kind"), "budget.kind")
     amount = _integer(data.get("value"), "budget.value")
@@ -53,7 +54,8 @@ def _budget(value: object) -> SearchBudget:
     raise ValueError("budget.kind must be depth, nodes, or milliseconds")
 
 
-def _agent(value: object) -> BenchmarkAgentConfig:
+def benchmark_agent_config_from_dict(value: object) -> BenchmarkAgentConfig:
+    """Validate JSON switches for an existing material search baseline."""
     data = _mapping(value, "agent")
     kind = _string(data.get("kind", "material_alpha_beta"), "agent.kind")
     agent_kind: Literal["material_alpha_beta", "material_greedy"]
@@ -104,8 +106,8 @@ def benchmark_spec_from_dict(value: object) -> BenchmarkSpec:
     return BenchmarkSpec(
         name=_string(data.get("name"), "name"),
         seed=_integer(data.get("seed"), "seed"),
-        budget=_budget(data.get("budget")),
-        agent=_agent(data.get("agent", {})),
+        budget=search_budget_from_dict(data.get("budget")),
+        agent=benchmark_agent_config_from_dict(data.get("agent", {})),
         positions=_positions(data.get("positions")),
     )
 

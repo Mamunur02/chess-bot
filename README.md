@@ -22,9 +22,13 @@ So far, I have built:
 - iterative-deepening alpha-beta search with principal variations;
 - optional move ordering, transposition tables, and bounded quiescence search;
 - deterministic match execution with structured results and failure records;
-- a minimal synchronous UCI interface; and
+- a minimal synchronous UCI interface;
 - a JSON benchmark tool that records the configuration, seeds, Git state,
-  environment, moves, search statistics, timings, and failures.
+  environment, moves, search statistics, timings, and failures; and
+- a manifest-driven ablation runner with dataset versions, dependency lock
+  hashes, incremental artifacts, paired summaries, and interruption records; and
+- a head-to-head suite runner with swapped agent colours, raw game records,
+  win/draw/loss counts, and explicit incomplete-pair coverage.
 
 The engine currently evaluates positions using material only. It does not yet
 contain a learned model, MCTS, a training pipeline, or a substantive benchmark
@@ -91,14 +95,39 @@ uv run chesslab-benchmark config.json result.json
 See [`docs/benchmark-format.md`](docs/benchmark-format.md) for the input and
 output format.
 
+Run the versioned development ablation with:
+
+```powershell
+uv run python -m chesslab.experiment experiments/manifests/development-ablation.json artifacts/development-ablation-001
+```
+
+Use a new artifact directory for each run. See
+[`docs/experiment-format.md`](docs/experiment-format.md) for the manifest,
+failure handling, and interpretation. The example uses development fixtures
+from correctness tests; it is not a held-out strength benchmark.
+
+Run the synthetic head-to-head bookkeeping example with:
+
+```powershell
+uv run python -m chesslab.match_suite experiments/manifests/development-matches.json artifacts/development-matches-001
+```
+
+See [`docs/match-suite-format.md`](docs/match-suite-format.md) for colour pairing,
+game outcomes, and failure handling. Random and greedy are behavioural
+comparators; they do not consume the supplied search budget. This example uses
+near-mate fixtures and does not establish playing strength.
+
 ## Next steps
 
-Before moving beyond the baseline, I still need to:
+The classical baseline and comparison infrastructure are implemented and
+verified. Before making substantive research claims, I still need to:
 
 - select and version a substantive benchmark dataset;
-- define separate tuning and held-out test splits;
-- add experiment manifests and a clear artifact layout; and
-- produce repeatable summaries across multiple runs.
+- define separate tuning and held-out test splits; and
+- choose a primary research metric and suitable uncertainty analysis.
+
+The first development-only ablation is recorded in
+[`experiments/summaries/development-ablation-20261006.md`](experiments/summaries/development-ablation-20261006.md).
 
 Once that foundation is ready, I will choose a more focused research direction.
 The options I am considering include:
@@ -120,5 +149,9 @@ have not selected the final direction yet.
   verified.
 - [`docs/benchmark-format.md`](docs/benchmark-format.md) describes the benchmark
   format and its current limitations.
+- [`docs/experiment-format.md`](docs/experiment-format.md) describes repeatable
+  baseline comparisons and artifact provenance.
+- [`docs/match-suite-format.md`](docs/match-suite-format.md) describes reproducible
+  head-to-head games, colour pairing, and outcome metrics.
 - [`CHESS_PROJECT_CODEX_IMPLEMENTATION_GUIDE.md`](CHESS_PROJECT_CODEX_IMPLEMENTATION_GUIDE.md)
   contains the broader roadmap and research standards.

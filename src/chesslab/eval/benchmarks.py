@@ -98,7 +98,8 @@ class BenchmarkAgentConfig:
         }
 
 
-def _budget_dict(budget: SearchBudget) -> dict[str, object]:
+def budget_to_dict(budget: SearchBudget) -> dict[str, object]:
+    """Serialize the shared depth, node, or millisecond budget format."""
     if isinstance(budget, DepthBudget):
         return {"kind": "depth", "value": budget.depth}
     if isinstance(budget, NodeBudget):
@@ -133,7 +134,7 @@ class BenchmarkSpec:
         return {
             "name": self.name,
             "seed": self.seed,
-            "budget": _budget_dict(self.budget),
+            "budget": budget_to_dict(self.budget),
             "agent": self.agent.to_dict(),
             "positions": [position.to_dict() for position in self.positions],
         }

@@ -1,0 +1,27 @@
+{
+  "schema_version": 1,
+  "name": "classical-development-ablation-v1",
+  "question": "Verify paired fixed-node ablations of ordering, caching, and quiescence on development fixtures.",
+  "dataset": {
+    "id": "chesslab-synthetic-development",
+    "version": "1",
+    "split": "development",
+    "source": "Synthetic positions from the repository's correctness tests. These have been used during implementation and must never be presented as held-out strength evaluation.",
+    "positions": [
+      {"name": "free-queen", "fen": "7k/q7/8/8/8/8/8/R1K5 w - - 0 1", "expected_moves": ["a1a7"]},
+      {"name": "mate-over-material", "fen": "7k/8/5KQ1/8/8/8/8/1r6 w - - 0 1", "expected_moves": ["g6g7"]},
+      {"name": "poisoned-pawn", "fen": "r6k/p7/8/8/8/8/8/R1K5 w - - 0 1"},
+      {"name": "castling", "fen": "r3k2r/8/8/8/8/8/8/R3K2R w KQkq - 0 1"},
+      {"name": "en-passant", "fen": "4k3/8/8/3pP3/8/8/8/4K3 w - d6 0 2"},
+      {"name": "promotion", "fen": "4k3/P7/8/8/8/8/8/4K3 w - - 0 1"}
+    ]
+  },
+  "budget": {"kind": "nodes", "value": 1000},
+  "seeds": [17, 23],
+  "variants": [
+    {"name": "plain", "agent": {}},
+    {"name": "capture-ordering", "agent": {"capture_ordering": true}},
+    {"name": "transposition-table", "agent": {"transposition_table": true}},
+    {"name": "quiescence-1", "agent": {"quiescence_depth": 1}}
+  ]
+}

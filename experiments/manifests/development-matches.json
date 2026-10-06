@@ -1,0 +1,22 @@
+{
+  "schema_version": 1,
+  "name": "classical-development-matches-v1",
+  "question": "Verify swapped-colour head-to-head execution and outcome bookkeeping on synthetic mate fixtures.",
+  "dataset": {
+    "id": "chesslab-synthetic-matches",
+    "version": "1",
+    "split": "development",
+    "source": "Synthetic correctness fixtures: an existing White mate-in-one position and its python-chess colour mirror. These are not representative opening positions or held-out strength data.",
+    "positions": [
+      {"name": "white-mate", "fen": "7k/8/5KQ1/8/8/8/8/1r6 w - - 0 1"},
+      {"name": "black-mate", "fen": "1R6/8/8/8/8/5kq1/8/7K b - - 0 1"}
+    ]
+  },
+  "agents": [
+    {"name": "greedy", "agent": {"kind": "material_greedy"}},
+    {"name": "alpha-beta", "agent": {"kind": "material_alpha_beta"}}
+  ],
+  "seeds": [17, 23],
+  "budget": {"kind": "depth", "value": 1},
+  "max_plies": 4
+}

@@ -1,12 +1,13 @@
 # Project status
 
-Last updated: 2026-09-10
+Last updated: 2026-10-07
 
 ## Current milestone
 
-Milestone 13: material-greedy comparator. A deterministic one-ply
-chess-specific baseline and explicit benchmark agent selection are implemented
-and verified.
+Milestone 15: colour-paired head-to-head suites. Classical baseline implementation
+and comparison infrastructure are complete for the current scope and verified.
+Research direction, substantive dataset selection, and model building have not
+started. Development-fixture measurements verify the workflow, not strength.
 
 ## Implemented
 
@@ -112,18 +113,58 @@ and verified.
 - A `material_greedy` benchmark agent kind.
 - Rejection of alpha-beta-only switches for greedy benchmark runs.
 
+Additional implemented infrastructure:
+
+- Versioned, strict JSON experiment manifests with explicit question, dataset
+  identity/version/source/split, shared budget, named variants, and seeds.
+- Full variant-by-seed execution through the existing benchmark runner.
+- Fresh artifact directories with normalized manifests, incremental raw runs,
+  metadata, and descriptive paired comparison summaries.
+- Installed engine/rules versions and dependency lock SHA-256 provenance.
+- Structured failed/interrupted grid status and partial summaries.
+- Explicit failure denominators, unavailable pairs, depth/cutoff/cache/quiescence
+  statistics, and variant-minus-reference deltas.
+- A versioned development-only synthetic fixture manifest and measured summary.
+- Strict two-agent match manifests supporting random, greedy, and alpha-beta
+  configurations with shared per-move budgets and explicit ply limits.
+- Both agent colour assignments for every seed-position pair, with recorded
+  root/match/player seeds and correct Black-to-move attribution.
+- Incremental raw game artifacts and completed-game win/draw/loss summaries.
+- Failed, interrupted, unrecorded, and incomplete-pair counts kept separate
+  from actual draws; no automatic forfeits or ply-limit adjudication.
+- Raw-game input validation against the suite manifest and active-game identity
+  captured when execution aborts.
+- Shared artifact/provenance and JSON validation helpers used by both commands.
+
 ## Verification
 
-Milestone 13 was verified on Windows with CPython 3.12.14:
+Milestone 15 was verified on Windows with CPython 3.12.14:
 
-- `uv run pytest`: passed; 129 tests passed.
+- `uv run pytest`: passed; 162 tests passed.
 - `uv run ruff check .`: passed.
-- `uv run mypy src`: passed; no issues found in 24 source files.
-- `uv run mypy src tests`: passed; no issues found in 37 source files.
+- `uv run mypy src`: passed; no issues found in 28 source files.
+- `uv run mypy src tests`: passed; no issues found in 43 source files.
+- Development manifest: 4 variants x 2 seeds x 6 positions; all 48 evaluations
+  completed with no failures, using 1,000 nodes per search.
+- Repeated-seed decisions and search statistics matched within each variant.
+- Synthetic match suite: 2 agents x 2 seeds x 2 positions x 2 colour assignments;
+  all 8 games completed, all 4 pairs complete, no failures/interruptions.
+  Each agent recorded 4 wins, 0 draws, and 4 losses on trivial near-mate fixtures.
+
+Required uv checks needed execution outside the sandbox because its interpreter
+and cache access failed. No dependency was added. These changes are being
+checkpointed at the user's request on 2026-10-07.
+The measurements recorded a dirty Git working tree.
+
+See `experiments/summaries/development-ablation-20261006.md` for observations
+and limitations of milestone 14, and
+`experiments/summaries/development-matches-20261007.md` for milestone 15.
+No held-out accuracy, Elo, or strength improvement is claimed.
 
 ## Planned, not implemented
 
-- Experiment manifests, artifact layout, and multi-run comparison summaries.
+- A substantive benchmark dataset, documented preparation, frozen disjoint
+  tuning/validation/test splits, and suitable statistical analysis.
 - Richer quiescence policies such as check generation, delta pruning, or
   selective-depth adaptation.
 - Learned models, MCTS experiments, datasets, interfaces, and deployment.
@@ -132,3 +173,33 @@ Milestone 13 was verified on Windows with CPython 3.12.14:
 
 - The long-term research branch will be selected only after the common
   infrastructure and classical baseline provide evidence for a decision.
+- Critical user-input gate: choose the first substantive evaluation priority
+  (tactical move quality/search efficiency or head-to-head playing strength)
+  before selecting a dataset, reference engine, or model.
+- Next smallest task after that input: review candidate sources for the agreed
+  metric and present concrete dataset/protocol choices before adoption.
+
+## Resume here next session
+
+Paused at the user's request on 2026-10-07 after completing the baseline testing
+ground through milestone 15. Implementation, experiment manifests, match suites,
+metrics, failure handling, and development smoke checks are ready. No substantive
+dataset, external reference engine, pretrained model, or research branch has
+been selected. The user has not answered the evaluation-priority question yet.
+
+Start by reading this status file, `AGENTS.md`, and the implementation guide,
+then inspect Git status. Ask the user which first formal evaluation to prioritize:
+
+1. Tactical move quality and search efficiency (suggested starting point).
+2. Head-to-head playing strength.
+
+This choice determines the next dataset/protocol investigation. After the user
+chooses, research concrete sources, provenance/licensing, labels, versioning,
+leakage risks, preparation, and split strategy; present those options before
+adopting a substantive dataset or reference model/engine. Continue infrastructure
+work only where needed for the agreed evaluation. Do not start training models
+or select the long-term research direction by assumption.
+
+The latest verification is recorded above. Local raw development measurements
+are ignored under `artifacts/`; compact summaries and reproducible manifests are
+included in the checkpoint. Those development results do not establish strength.
