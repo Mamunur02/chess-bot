@@ -2,7 +2,8 @@
 
 The match-suite command wraps the existing deterministic match runner in a
 reproducible two-agent comparison. It supports seeded random, material-greedy,
-and material alpha-beta agents. It does not select a research dataset or infer
+material alpha-beta agents, and external UCI opponents. It does not select a
+research dataset or infer
 playing strength from synthetic examples.
 
 ```powershell
@@ -22,9 +23,12 @@ The checked-in JSON manifest is the complete version 1 schema:
   positions. Splits are `development`, `validation`, or `test`; these labels
   describe intent and cannot establish independence across datasets.
 - `agents` contains exactly two uniquely named configurations. Kind is
-  `random`, `material_greedy`, or `material_alpha_beta`. Random accepts only its
+  `random`, `material_greedy`, `material_alpha_beta`, or `external_uci`. Random
+  accepts only its
   kind; greedy rejects search switches; alpha-beta supports the same switches
   as [the benchmark tool](benchmark-format.md).
+  External engine pins, options, watchdogs and lifecycle semantics are documented
+  in [external opponents](external-opponents.md).
 - `seeds` is a non-empty list of distinct integer root seeds.
 - `budget` is a shared per-move depth, node, or millisecond budget.
 - `max_plies` is a positive game-length limit. It is not adjudication.
@@ -70,7 +74,8 @@ does not infer Elo, confidence intervals, or significance. Choosing sampling
 units, opening distributions, adjudication, and the primary metric belongs to
 the substantive evaluation protocol.
 
-Metadata status is `failed` if any game fails; otherwise `interrupted` if any
+Metadata status is `failed` if any game or engine cleanup fails; otherwise
+`interrupted` if any
 game hits its ply limit; otherwise `completed`. Execution exceptions and keyboard
 interruption preserve previously returned game records and a partial summary.
 Moves from the currently executing game are not saved on keyboard interruption.

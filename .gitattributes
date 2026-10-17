@@ -1,0 +1,5 @@
+# Frozen research artifacts must keep their original bytes and source hashes.
+reports/tactical-study-v1/** -text -whitespace
+
+# These analysis sources are also hashed in the frozen report provenance.
+scripts/*.py text eol=lf

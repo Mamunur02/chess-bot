@@ -2,6 +2,7 @@
 
 import hashlib
 import json
+import time
 from importlib.metadata import version
 from pathlib import Path
 from tempfile import NamedTemporaryFile
@@ -20,6 +21,10 @@ def write_artifact_json(path: Path, value: object, *, replace: bool = False) -> 
 
     New artifacts use exclusive creation. Replacement uses a temporary file in
     the destination directory and cleans it up on handled write failures.
+    Windows readers/scanners can briefly deny rename/delete sharing. Retry that
+    specific access/sharing failure in place, preserving atomic replacement and
+    the previous JSON; other errors propagate immediately. Total backoff is
+    bounded to less than six seconds, not counting filesystem call duration.
     """
     encoded = json.dumps(value, indent=2, sort_keys=True, allow_nan=False) + "\n"
     if replace:
@@ -37,7 +42,17 @@ def write_artifact_json(path: Path, value: object, *, replace: bool = False) -> 
                 temporary.unlink(missing_ok=True)
                 raise
         try:
-            temporary.replace(path)
+            for attempt in range(16):
+                try:
+                    temporary.replace(path)
+                    break
+                except PermissionError as error:
+                    if (
+                        getattr(error, "winerror", None) not in {5, 32, 33}
+                        or attempt == 15
+                    ):
+                        raise
+                    time.sleep(min(0.01 * 2**attempt, 0.5))
         finally:
             temporary.unlink(missing_ok=True)
     else:

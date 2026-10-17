@@ -1,0 +1,326 @@
+{
+  "purpose": "Post-study development-only profiling, not a strength/timing benchmark",
+  "development_sha256": "767557215b8087b7f258c7fd4c7801145115349f84d82c22e74172fe8c8c8a1e",
+  "variants": [
+    {
+      "name": "plain",
+      "total_profiled_seconds": 4.793012400000001,
+      "functions": [
+        {
+          "file": "C:\\Projects\\chess-bot\\src\\chesslab\\games\\chess\\state.py",
+          "line": 65,
+          "function": "apply",
+          "calls": 24985,
+          "own_seconds": 0.057334500000000004,
+          "cumulative_seconds": 2.0720590000000003
+        },
+        {
+          "file": "C:\\Projects\\chess-bot\\src\\chesslab\\games\\chess\\state.py",
+          "line": 84,
+          "function": "is_terminal",
+          "calls": 53205,
+          "own_seconds": 0.0276518,
+          "cumulative_seconds": 1.5791326
+        },
+        {
+          "file": "C:\\Projects\\chess-bot\\.venv\\Lib\\site-packages\\chess\\__init__.py",
+          "line": 2041,
+          "function": "outcome",
+          "calls": 53241,
+          "own_seconds": 0.17608200000000002,
+          "cumulative_seconds": 1.5532561
+        },
+        {
+          "file": "C:\\Projects\\chess-bot\\.venv\\Lib\\site-packages\\chess\\__init__.py",
+          "line": 3858,
+          "function": "copy",
+          "calls": 24985,
+          "own_seconds": 0.0749282,
+          "cumulative_seconds": 0.6369419000000001
+        },
+        {
+          "file": "C:\\Projects\\chess-bot\\src\\chesslab\\games\\chess\\state.py",
+          "line": 59,
+          "function": "legal_actions",
+          "calls": 3179,
+          "own_seconds": 0.025486500000000002,
+          "cumulative_seconds": 0.534884
+        },
+        {
+          "file": "C:\\Users\\mamun\\AppData\\Roaming\\uv\\python\\cpython-3.12.14-windows-x86_64-none\\Lib\\copy.py",
+          "line": 61,
+          "function": "copy",
+          "calls": 55132,
+          "own_seconds": 0.15121700000000002,
+          "cumulative_seconds": 0.40153300000000003
+        },
+        {
+          "file": "C:\\Projects\\chess-bot\\.venv\\Lib\\site-packages\\chess\\__init__.py",
+          "line": 1998,
+          "function": "is_legal",
+          "calls": 24985,
+          "own_seconds": 0.027112900000000002,
+          "cumulative_seconds": 0.31620000000000004
+        },
+        {
+          "file": "C:\\Projects\\chess-bot\\.venv\\Lib\\site-packages\\chess\\__init__.py",
+          "line": 1494,
+          "function": "copy",
+          "calls": 24985,
+          "own_seconds": 0.031488800000000004,
+          "cumulative_seconds": 0.15429690000000001
+        }
+      ]
+    },
+    {
+      "name": "capture-ordering",
+      "total_profiled_seconds": 12.520708999999997,
+      "functions": [
+        {
+          "file": "C:\\Projects\\chess-bot\\src\\chesslab\\games\\chess\\state.py",
+          "line": 74,
+          "function": "is_capture",
+          "calls": 182366,
+          "own_seconds": 0.17196850000000002,
+          "cumulative_seconds": 7.0926431
+        },
+        {
+          "file": "C:\\Projects\\chess-bot\\src\\chesslab\\games\\chess\\state.py",
+          "line": 84,
+          "function": "is_terminal",
+          "calls": 237603,
+          "own_seconds": 0.1096053,
+          "cumulative_seconds": 6.3519708
+        },
+        {
+          "file": "C:\\Projects\\chess-bot\\.venv\\Lib\\site-packages\\chess\\__init__.py",
+          "line": 2041,
+          "function": "outcome",
+          "calls": 237612,
+          "own_seconds": 0.7320418000000001,
+          "cumulative_seconds": 6.242656200000001
+        },
+        {
+          "file": "C:\\Projects\\chess-bot\\.venv\\Lib\\site-packages\\chess\\__init__.py",
+          "line": 1998,
+          "function": "is_legal",
+          "calls": 207349,
+          "own_seconds": 0.20382050000000002,
+          "cumulative_seconds": 2.4595432
+        },
+        {
+          "file": "C:\\Projects\\chess-bot\\src\\chesslab\\games\\chess\\state.py",
+          "line": 65,
+          "function": "apply",
+          "calls": 24983,
+          "own_seconds": 0.060200500000000004,
+          "cumulative_seconds": 2.2023414000000003
+        },
+        {
+          "file": "C:\\Projects\\chess-bot\\src\\chesslab\\games\\chess\\state.py",
+          "line": 59,
+          "function": "legal_actions",
+          "calls": 5240,
+          "own_seconds": 0.0449699,
+          "cumulative_seconds": 0.9482932000000001
+        },
+        {
+          "file": "C:\\Projects\\chess-bot\\.venv\\Lib\\site-packages\\chess\\__init__.py",
+          "line": 3858,
+          "function": "copy",
+          "calls": 24983,
+          "own_seconds": 0.08243460000000001,
+          "cumulative_seconds": 0.7111419
+        },
+        {
+          "file": "C:\\Users\\mamun\\AppData\\Roaming\\uv\\python\\cpython-3.12.14-windows-x86_64-none\\Lib\\copy.py",
+          "line": 61,
+          "function": "copy",
+          "calls": 61859,
+          "own_seconds": 0.1723653,
+          "cumulative_seconds": 0.460293
+        },
+        {
+          "file": "C:\\Projects\\chess-bot\\.venv\\Lib\\site-packages\\chess\\__init__.py",
+          "line": 1494,
+          "function": "copy",
+          "calls": 24983,
+          "own_seconds": 0.033238300000000005,
+          "cumulative_seconds": 0.16204280000000001
+        },
+        {
+          "file": "C:\\Projects\\chess-bot\\.venv\\Lib\\site-packages\\chess\\__init__.py",
+          "line": 3311,
+          "function": "is_capture",
+          "calls": 182366,
+          "own_seconds": 0.12269840000000001,
+          "cumulative_seconds": 0.1496343
+        }
+      ]
+    },
+    {
+      "name": "transposition-table",
+      "total_profiled_seconds": 6.7362162,
+      "functions": [
+        {
+          "file": "C:\\Projects\\chess-bot\\src\\chesslab\\games\\chess\\state.py",
+          "line": 65,
+          "function": "apply",
+          "calls": 24985,
+          "own_seconds": 0.0618941,
+          "cumulative_seconds": 2.2164091000000004
+        },
+        {
+          "file": "C:\\Projects\\chess-bot\\src\\chesslab\\games\\chess\\state.py",
+          "line": 84,
+          "function": "is_terminal",
+          "calls": 53192,
+          "own_seconds": 0.031425100000000004,
+          "cumulative_seconds": 1.7058845
+        },
+        {
+          "file": "C:\\Projects\\chess-bot\\.venv\\Lib\\site-packages\\chess\\__init__.py",
+          "line": 2041,
+          "function": "outcome",
+          "calls": 53228,
+          "own_seconds": 0.1936759,
+          "cumulative_seconds": 1.6763890000000001
+        },
+        {
+          "file": "C:\\Projects\\chess-bot\\src\\chesslab\\games\\chess\\state.py",
+          "line": 103,
+          "function": "transposition_key",
+          "calls": 3167,
+          "own_seconds": 0.0206544,
+          "cumulative_seconds": 1.6391817000000002
+        },
+        {
+          "file": "C:\\Projects\\chess-bot\\.venv\\Lib\\site-packages\\chess\\__init__.py",
+          "line": 3858,
+          "function": "copy",
+          "calls": 28152,
+          "own_seconds": 0.0908206,
+          "cumulative_seconds": 0.7714162
+        },
+        {
+          "file": "C:\\Projects\\chess-bot\\src\\chesslab\\games\\chess\\state.py",
+          "line": 59,
+          "function": "legal_actions",
+          "calls": 3166,
+          "own_seconds": 0.0277477,
+          "cumulative_seconds": 0.5961606
+        },
+        {
+          "file": "C:\\Users\\mamun\\AppData\\Roaming\\uv\\python\\cpython-3.12.14-windows-x86_64-none\\Lib\\copy.py",
+          "line": 61,
+          "function": "copy",
+          "calls": 62920,
+          "own_seconds": 0.1861383,
+          "cumulative_seconds": 0.49001970000000006
+        },
+        {
+          "file": "C:\\Projects\\chess-bot\\.venv\\Lib\\site-packages\\chess\\__init__.py",
+          "line": 1998,
+          "function": "is_legal",
+          "calls": 24985,
+          "own_seconds": 0.0294866,
+          "cumulative_seconds": 0.3381408
+        },
+        {
+          "file": "C:\\Projects\\chess-bot\\.venv\\Lib\\site-packages\\chess\\__init__.py",
+          "line": 1494,
+          "function": "copy",
+          "calls": 28152,
+          "own_seconds": 0.037165800000000006,
+          "cumulative_seconds": 0.1833344
+        }
+      ]
+    },
+    {
+      "name": "quiescence-1",
+      "total_profiled_seconds": 24.536603899999996,
+      "functions": [
+        {
+          "file": "C:\\Projects\\chess-bot\\src\\chesslab\\games\\chess\\state.py",
+          "line": 74,
+          "function": "is_capture",
+          "calls": 385277,
+          "own_seconds": 0.3761206,
+          "cumulative_seconds": 14.774648000000001
+        },
+        {
+          "file": "C:\\Projects\\chess-bot\\src\\chesslab\\games\\chess\\state.py",
+          "line": 84,
+          "function": "is_terminal",
+          "calls": 471854,
+          "own_seconds": 0.222028,
+          "cumulative_seconds": 12.345702200000002
+        },
+        {
+          "file": "C:\\Projects\\chess-bot\\.venv\\Lib\\site-packages\\chess\\__init__.py",
+          "line": 2041,
+          "function": "outcome",
+          "calls": 471975,
+          "own_seconds": 1.4930257,
+          "cumulative_seconds": 12.1288456
+        },
+        {
+          "file": "C:\\Projects\\chess-bot\\.venv\\Lib\\site-packages\\chess\\__init__.py",
+          "line": 1998,
+          "function": "is_legal",
+          "calls": 410264,
+          "own_seconds": 0.40834970000000004,
+          "cumulative_seconds": 4.7648256
+        },
+        {
+          "file": "C:\\Projects\\chess-bot\\src\\chesslab\\games\\chess\\state.py",
+          "line": 59,
+          "function": "legal_actions",
+          "calls": 24747,
+          "own_seconds": 0.20111510000000002,
+          "cumulative_seconds": 4.3269009
+        },
+        {
+          "file": "C:\\Projects\\chess-bot\\src\\chesslab\\games\\chess\\state.py",
+          "line": 65,
+          "function": "apply",
+          "calls": 24987,
+          "own_seconds": 0.0634619,
+          "cumulative_seconds": 2.3587668
+        },
+        {
+          "file": "C:\\Projects\\chess-bot\\.venv\\Lib\\site-packages\\chess\\__init__.py",
+          "line": 3858,
+          "function": "copy",
+          "calls": 24987,
+          "own_seconds": 0.08991460000000001,
+          "cumulative_seconds": 0.7820977
+        },
+        {
+          "file": "C:\\Users\\mamun\\AppData\\Roaming\\uv\\python\\cpython-3.12.14-windows-x86_64-none\\Lib\\copy.py",
+          "line": 61,
+          "function": "copy",
+          "calls": 64485,
+          "own_seconds": 0.1924894,
+          "cumulative_seconds": 0.513193
+        },
+        {
+          "file": "C:\\Projects\\chess-bot\\.venv\\Lib\\site-packages\\chess\\__init__.py",
+          "line": 3311,
+          "function": "is_capture",
+          "calls": 385277,
+          "own_seconds": 0.2646909,
+          "cumulative_seconds": 0.3238881
+        },
+        {
+          "file": "C:\\Projects\\chess-bot\\.venv\\Lib\\site-packages\\chess\\__init__.py",
+          "line": 1494,
+          "function": "copy",
+          "calls": 24987,
+          "own_seconds": 0.035469,
+          "cumulative_seconds": 0.17220090000000002
+        }
+      ]
+    }
+  ]
+}

@@ -4,6 +4,7 @@ import random
 from collections.abc import Callable
 from dataclasses import dataclass
 from enum import StrEnum
+from time import perf_counter
 from typing import Literal
 
 from chesslab.agents import Agent
@@ -62,13 +63,17 @@ class MoveRecord:
     ply_index: int
     player: Player
     action: str
+    elapsed_seconds: float | None = None
 
     def to_dict(self) -> dict[str, object]:
-        return {
+        result: dict[str, object] = {
             "ply_index": self.ply_index,
             "player": self.player,
             "action": self.action,
         }
+        if self.elapsed_seconds is not None:
+            result["elapsed_seconds"] = self.elapsed_seconds
+        return result
 
 
 @dataclass(frozen=True, slots=True)
@@ -171,6 +176,7 @@ def run_match[ActionT](
     seed: int,
     max_plies: int,
     encode_action: Callable[[ActionT], str],
+    collect_timing: bool = False,
 ) -> MatchResult:
     """Run a deterministic match and return a structured result."""
     if isinstance(seed, bool) or not isinstance(seed, int):
@@ -240,10 +246,10 @@ def run_match[ActionT](
             )
 
         try:
-            decision = agents[player].select_action(
-                state, budget, player_rngs[player]
-            )
+            started = perf_counter() if collect_timing else 0.0
+            decision = agents[player].select_action(state, budget, player_rngs[player])
             action = decision.action
+            elapsed = perf_counter() - started if collect_timing else None
         except Exception as error:
             return _stopped_result(
                 status=MatchStatus.FAILED,
@@ -297,6 +303,7 @@ def run_match[ActionT](
                 ply_index=len(moves),
                 player=player,
                 action=encoded_action,
+                elapsed_seconds=elapsed,
             )
         )
         state = next_state

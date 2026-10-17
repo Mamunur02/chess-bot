@@ -1,0 +1,43 @@
+import cProfile
+import hashlib
+import json
+import pstats
+from pathlib import Path
+
+from chesslab.benchmark import benchmark_spec_from_dict
+from chesslab.eval.benchmarks import capture_provenance, run_benchmark
+
+destination = Path("artifacts/development-profile-20261017")
+destination.mkdir(exist_ok=False)
+payload = Path("data/lichess/prepared-v1-verified/development.json").read_bytes()
+rows = json.loads(payload)[:5]
+variants = [
+    ("plain", {}), ("capture-ordering", {"capture_ordering": True}),
+    ("transposition-table", {"transposition_table": True}),
+    ("quiescence-1", {"quiescence_depth": 1}),
+]
+summary = {"purpose": "Post-study development-only profiling, not a strength/timing benchmark",
+           "development_sha256": hashlib.sha256(payload).hexdigest(), "variants": []}
+for name, switches in variants:
+    data = {"name": name, "seed": 20261017, "budget": {"kind": "nodes", "value": 5000},
+            "agent": switches,
+            "positions": [{k: p[k] for k in ("name", "fen", "expected_moves")} for p in rows]}
+    spec = benchmark_spec_from_dict(data)
+    provenance = capture_provenance(Path.cwd(), spec.digest)
+    profile = cProfile.Profile()
+    result = profile.runcall(run_benchmark, spec, provenance)
+    assert all(c.status == "completed" for c in result.cases)
+    (destination / f"{name}-config.json").write_text(json.dumps(data, indent=2))
+    (destination / f"{name}-provenance.json").write_text(json.dumps(provenance.to_dict(), indent=2))
+    profile.dump_stats(str(destination / f"{name}.pstats"))
+    stats = pstats.Stats(profile)
+    selected = []
+    for (file, line, function), (primitive, total, own, cumulative, _) in stats.stats.items():
+        if function in {"is_capture", "is_terminal", "is_legal", "outcome",
+                        "transposition_key", "legal_actions", "apply", "copy"}:
+            selected.append({"file": file, "line": line, "function": function,
+                             "calls": total, "own_seconds": own, "cumulative_seconds": cumulative})
+    summary["variants"].append({"name": name, "total_profiled_seconds": stats.total_tt,
+                                "functions": sorted(selected, key=lambda v: -v["cumulative_seconds"])})
+    print("Profile complete:", name, flush=True)
+(destination / "summary.json").write_text(json.dumps(summary, indent=2))

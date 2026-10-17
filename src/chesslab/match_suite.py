@@ -3,13 +3,16 @@
 import argparse
 import json
 import random
+import shutil
 from collections.abc import Sequence
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from pathlib import Path
+from statistics import median
 
 import chess
 
 from chesslab.agents import Agent, RandomAgent
+from chesslab.agents.external_uci import ExternalUciAgent, UciConfig, file_sha256
 from chesslab.benchmark import (
     benchmark_agent_config_from_dict,
     search_budget_from_dict,
@@ -33,23 +36,31 @@ from chesslab.search import SearchBudget
 
 @dataclass(frozen=True, slots=True)
 class MatchAgentConfig:
-    """One named random or material agent, built fresh for each game.
+    """One named random, material or external agent, built fresh for each game.
 
     ``search=None`` selects the random agent. A material configuration selects
     greedy or alpha-beta using its existing validation and switches.
+    ``external`` selects a hash-pinned UCI process instead.
     """
 
     name: str
     search: BenchmarkAgentConfig | None = None
+    external: UciConfig | None = None
 
     def build(self) -> Agent[GameState[chess.Move], chess.Move]:
+        if self.external is not None:
+            return ExternalUciAgent(self.external)
         return RandomAgent[chess.Move]() if self.search is None else self.search.build()
 
     def to_dict(self) -> dict[str, object]:
         return {
             "name": self.name,
             "agent": (
-                {"kind": "random"} if self.search is None else self.search.to_dict()
+                self.external.to_dict()
+                if self.external is not None
+                else {"kind": "random"}
+                if self.search is None
+                else self.search.to_dict()
             ),
         }
 
@@ -179,7 +190,11 @@ def match_suite_spec_from_dict(value: object) -> MatchSuiteSpec:
         reject_unknown_fields(entry, {"name", "agent"}, "named agent")
         agent_name = nonempty_string(entry.get("name"), "agent.name")
         settings = json_object(entry.get("agent"), "agent")
-        if settings.get("kind") == "random":
+        external = None
+        if settings.get("kind") == "external_uci":
+            external = UciConfig.from_dict(settings)
+            search = None
+        elif settings.get("kind") == "random":
             reject_unknown_fields(settings, {"kind"}, "random agent")
             search = None
         else:
@@ -189,7 +204,7 @@ def match_suite_spec_from_dict(value: object) -> MatchSuiteSpec:
                 "material agent",
             )
             search = benchmark_agent_config_from_dict(settings)
-        agents.append(MatchAgentConfig(agent_name, search))
+        agents.append(MatchAgentConfig(agent_name, search, external))
     if agents[0].name == agents[1].name:
         raise ValueError("agent names must be unique")
     return MatchSuiteSpec(
@@ -218,9 +233,10 @@ class SuiteGame:
     white_agent: str
     black_agent: str
     result: MatchResult
+    engines: dict[str, object] = field(default_factory=dict)
 
     def to_dict(self) -> dict[str, object]:
-        return {
+        record: dict[str, object] = {
             "pair_index": self.pair_index,
             "root_seed": self.root_seed,
             "position_name": self.position_name,
@@ -229,6 +245,9 @@ class SuiteGame:
             "black_agent": self.black_agent,
             "result": self.result.to_dict(),
         }
+        if self.engines:
+            record["engines"] = self.engines
+        return record
 
 
 def summarize_match_suite(
@@ -280,6 +299,14 @@ def summarize_match_suite(
             wins += value > 0
             draws += value == 0
             losses += value < 0
+        timings = [
+            move.elapsed_seconds
+            for game in games
+            for move in game.result.moves
+            if move.elapsed_seconds is not None
+            and (game.white_agent if move.player == 0 else game.black_agent)
+            == agent.name
+        ]
         rows.append(
             {
                 "agent": agent.name,
@@ -289,6 +316,9 @@ def summarize_match_suite(
                 "score_fraction_completed": (wins + draws / 2) / len(completed)
                 if completed
                 else None,
+                "timed_decisions": len(timings),
+                "decision_seconds_total": sum(timings),
+                "decision_seconds_median": median(timings) if timings else None,
             }
         )
     by_pair: dict[int, list[SuiteGame]] = {}
@@ -311,6 +341,11 @@ def summarize_match_suite(
         "pairs_without_two_completed_games": spec.games_planned // 2 - complete_pairs,
         "total_plies": sum(g.result.plies for g in games),
         "agents": rows,
+        "engine_cleanup_failures": sum(
+            isinstance(engine, dict) and engine.get("cleanup_error") is not None
+            for game in games
+            for engine in game.engines.values()
+        ),
     }
 
 
@@ -324,9 +359,27 @@ def run_match_suite(
     metadata = capture_run_metadata(
         repository, output.name, spec.digest, spec.games_planned
     )
+    external_suite = any(agent.external is not None for agent in spec.agents)
+    if external_suite:
+        # Dirty-tree runs remain reconstructable after subsequent source edits.
+        source = repository / "src"
+        shutil.copytree(
+            source,
+            output / "source" / "src",
+            ignore=shutil.ignore_patterns("__pycache__", "*.pyc"),
+        )
+        for filename in ("pyproject.toml", "uv.lock"):
+            shutil.copy2(repository / filename, output / "source" / filename)
+        metadata["source_sha256"] = {
+            str(path.relative_to(output / "source")): file_sha256(path)
+            for path in sorted((output / "source").rglob("*"))
+            if path.is_file()
+        }
     write_artifact_json(output / "manifest.json", spec.to_dict())
     write_artifact_json(output / "metadata.json", metadata)
     (output / "games").mkdir()
+    if external_suite:
+        (output / "engines").mkdir()
     games: list[SuiteGame] = []
     pair_index = 0
     try:
@@ -348,14 +401,31 @@ def run_match_suite(
                     write_artifact_json(
                         output / "metadata.json", metadata, replace=True
                     )
-                    result = run_match(
-                        ChessState.from_fen(position.fen),
-                        (white.build(), black.build()),
-                        spec.budget,
-                        seed=match_seed,
-                        max_plies=spec.max_plies,
-                        encode_action=lambda move: move.uci(),
-                    )
+                    agents = (white.build(), black.build())
+                    engines: dict[str, object] = {}
+                    try:
+                        timing = {"collect_timing": True} if external_suite else {}
+                        result = run_match(
+                            ChessState.from_fen(position.fen),
+                            agents,
+                            spec.budget,
+                            seed=match_seed,
+                            max_plies=spec.max_plies,
+                            encode_action=lambda move: move.uci(),
+                            **timing,
+                        )
+                    finally:
+                        for name, agent in zip(
+                            (white.name, black.name), agents, strict=True
+                        ):
+                            if isinstance(agent, ExternalUciAgent):
+                                agent.close()
+                                engines[name] = agent.metadata
+                        if engines:
+                            write_artifact_json(
+                                output / "engines" / f"{len(games):04d}.json",
+                                engines,
+                            )
                     game = SuiteGame(
                         pair_index,
                         root_seed,
@@ -364,6 +434,7 @@ def run_match_suite(
                         white.name,
                         black.name,
                         result,
+                        engines,
                     )
                     write_artifact_json(
                         output / "games" / f"{len(games):04d}.json", game.to_dict()
@@ -378,6 +449,7 @@ def run_match_suite(
         metadata["status"] = (
             "failed"
             if any(g.result.status is MatchStatus.FAILED for g in games)
+            or summarize_match_suite(spec, games)["engine_cleanup_failures"] != 0
             else "interrupted"
             if any(g.result.status is MatchStatus.INTERRUPTED for g in games)
             else "completed"

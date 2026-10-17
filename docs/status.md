@@ -1,13 +1,50 @@
 # Project status
 
-Last updated: 2026-10-07
+Last updated: 2026-10-17
 
 ## Current milestone
 
-Milestone 15: colour-paired head-to-head suites. Classical baseline implementation
-and comparison infrastructure are complete for the current scope and verified.
-Research direction, substantive dataset selection, and model building have not
-started. Development-fixture measurements verify the workflow, not strength.
+Milestone 18 complete: external UCI opponents integrated into colour-paired
+matches, with binary pins, full board history, lifecycle/watchdog handling,
+failure records, timings and source/version metadata. No dependency was added.
+The final local Stockfish 19 smoke run completed four games and two colour pairs:
+Stockfish 4 wins, our material alpha-beta 4 losses; zero final-run failures.
+The first attempt's four configuration failures and a successful validation
+rerun remain disclosed. No Elo or general-strength estimate is inferred.
+See `docs/external-opponents.md` and
+`experiments/summaries/external-stockfish19-20261017.md`.
+
+Verification: 226 tests passed; Ruff passed; mypy src and src/tests passed.
+Windows asyncio required running tests and real games outside the sandbox.
+Local CPU only; engine binaries, raw logs, datasets and environments stay ignored.
+The user explicitly authorized committing/pushing reviewed existing work and this
+milestone on 2026-10-17, superseding earlier no-commit notes below.
+
+### Preserved milestone 17 history
+
+Milestone 17 complete: first held-out tactical quality/search-cost study.
+The user selected three timing passes and explicitly authorized an immediate
+quiet computer window on 2026-10-17. The frozen 7,200-search local run started
+at 13:51 UTC (14:51 Europe/London), with per-case checkpoints and a four-hour cap.
+The initial process stopped at 14:11 UTC (15:11 BST) on a Windows metadata-file
+replacement PermissionError after 891 completed cases. All saved case/spec hashes
+were verified, with zero recorded search failures. It resumed at 14:16 UTC
+(15:16 BST) through `scripts/resume_tactical_study.py`, preserving frozen code,
+protocol, saved cases and the original 17:51 UTC (18:51 BST) deadline. The wrapper
+retries only metadata WinError 5 failures, at most eight times. Original failure
+records are retained under the run's `recovery-v1/` directory.
+Recovery v1 later exhausted its retries at 2,235 saved cases. At 15:13 UTC
+(16:13 BST), recovery v2 resumed with a tested atomic-writer sharing-retry fix,
+using the original copied engine/runner plus a disclosed logging-only override.
+The original plan/source snapshots remain intact. Hashes, replacement writer
+and launcher are recorded in `recovery-v2/amendment.json`; see
+`docs/research/tactical-logging-amendment-20261017.md`. The deadline is unchanged.
+The study and automatic analysis completed at 17:05 UTC (18:05 BST). All 7,200
+searches completed with zero failed/missing search cases, 62.4 million visited
+nodes and no repeated-decision/statistic disagreements. Reanalysis reproduced
+the summary byte for byte; independent raw-record and source-label audits passed.
+The reviewed interpretation is `reports/tactical-study-v1/research-memo.md`.
+Long-term research-branch selection and model building have not started.
 
 ## Implemented
 
@@ -104,7 +141,8 @@ started. Development-fixture measurements verify the workflow, not strength.
 - Exact aggregate completion, failure, accepted-move, and node counts.
 - Digest matching between benchmark specification and provenance.
 - Result overwrite protection.
-- No committed substantive benchmark dataset or claimed experimental result.
+- Later milestones added versioned puzzle manifests and measured tactical results;
+  generated datasets remain ignored.
 
 - A deterministic one-ply material-greedy chess agent.
 - Terminal scores taking precedence over immediate material.
@@ -136,7 +174,61 @@ Additional implemented infrastructure:
   captured when execution aborts.
 - Shared artifact/provenance and JSON validation helpers used by both commands.
 
+Milestone 16 additions:
+
+- Full-snapshot reservoir sampling of a versioned CC0 Lichess puzzle export.
+- Setup-ply handling, full-line legality checks and all-immediate-mate labels.
+- Connected source-game/position/ID deduplication before disjoint splits.
+- Source/split hashes, original metadata, rejection records and provenance.
+- 50 development, 50 validation, 200 held-out test positions stored locally.
+- Counterbalanced variant/budget schedules with timing repeats, per-case
+  checkpoints, runtime caps between searches, and explicit resume validation.
+- Source snapshots and code/protocol hashes for dirty-tree reproducibility.
+- An explicit protocol-file requirement before executing the held-out test split.
+- A reproducible development pilot and optional Node 24 PZstandard preparation
+  tool; no new project Python dependency, GPU or reference engine.
+
 ## Verification
+
+Latest checks on 2026-10-17, Windows CPython 3.12.14:
+
+- Workspace uv cache and explicit existing interpreter bypassed sandbox cache
+  permissions; pytest also needed a workspace base-temp directory.
+- Full pytest: 201 passed. Ruff: passed. mypy src: passed (30 source files).
+  mypy src tests: passed (50 files). Commands used a workspace cache, explicit
+  interpreter and fresh pytest base-temp directory; see `docs/tactical-data.md`.
+- Locked offline uv sync: 18 installed packages checked; no change/download.
+- Optional Node decompression integration check: passed, including multiple
+  frames, overwrite protection and corrupt-input cleanup.
+- Complete preparation repeated: identical manifests and split hashes. The
+  1,200 sampled rows all validated, with 1,200 independent components.
+- Development pilot: 10 puzzles x 4 variants x 3 node budgets = 120 completed
+  searches, no failures; 167.189 seconds measured grid wall time.
+- Validation preflight: 50 puzzles x 4 variants x 1 budget = 200 completed
+  searches, no failures; 44.650 seconds measured invocation wall time.
+- Held-out run: 7,200/7,200 searches completed; zero failed/missing search cases.
+  Source setup/solution labels were independently rechecked on all 200 positions.
+  All 2,400 conditions agreed across three decision/statistic repeats. Total
+  visited nodes: 62,400,000. Recording interruptions/amendment remain disclosed.
+- At the primary 5,000-node budget: plain 127/200, ordering 137/200, caching
+  128/200, quiescence-1 134/200 accepted first moves. Median paired runtime ratios
+  versus plain: 2.24x / 1.23x / 4.53x. See report for descriptive paired intervals;
+  no population improvement, significance, general-strength or Elo claim.
+- Fresh analysis reproduced `analysis.json` byte for byte. A separate audit
+  reproduced quality counts, paired differences and timing medians from raw
+  records. See `reports/tactical-study-v1/audit.json`.
+- Development-only post-study cProfile identifies repeated capture/terminal/
+  legality checks and history-key construction as optimisation candidates;
+  no code optimisation or speedup is implemented/claimed from this profile.
+- Analysis validation tests cover paired bootstrap/percentiles, missing-pair
+  bounds and denominators, timing medians, repeat disagreements, source/case
+  tampering and unfinished-run rejection. A synthetic end-to-end report/plot
+  smoke test passed. Matplotlib is isolated under ignored `artifacts/plot-env/`;
+  no frozen project dependency or lockfile changed.
+- See `experiments/summaries/tactical-pilot-20261017.md` for measured tables,
+  capacity estimates, environment, Git state and limitations.
+
+Historical verification:
 
 Milestone 15 was verified on Windows with CPython 3.12.14:
 
@@ -163,8 +255,9 @@ No held-out accuracy, Elo, or strength improvement is claimed.
 
 ## Planned, not implemented
 
-- A substantive benchmark dataset, documented preparation, frozen disjoint
-  tuning/validation/test splits, and suitable statistical analysis.
+- Shared fresh tactical comparisons including external agents, followed by one
+  learned bot with explicit objectives, data splits and resource settings.
+  External UCI matches are implemented; learned/RL/self-play/LLM pipelines are not.
 - Richer quiescence policies such as check generation, delta pruning, or
   selective-depth adaptation.
 - Learned models, MCTS experiments, datasets, interfaces, and deployment.
@@ -173,33 +266,54 @@ No held-out accuracy, Elo, or strength improvement is claimed.
 
 - The long-term research branch will be selected only after the common
   infrastructure and classical baseline provide evidence for a decision.
-- Critical user-input gate: choose the first substantive evaluation priority
-  (tactical move quality/search efficiency or head-to-head playing strength)
-  before selecting a dataset, reference engine, or model.
-- Next smallest task after that input: review candidate sources for the agreed
-  metric and present concrete dataset/protocol choices before adoption.
+- On 2026-10-17 the user chose tactical move quality and search efficiency.
+- Target: finish a bounded evaluation and report within approximately one week
+  (target 2026-10-24), primarily on the user's computer. Free Colab is optional.
+- Up to GBP 50 might be available for compute only after the experiment has been
+  checked carefully. This is a ceiling, not authorization to purchase compute.
+- Keep terminal utility, the material search heuristic, and external evaluation
+  metrics distinct. Define quality before formal experiments, not afterwards.
+- Lichess source and preparation are adopted under the user's instruction to
+  continue. No reference engine is needed for the first study.
+- The run-window/repetitions gate is resolved and the study finished. Do not
+  restart it or request another window for this completed experiment.
+- The user clarified the practical scope: build a chess bot, compare bots made
+  with different methods and existing opponents, and evaluate them. The exact
+  research question may develop later. Do not block common setup on a thesis
+  question or independently turn engine optimisation into the main objective.
+  See `docs/research/practical-project-scope.md` for current gaps and sequence.
+- See `docs/research/tactical-evaluation-protocol.md` for the concrete protocol
+  and `docs/tactical-data.md` for tested preparation and run commands.
 
 ## Resume here next session
 
-Paused at the user's request on 2026-10-07 after completing the baseline testing
-ground through milestone 15. Implementation, experiment manifests, match suites,
-metrics, failure handling, and development smoke checks are ready. No substantive
-dataset, external reference engine, pretrained model, or research branch has
-been selected. The user has not answered the evaluation-priority question yet.
+The user resumed on 2026-10-17 and selected tactical quality/search efficiency.
+Do not ask that priority question again. Read the proposal alongside this file,
+`AGENTS.md`, and the implementation guide, then inspect Git status.
 
-Start by reading this status file, `AGENTS.md`, and the implementation guide,
-then inspect Git status. Ask the user which first formal evaluation to prioritize:
+The run and analysis are complete, with no background compute needed. Read
+`reports/tactical-study-v1/research-memo.md`, `analysis.json`, `audit.json` and
+`quality-cost.png`. The first result, data selection and protocol remain frozen.
+The user corrected the direction: this is their ML research project, and Codex
+must follow their guide rather than choose a research programme independently.
+The supplied PDF has been read; consult `docs/research/user-guide-alignment.md`.
+The subsequent clarification is recorded in `docs/research/practical-project-scope.md`:
+make practical comparisons work now and add methods progressively; do not demand
+a fixed ML question before shared setup. The external UCI opponent bridge and
+first ordinary-game colour-paired smoke
+comparison are now complete. Match configs accept internal or pinned external
+agents. Next add shared fresh tactical comparison inputs, then choose one learned
+method and its objective/data/splits before implementing training.
+Do not build every training pipeline upfront or continue optimisation by default.
+Do not repeat the original tactical-vs-Elo choice. A later confirmatory study
+must use fresh held-out positions; the original test set is now observed.
+Existing positions may serve clearly labelled regression checks.
+Preparation data remain at `data/lichess/prepared-v1-verified/`. Analysis and
+plotting scripts are outside `src/` and have separate provenance. Commit/push
+authorization was subsequently supplied on 2026-10-17. Additional setup/load notes are in
+`artifacts/tactical-test-v1-run-notes.json`.
 
-1. Tactical move quality and search efficiency (suggested starting point).
-2. Head-to-head playing strength.
-
-This choice determines the next dataset/protocol investigation. After the user
-chooses, research concrete sources, provenance/licensing, labels, versioning,
-leakage risks, preparation, and split strategy; present those options before
-adopting a substantive dataset or reference model/engine. Continue infrastructure
-work only where needed for the agreed evaluation. Do not start training models
-or select the long-term research direction by assumption.
-
-The latest verification is recorded above. Local raw development measurements
-are ignored under `artifacts/`; compact summaries and reproducible manifests are
-included in the checkpoint. Those development results do not establish strength.
+Local raw measurements and data are ignored under `artifacts/` and `data/`;
+compact summaries and manifests are being included in the user-authorized
+reviewed checkpoint. No paid compute has been used. Held-out
+first-move agreement has been measured; general playing strength has not.

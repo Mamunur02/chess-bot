@@ -1,0 +1,158 @@
+{
+  "audited_at": "2026-10-17T17:14:14.824892+00:00",
+  "status": "passed",
+  "raw_searches": 7200,
+  "independent_puzzles": 200,
+  "total_visited_nodes": 62400000,
+  "source_setup_and_labels_rechecked": 200,
+  "reanalysis_summary_byte_identical": true,
+  "repeated_decision_statistic_disagreements": 0,
+  "total_case_seconds_by_pass": [
+    3191.2902361000197,
+    3159.1575691999788,
+    3170.0151892998583
+  ],
+  "primary_contrasts": [
+    {
+      "variant": "capture-ordering",
+      "candidate_only": 18,
+      "plain_only": 8,
+      "paired_delta_pp": 5.0,
+      "median_paired_runtime_ratio_by_pass": [
+        2.269526633812232,
+        2.2476994020087635,
+        2.2421369629106733
+      ]
+    },
+    {
+      "variant": "transposition-table",
+      "candidate_only": 1,
+      "plain_only": 0,
+      "paired_delta_pp": 0.5,
+      "median_paired_runtime_ratio_by_pass": [
+        1.2444495767848163,
+        1.2340925458669147,
+        1.2289151032396672
+      ]
+    },
+    {
+      "variant": "quiescence-1",
+      "candidate_only": 16,
+      "plain_only": 9,
+      "paired_delta_pp": 3.5,
+      "median_paired_runtime_ratio_by_pass": [
+        4.5842343766361955,
+        4.530992986955198,
+        4.481077997027578
+      ]
+    }
+  ],
+  "illustrative_examples_SAN": [
+    {
+      "position": "JQDw6",
+      "accepted_SAN": [
+        "b7"
+      ],
+      "selected_SAN": {
+        "capture-ordering": "Nd7",
+        "plain": "Ke3",
+        "quiescence-1": "Nd7",
+        "transposition-table": "Ke3"
+      },
+      "source_themes": "advancedPawn crushing endgame knightEndgame long"
+    },
+    {
+      "position": "5Vri0",
+      "accepted_SAN": [
+        "c5"
+      ],
+      "selected_SAN": {
+        "capture-ordering": "Ke7",
+        "plain": "Ke7",
+        "quiescence-1": "Ke6",
+        "transposition-table": "Ke7"
+      },
+      "source_themes": "advancedPawn crushing endgame pawnEndgame promotion quietMove veryLong"
+    },
+    {
+      "position": "0TOrD",
+      "accepted_SAN": [
+        "Rxf7+"
+      ],
+      "selected_SAN": {
+        "capture-ordering": "Rxg6",
+        "plain": "Rxg6",
+        "quiescence-1": "Rxg6",
+        "transposition-table": "Rxg6"
+      },
+      "source_themes": "attraction crushing endgame fork long sacrifice"
+    },
+    {
+      "position": "efOHT",
+      "accepted_SAN": [
+        "Ke3"
+      ],
+      "selected_SAN": {
+        "capture-ordering": "Kg4",
+        "plain": "Kg2",
+        "quiescence-1": "Kg4",
+        "transposition-table": "Kg2"
+      },
+      "source_themes": "advantage defensiveMove endgame master short"
+    },
+    {
+      "position": "6zUmu",
+      "accepted_SAN": [
+        "Rxg7"
+      ],
+      "selected_SAN": {
+        "capture-ordering": "Be4",
+        "plain": "Ba6",
+        "quiescence-1": "Be4",
+        "transposition-table": "Ba6"
+      },
+      "source_themes": "advantage attraction deflection long master middlegame sacrifice"
+    },
+    {
+      "position": "2Ez6t",
+      "accepted_SAN": [
+        "Qxf2+"
+      ],
+      "selected_SAN": {
+        "capture-ordering": "Re8",
+        "plain": "Qxf2+",
+        "quiescence-1": "Re8",
+        "transposition-table": "Qxf2+"
+      },
+      "source_themes": "backRankMate endgame long mate mateIn3 sacrifice"
+    },
+    {
+      "position": "gZ8sE",
+      "accepted_SAN": [
+        "Rg7+"
+      ],
+      "selected_SAN": {
+        "capture-ordering": "Ra8",
+        "plain": "Ra8",
+        "quiescence-1": "Rg7+",
+        "transposition-table": "Ra8"
+      },
+      "source_themes": "crushing deflection endgame long rookEndgame skewer"
+    },
+    {
+      "position": "xWIfB",
+      "accepted_SAN": [
+        "Nc6+"
+      ],
+      "selected_SAN": {
+        "capture-ordering": "Bd5",
+        "plain": "Nc6+",
+        "quiescence-1": "Bd5",
+        "transposition-table": "Nc6+"
+      },
+      "source_themes": "advantage middlegame quietMove sacrifice veryLong"
+    }
+  ],
+  "timing_note": "Per-pass ratios are post-hoc robustness diagnostics, not replacement primary estimates. No trials were removed.",
+  "audit_script_sha256": "caa6d4d11061cebd6c0f2b4bd1e8e4416589b30733014f39d894eb4f5fce12ea"
+}

@@ -1,0 +1,1210 @@
+{
+  "bootstrap_replicates": 10000,
+  "bootstrap_seed": 20261018,
+  "contrasts": [
+    {
+      "budget": 1000,
+      "candidate_only_success": 12,
+      "complete_pair_delta_pp": 3.5,
+      "complete_pairs": 200,
+      "descriptive_95_percent_interval_pp": [
+        -0.5,
+        7.5
+      ],
+      "median_paired_runtime_ratio": 2.0440369997500714,
+      "missing_outcome_lower_pp": 3.5,
+      "missing_outcome_upper_pp": 3.5,
+      "planned_positions": 200,
+      "reference": "plain",
+      "reference_only_success": 5,
+      "runtime_ratio_q1": 1.8245960565163746,
+      "runtime_ratio_q3": 2.2902851515885425,
+      "timing_pairs": 200,
+      "variant": "capture-ordering"
+    },
+    {
+      "budget": 1000,
+      "candidate_only_success": 0,
+      "complete_pair_delta_pp": 0.0,
+      "complete_pairs": 200,
+      "descriptive_95_percent_interval_pp": [
+        0.0,
+        0.0
+      ],
+      "median_paired_runtime_ratio": 1.2563301503460078,
+      "missing_outcome_lower_pp": 0.0,
+      "missing_outcome_upper_pp": 0.0,
+      "planned_positions": 200,
+      "reference": "plain",
+      "reference_only_success": 0,
+      "runtime_ratio_q1": 1.2011394351268128,
+      "runtime_ratio_q3": 1.3200168016498313,
+      "timing_pairs": 200,
+      "variant": "transposition-table"
+    },
+    {
+      "budget": 1000,
+      "candidate_only_success": 14,
+      "complete_pair_delta_pp": 2.5,
+      "complete_pairs": 200,
+      "descriptive_95_percent_interval_pp": [
+        -2.0,
+        7.5
+      ],
+      "median_paired_runtime_ratio": 4.244987424195543,
+      "missing_outcome_lower_pp": 2.5,
+      "missing_outcome_upper_pp": 2.5,
+      "planned_positions": 200,
+      "reference": "plain",
+      "reference_only_success": 9,
+      "runtime_ratio_q1": 3.754526353650475,
+      "runtime_ratio_q3": 4.739940860542686,
+      "timing_pairs": 200,
+      "variant": "quiescence-1"
+    },
+    {
+      "budget": 5000,
+      "candidate_only_success": 18,
+      "complete_pair_delta_pp": 5.0,
+      "complete_pairs": 200,
+      "descriptive_95_percent_interval_pp": [
+        0.0,
+        10.0
+      ],
+      "median_paired_runtime_ratio": 2.238063205828423,
+      "missing_outcome_lower_pp": 5.0,
+      "missing_outcome_upper_pp": 5.0,
+      "planned_positions": 200,
+      "reference": "plain",
+      "reference_only_success": 8,
+      "runtime_ratio_q1": 1.8933909636196518,
+      "runtime_ratio_q3": 2.7150984079534513,
+      "timing_pairs": 200,
+      "variant": "capture-ordering"
+    },
+    {
+      "budget": 5000,
+      "candidate_only_success": 1,
+      "complete_pair_delta_pp": 0.5,
+      "complete_pairs": 200,
+      "descriptive_95_percent_interval_pp": [
+        0.0,
+        1.5
+      ],
+      "median_paired_runtime_ratio": 1.2300321403603807,
+      "missing_outcome_lower_pp": 0.5,
+      "missing_outcome_upper_pp": 0.5,
+      "planned_positions": 200,
+      "reference": "plain",
+      "reference_only_success": 0,
+      "runtime_ratio_q1": 1.1769191377954762,
+      "runtime_ratio_q3": 1.3650329208343714,
+      "timing_pairs": 200,
+      "variant": "transposition-table"
+    },
+    {
+      "budget": 5000,
+      "candidate_only_success": 16,
+      "complete_pair_delta_pp": 3.5,
+      "complete_pairs": 200,
+      "descriptive_95_percent_interval_pp": [
+        -1.5,
+        8.5
+      ],
+      "median_paired_runtime_ratio": 4.529051773649432,
+      "missing_outcome_lower_pp": 3.5,
+      "missing_outcome_upper_pp": 3.5,
+      "planned_positions": 200,
+      "reference": "plain",
+      "reference_only_success": 9,
+      "runtime_ratio_q1": 3.800537843540635,
+      "runtime_ratio_q3": 5.143556772661242,
+      "timing_pairs": 200,
+      "variant": "quiescence-1"
+    },
+    {
+      "budget": 20000,
+      "candidate_only_success": 20,
+      "complete_pair_delta_pp": 4.0,
+      "complete_pairs": 200,
+      "descriptive_95_percent_interval_pp": [
+        -1.5,
+        9.5
+      ],
+      "median_paired_runtime_ratio": 2.27215903142287,
+      "missing_outcome_lower_pp": 4.0,
+      "missing_outcome_upper_pp": 4.0,
+      "planned_positions": 200,
+      "reference": "plain",
+      "reference_only_success": 12,
+      "runtime_ratio_q1": 1.9723295422928828,
+      "runtime_ratio_q3": 2.6901419465788767,
+      "timing_pairs": 200,
+      "variant": "capture-ordering"
+    },
+    {
+      "budget": 20000,
+      "candidate_only_success": 0,
+      "complete_pair_delta_pp": -0.5,
+      "complete_pairs": 200,
+      "descriptive_95_percent_interval_pp": [
+        -1.5,
+        0.0
+      ],
+      "median_paired_runtime_ratio": 1.3351411685155041,
+      "missing_outcome_lower_pp": -0.5,
+      "missing_outcome_upper_pp": -0.5,
+      "planned_positions": 200,
+      "reference": "plain",
+      "reference_only_success": 1,
+      "runtime_ratio_q1": 1.2410963264622576,
+      "runtime_ratio_q3": 1.4361282388618604,
+      "timing_pairs": 200,
+      "variant": "transposition-table"
+    },
+    {
+      "budget": 20000,
+      "candidate_only_success": 15,
+      "complete_pair_delta_pp": 2.5,
+      "complete_pairs": 200,
+      "descriptive_95_percent_interval_pp": [
+        -2.5,
+        7.5
+      ],
+      "median_paired_runtime_ratio": 4.423320334543545,
+      "missing_outcome_lower_pp": 2.5,
+      "missing_outcome_upper_pp": 2.5,
+      "planned_positions": 200,
+      "reference": "plain",
+      "reference_only_success": 10,
+      "runtime_ratio_q1": 3.8783927983589845,
+      "runtime_ratio_q3": 5.0169942772817135,
+      "timing_pairs": 200,
+      "variant": "quiescence-1"
+    }
+  ],
+  "example_selection": "First eight source-order positions with any primary-budget miss; illustrative only, without relabelling or tuning.",
+  "execution_recovery": {
+    "note": "Windows progress-file access interrupted execution; Original recovery preserved code/protocol and cases; later logging amendments are recorded separately. Retain this interruption as a timing limitation.",
+    "original_failure": {
+      "active_case": 891,
+      "dependency_lock_error": null,
+      "dependency_lock_sha256": "569ca4796c7aebfc828e83f29a7ad76cd1b29242f7599d2dc0aeae3875db749e",
+      "dependency_versions": {
+        "chess": "1.11.2",
+        "chess-ai-lab": "0.1.0",
+        "python-chess": "1.999"
+      },
+      "error": "PermissionError: [WinError 5] Access is denied: 'C:\\\\Projects\\\\chess-bot\\\\artifacts\\\\tactical-test-v1\\\\tmpfbjs38vp' -> 'artifacts\\\\tactical-test-v1\\\\metadata.json'",
+      "invocation_elapsed_seconds": 1240.1218891999997,
+      "manifest_digest": "8cd542fe2144d0d1faefabea5776c41a6a6bbd0aab7d43978e2668d53caa8c0b",
+      "provenance": {
+        "config_digest": "8cd542fe2144d0d1faefabea5776c41a6a6bbd0aab7d43978e2668d53caa8c0b",
+        "git_commit": "2b591700d28c69b94e00ab877bd9308623781bf7",
+        "git_dirty": true,
+        "git_error": null,
+        "machine": "AMD64",
+        "platform": "Windows-11-10.0.26200-SP0",
+        "processor": "Intel64 Family 6 Model 165 Stepping 2, GenuineIntel",
+        "python_version": "3.12.14",
+        "started_at": "2026-10-17T13:51:10.894256+00:00"
+      },
+      "run_id": "tactical-test-v1",
+      "runs_planned": 7200,
+      "runs_written": 891,
+      "runtime_cap_seconds_per_invocation": 14400.0,
+      "schema_version": 1,
+      "status": "failed"
+    },
+    "original_session": {
+      "authorization": "User selected three passes and confirmed availability now.",
+      "finished_at": "2026-10-17T14:11:51.139905+00:00",
+      "paid_compute": false,
+      "pid": 29384,
+      "power_load": "User confirmed quiet plugged-in/awake window; no power plan change.",
+      "runner_returncode": 2,
+      "runner_status": "failed",
+      "started_at": "2026-10-17T13:51:07.691272+00:00",
+      "status": "needs_attention",
+      "temporary_sleep_inhibition_succeeded": true,
+      "window_seconds": 14400
+    }
+  },
+  "failure_examples": [
+    {
+      "decisions": {
+        "capture-ordering": {
+          "action": "b8d7",
+          "cutoffs": 785,
+          "depth": 5,
+          "iterations": 5,
+          "nodes": 5000,
+          "principal_variation": [
+            "b8d7",
+            "d6c6",
+            "d7f6",
+            "c6b6",
+            "f6g8"
+          ],
+          "quiescence_nodes": 0,
+          "search_elapsed_seconds": null,
+          "transposition_hits": 0,
+          "value": 0
+        },
+        "plain": {
+          "action": "d3e3",
+          "cutoffs": 684,
+          "depth": 4,
+          "iterations": 4,
+          "nodes": 5000,
+          "principal_variation": [
+            "d3e3",
+            "d6e7",
+            "b8c6",
+            "e7f8"
+          ],
+          "quiescence_nodes": 0,
+          "search_elapsed_seconds": null,
+          "transposition_hits": 0,
+          "value": 0
+        },
+        "quiescence-1": {
+          "action": "b8d7",
+          "cutoffs": 2811,
+          "depth": 4,
+          "iterations": 4,
+          "nodes": 5000,
+          "principal_variation": [
+            "b8d7",
+            "d6c6",
+            "d7f6",
+            "c6b6"
+          ],
+          "quiescence_nodes": 4225,
+          "search_elapsed_seconds": null,
+          "transposition_hits": 0,
+          "value": 0
+        },
+        "transposition-table": {
+          "action": "d3e3",
+          "cutoffs": 680,
+          "depth": 4,
+          "iterations": 4,
+          "nodes": 5000,
+          "principal_variation": [
+            "d3e3",
+            "d6e7",
+            "b8c6",
+            "e7f8"
+          ],
+          "quiescence_nodes": 0,
+          "search_elapsed_seconds": null,
+          "transposition_hits": 12,
+          "value": 0
+        }
+      },
+      "expected_moves": [
+        "b6b7"
+      ],
+      "fen": "1N6/8/1P1k1p2/2p3p1/2P3Pp/3K2nP/8/8 w - g6 0 45",
+      "position": "JQDw6",
+      "source_row": {
+        "DailyDate": "",
+        "FEN": "1N6/6p1/1P1k1p2/2p5/2P3Pp/3K2nP/8/8 b - - 0 44",
+        "GameUrl": "https://lichess.org/f4qDnHg8/black#88",
+        "Moves": "g7g5 b6b7 d6c7 b8d7 c7b7 d7f6",
+        "NbPlays": "330",
+        "OpeningTags": "",
+        "Popularity": "86",
+        "PuzzleId": "JQDw6",
+        "Rating": "2787",
+        "RatingDeviation": "91",
+        "Themes": "advancedPawn crushing endgame knightEndgame long"
+      }
+    },
+    {
+      "decisions": {
+        "capture-ordering": {
+          "action": "d6e7",
+          "cutoffs": 1109,
+          "depth": 5,
+          "iterations": 5,
+          "nodes": 5000,
+          "principal_variation": [
+            "d6e7",
+            "d4c3",
+            "e7f8",
+            "c3b3",
+            "f8g7"
+          ],
+          "quiescence_nodes": 0,
+          "search_elapsed_seconds": null,
+          "transposition_hits": 0,
+          "value": 0
+        },
+        "plain": {
+          "action": "d6e7",
+          "cutoffs": 848,
+          "depth": 5,
+          "iterations": 5,
+          "nodes": 5000,
+          "principal_variation": [
+            "d6e7",
+            "d4c3",
+            "e7f8",
+            "c3b3",
+            "f8g7"
+          ],
+          "quiescence_nodes": 0,
+          "search_elapsed_seconds": null,
+          "transposition_hits": 0,
+          "value": 0
+        },
+        "quiescence-1": {
+          "action": "d6e6",
+          "cutoffs": 2852,
+          "depth": 5,
+          "iterations": 5,
+          "nodes": 5000,
+          "principal_variation": [
+            "d6e6",
+            "d4c5",
+            "e6f7",
+            "c5b4",
+            "f7g7",
+            "b4b3"
+          ],
+          "quiescence_nodes": 4061,
+          "search_elapsed_seconds": null,
+          "transposition_hits": 0,
+          "value": 0
+        },
+        "transposition-table": {
+          "action": "d6e7",
+          "cutoffs": 857,
+          "depth": 5,
+          "iterations": 5,
+          "nodes": 5000,
+          "principal_variation": [
+            "d6e7",
+            "d4c3",
+            "e7f8",
+            "c3b3",
+            "f8g7"
+          ],
+          "quiescence_nodes": 0,
+          "search_elapsed_seconds": null,
+          "transposition_hits": 54,
+          "value": 0
+        }
+      },
+      "expected_moves": [
+        "c4c5"
+      ],
+      "fen": "8/6p1/3K3p/4p3/2Pk3P/1P6/8/8 w - - 2 45",
+      "position": "5Vri0",
+      "source_row": {
+        "DailyDate": "",
+        "FEN": "8/6p1/3K3p/4p3/2P1k2P/1P6/8/8 b - - 1 44",
+        "GameUrl": "https://lichess.org/afgZ1Ntg/black#88",
+        "Moves": "e4d4 c4c5 e5e4 c5c6 e4e3 c6c7 e3e2 c7c8q",
+        "NbPlays": "485",
+        "OpeningTags": "",
+        "Popularity": "94",
+        "PuzzleId": "5Vri0",
+        "Rating": "947",
+        "RatingDeviation": "100",
+        "Themes": "advancedPawn crushing endgame pawnEndgame promotion quietMove veryLong"
+      }
+    },
+    {
+      "decisions": {
+        "capture-ordering": {
+          "action": "g4g6",
+          "cutoffs": 839,
+          "depth": 3,
+          "iterations": 3,
+          "nodes": 5000,
+          "principal_variation": [
+            "g4g6",
+            "f7g6",
+            "f1f8"
+          ],
+          "quiescence_nodes": 0,
+          "search_elapsed_seconds": null,
+          "transposition_hits": 0,
+          "value": 0
+        },
+        "plain": {
+          "action": "g4g6",
+          "cutoffs": 376,
+          "depth": 3,
+          "iterations": 3,
+          "nodes": 5000,
+          "principal_variation": [
+            "g4g6",
+            "f7g6",
+            "f1f8"
+          ],
+          "quiescence_nodes": 0,
+          "search_elapsed_seconds": null,
+          "transposition_hits": 0,
+          "value": 0
+        },
+        "quiescence-1": {
+          "action": "g4g6",
+          "cutoffs": 2240,
+          "depth": 2,
+          "iterations": 2,
+          "nodes": 5000,
+          "principal_variation": [
+            "g4g6",
+            "f7g6",
+            "f1f8"
+          ],
+          "quiescence_nodes": 4816,
+          "search_elapsed_seconds": null,
+          "transposition_hits": 0,
+          "value": 0
+        },
+        "transposition-table": {
+          "action": "g4g6",
+          "cutoffs": 376,
+          "depth": 3,
+          "iterations": 3,
+          "nodes": 5000,
+          "principal_variation": [
+            "g4g6",
+            "f7g6",
+            "f1f8"
+          ],
+          "quiescence_nodes": 0,
+          "search_elapsed_seconds": null,
+          "transposition_hits": 0,
+          "value": 0
+        }
+      },
+      "expected_moves": [
+        "f1f7"
+      ],
+      "fen": "r2q1r2/p4p1k/1p2p1pp/2p5/3P2R1/2PQ4/P1P3PP/5RK1 w - - 0 20",
+      "position": "0TOrD",
+      "source_row": {
+        "DailyDate": "",
+        "FEN": "r2q1r2/p4ppk/1p2p2p/2p5/3P2R1/2PQ4/P1P3PP/5RK1 b - - 3 19",
+        "GameUrl": "https://lichess.org/k7GBkvTc/black#38",
+        "Moves": "g7g6 f1f7 f8f7 d3g6 h7h8 g6f7",
+        "NbPlays": "814",
+        "OpeningTags": "",
+        "Popularity": "100",
+        "PuzzleId": "0TOrD",
+        "Rating": "1883",
+        "RatingDeviation": "75",
+        "Themes": "attraction crushing endgame fork long sacrifice"
+      }
+    },
+    {
+      "decisions": {
+        "capture-ordering": {
+          "action": "f3g4",
+          "cutoffs": 1113,
+          "depth": 4,
+          "iterations": 4,
+          "nodes": 5000,
+          "principal_variation": [
+            "f3g4",
+            "d5d3",
+            "g4h5",
+            "d3g3"
+          ],
+          "quiescence_nodes": 0,
+          "search_elapsed_seconds": null,
+          "transposition_hits": 0,
+          "value": -120
+        },
+        "plain": {
+          "action": "f3g2",
+          "cutoffs": 504,
+          "depth": 3,
+          "iterations": 3,
+          "nodes": 5000,
+          "principal_variation": [
+            "f3g2",
+            "d5d8",
+            "d1d2"
+          ],
+          "quiescence_nodes": 0,
+          "search_elapsed_seconds": null,
+          "transposition_hits": 0,
+          "value": 300
+        },
+        "quiescence-1": {
+          "action": "f3g4",
+          "cutoffs": 2549,
+          "depth": 3,
+          "iterations": 3,
+          "nodes": 5000,
+          "principal_variation": [
+            "f3g4",
+            "d5d3",
+            "g4h5",
+            "d3g3"
+          ],
+          "quiescence_nodes": 4656,
+          "search_elapsed_seconds": null,
+          "transposition_hits": 0,
+          "value": -120
+        },
+        "transposition-table": {
+          "action": "f3g2",
+          "cutoffs": 511,
+          "depth": 3,
+          "iterations": 3,
+          "nodes": 5000,
+          "principal_variation": [
+            "f3g2",
+            "d5d8",
+            "d1d2"
+          ],
+          "quiescence_nodes": 0,
+          "search_elapsed_seconds": null,
+          "transposition_hits": 4,
+          "value": 300
+        }
+      },
+      "expected_moves": [
+        "f3e3"
+      ],
+      "fen": "8/6pp/8/p2r4/2k2P2/2P2KP1/PP1n3P/3R4 w - - 0 39",
+      "position": "efOHT",
+      "source_row": {
+        "DailyDate": "",
+        "FEN": "8/6pp/8/p2r4/2k1nP2/2P2KP1/PP1B3P/3R4 b - - 2 38",
+        "GameUrl": "https://lichess.org/asUZZyAq/black#76",
+        "Moves": "e4d2 f3e3 d2f1 d1f1",
+        "NbPlays": "31",
+        "OpeningTags": "",
+        "Popularity": "80",
+        "PuzzleId": "efOHT",
+        "Rating": "1811",
+        "RatingDeviation": "81",
+        "Themes": "advantage defensiveMove endgame master short"
+      }
+    },
+    {
+      "decisions": {
+        "capture-ordering": {
+          "action": "d3e4",
+          "cutoffs": 343,
+          "depth": 3,
+          "iterations": 3,
+          "nodes": 5000,
+          "principal_variation": [
+            "d3e4",
+            "a8f8",
+            "b7g7"
+          ],
+          "quiescence_nodes": 0,
+          "search_elapsed_seconds": null,
+          "transposition_hits": 0,
+          "value": 230
+        },
+        "plain": {
+          "action": "d3a6",
+          "cutoffs": 381,
+          "depth": 2,
+          "iterations": 2,
+          "nodes": 5000,
+          "principal_variation": [
+            "d3a6",
+            "g7b2"
+          ],
+          "quiescence_nodes": 0,
+          "search_elapsed_seconds": null,
+          "transposition_hits": 0,
+          "value": -200
+        },
+        "quiescence-1": {
+          "action": "d3e4",
+          "cutoffs": 1486,
+          "depth": 2,
+          "iterations": 2,
+          "nodes": 5000,
+          "principal_variation": [
+            "d3e4",
+            "a8f8",
+            "b7g7"
+          ],
+          "quiescence_nodes": 4840,
+          "search_elapsed_seconds": null,
+          "transposition_hits": 0,
+          "value": 230
+        },
+        "transposition-table": {
+          "action": "d3a6",
+          "cutoffs": 381,
+          "depth": 2,
+          "iterations": 2,
+          "nodes": 5000,
+          "principal_variation": [
+            "d3a6",
+            "g7b2"
+          ],
+          "quiescence_nodes": 0,
+          "search_elapsed_seconds": null,
+          "transposition_hits": 0,
+          "value": -200
+        }
+      },
+      "expected_moves": [
+        "b7g7"
+      ],
+      "fen": "r6k/pR4bp/1p4p1/6q1/8/1Q1B4/PP1r2P1/1K5R w - - 0 23",
+      "position": "6zUmu",
+      "source_row": {
+        "DailyDate": "",
+        "FEN": "r6k/pR4bp/1p4p1/6q1/8/1Q1B4/PP1N1rP1/1K5R b - - 0 22",
+        "GameUrl": "https://lichess.org/OzFVUy5X/black#44",
+        "Moves": "f2d2 b7g7 h8g7 b3c3 g5f6 c3d2",
+        "NbPlays": "89",
+        "OpeningTags": "",
+        "Popularity": "89",
+        "PuzzleId": "6zUmu",
+        "Rating": "2200",
+        "RatingDeviation": "89",
+        "Themes": "advantage attraction deflection long master middlegame sacrifice"
+      }
+    },
+    {
+      "decisions": {
+        "capture-ordering": {
+          "action": "f8e8",
+          "cutoffs": 919,
+          "depth": 3,
+          "iterations": 3,
+          "nodes": 5000,
+          "principal_variation": [
+            "f8e8",
+            "e6a6",
+            "c2d3"
+          ],
+          "quiescence_nodes": 0,
+          "search_elapsed_seconds": null,
+          "transposition_hits": 0,
+          "value": 330
+        },
+        "plain": {
+          "action": "c2f2",
+          "cutoffs": 264,
+          "depth": 2,
+          "iterations": 2,
+          "nodes": 5000,
+          "principal_variation": [
+            "c2f2",
+            "g1h1"
+          ],
+          "quiescence_nodes": 0,
+          "search_elapsed_seconds": null,
+          "transposition_hits": 0,
+          "value": 30
+        },
+        "quiescence-1": {
+          "action": "f8e8",
+          "cutoffs": 1906,
+          "depth": 2,
+          "iterations": 2,
+          "nodes": 5000,
+          "principal_variation": [
+            "f8e8",
+            "e6a6",
+            "c2d3"
+          ],
+          "quiescence_nodes": 4790,
+          "search_elapsed_seconds": null,
+          "transposition_hits": 0,
+          "value": 330
+        },
+        "transposition-table": {
+          "action": "c2f2",
+          "cutoffs": 264,
+          "depth": 2,
+          "iterations": 2,
+          "nodes": 5000,
+          "principal_variation": [
+            "c2f2",
+            "g1h1"
+          ],
+          "quiescence_nodes": 0,
+          "search_elapsed_seconds": null,
+          "transposition_hits": 0,
+          "value": 30
+        }
+      },
+      "expected_moves": [
+        "c2f2"
+      ],
+      "fen": "5r1k/4b1p1/p3Q2p/1p6/8/3R4/2q2PPP/3R2K1 b - - 1 28",
+      "position": "2Ez6t",
+      "source_row": {
+        "DailyDate": "",
+        "FEN": "5r1k/4b1p1/p3Q2p/1p6/8/7R/2q2PPP/3R2K1 w - - 0 28",
+        "GameUrl": "https://lichess.org/V46ecC4X#55",
+        "Moves": "h3d3 c2f2 g1h1 f2f1 d1f1 f8f1",
+        "NbPlays": "646",
+        "OpeningTags": "",
+        "Popularity": "91",
+        "PuzzleId": "2Ez6t",
+        "Rating": "954",
+        "RatingDeviation": "88",
+        "Themes": "backRankMate endgame long mate mateIn3 sacrifice"
+      }
+    },
+    {
+      "decisions": {
+        "capture-ordering": {
+          "action": "a7a8",
+          "cutoffs": 936,
+          "depth": 4,
+          "iterations": 4,
+          "nodes": 5000,
+          "principal_variation": [
+            "a7a8",
+            "g4g5",
+            "a8h8",
+            "g5g6"
+          ],
+          "quiescence_nodes": 0,
+          "search_elapsed_seconds": null,
+          "transposition_hits": 0,
+          "value": 0
+        },
+        "plain": {
+          "action": "a7a8",
+          "cutoffs": 955,
+          "depth": 4,
+          "iterations": 4,
+          "nodes": 5000,
+          "principal_variation": [
+            "a7a8",
+            "g4g5",
+            "a8h8",
+            "g5g6"
+          ],
+          "quiescence_nodes": 0,
+          "search_elapsed_seconds": null,
+          "transposition_hits": 0,
+          "value": 0
+        },
+        "quiescence-1": {
+          "action": "a7g7",
+          "cutoffs": 2712,
+          "depth": 4,
+          "iterations": 4,
+          "nodes": 5000,
+          "principal_variation": [
+            "a7g7",
+            "g4f5",
+            "g7f7",
+            "f5g6",
+            "f7f4"
+          ],
+          "quiescence_nodes": 4129,
+          "search_elapsed_seconds": null,
+          "transposition_hits": 0,
+          "value": 500
+        },
+        "transposition-table": {
+          "action": "a7a8",
+          "cutoffs": 954,
+          "depth": 4,
+          "iterations": 4,
+          "nodes": 5000,
+          "principal_variation": [
+            "a7a8",
+            "g4g5",
+            "a8h8",
+            "g5g6"
+          ],
+          "quiescence_nodes": 0,
+          "search_elapsed_seconds": null,
+          "transposition_hits": 6,
+          "value": 0
+        }
+      },
+      "expected_moves": [
+        "a7g7"
+      ],
+      "fen": "8/R7/8/7p/5rk1/4K3/P7/8 w - - 0 55",
+      "position": "gZ8sE",
+      "source_row": {
+        "DailyDate": "",
+        "FEN": "8/R7/8/7p/2r2Pk1/4K3/P7/8 b - - 2 54",
+        "GameUrl": "https://lichess.org/oyXs5Mx8/black#108",
+        "Moves": "c4f4 a7g7 g4f5 g7f7 f5g6 f7f4",
+        "NbPlays": "410",
+        "OpeningTags": "",
+        "Popularity": "94",
+        "PuzzleId": "gZ8sE",
+        "Rating": "984",
+        "RatingDeviation": "101",
+        "Themes": "crushing deflection endgame long rookEndgame skewer"
+      }
+    },
+    {
+      "decisions": {
+        "capture-ordering": {
+          "action": "e4d5",
+          "cutoffs": 407,
+          "depth": 3,
+          "iterations": 3,
+          "nodes": 5000,
+          "principal_variation": [
+            "e4d5",
+            "e8e3",
+            "d5c4"
+          ],
+          "quiescence_nodes": 0,
+          "search_elapsed_seconds": null,
+          "transposition_hits": 0,
+          "value": -280
+        },
+        "plain": {
+          "action": "a7c6",
+          "cutoffs": 515,
+          "depth": 2,
+          "iterations": 2,
+          "nodes": 5000,
+          "principal_variation": [
+            "a7c6",
+            "b7c6"
+          ],
+          "quiescence_nodes": 0,
+          "search_elapsed_seconds": null,
+          "transposition_hits": 0,
+          "value": -430
+        },
+        "quiescence-1": {
+          "action": "e4d5",
+          "cutoffs": 1846,
+          "depth": 2,
+          "iterations": 2,
+          "nodes": 5000,
+          "principal_variation": [
+            "e4d5",
+            "e8e3",
+            "d5c4"
+          ],
+          "quiescence_nodes": 4816,
+          "search_elapsed_seconds": null,
+          "transposition_hits": 0,
+          "value": -280
+        },
+        "transposition-table": {
+          "action": "a7c6",
+          "cutoffs": 515,
+          "depth": 2,
+          "iterations": 2,
+          "nodes": 5000,
+          "principal_variation": [
+            "a7c6",
+            "b7c6"
+          ],
+          "quiescence_nodes": 0,
+          "search_elapsed_seconds": null,
+          "transposition_hits": 0,
+          "value": -430
+        }
+      },
+      "expected_moves": [
+        "a7c6"
+      ],
+      "fen": "1k2r3/Npp3pp/3b4/5p2/1Pb1B3/2P1R2P/3r2P1/R5K1 w - f6 0 24",
+      "position": "xWIfB",
+      "source_row": {
+        "DailyDate": "",
+        "FEN": "1k2r3/Npp2ppp/3b4/8/1Pb1B3/2P1R2P/3r2P1/R5K1 b - - 2 23",
+        "GameUrl": "https://lichess.org/z7YC3pSm/black#46",
+        "Moves": "f7f5 a7c6 b7c6 e4c6 d2d1 a1d1 e8e3 d1a1 e3e1 a1e1",
+        "NbPlays": "60",
+        "OpeningTags": "",
+        "Popularity": "81",
+        "PuzzleId": "xWIfB",
+        "Rating": "1691",
+        "RatingDeviation": "76",
+        "Themes": "advantage middlegame quietMove sacrifice veryLong"
+      }
+    }
+  ],
+  "interval_scope": "Descriptive marginal complete-pair intervals; no significance or family-wise coverage claim.",
+  "logging_amendment": {
+    "authorization": "User explicitly requested fixing the problem and resuming.",
+    "initial_saved_cases": 2235,
+    "launcher_sha256": "d060071d451ba74af9c750a3a5cc6da311f03dff508a4e1b459c73d2ab1d650b",
+    "new_writer_sha256": "6779c1b7aaa7ea93c288d29654ba51c9c89a42c98e129ce2e75ad3f7ffced01f",
+    "old_writer_sha256": "e2f05f3978d81379a33a7af51c85a146352b0187e358113b78ea014331d27dc9",
+    "original_plan_digest": "8cd542fe2144d0d1faefabea5776c41a6a6bbd0aab7d43978e2668d53caa8c0b",
+    "reason": "Repeated Windows metadata atomic-replace access/sharing errors.",
+    "recorded_at": "2026-10-17T15:13:22.214370+00:00",
+    "scope": "Only run_tactical.write_artifact_json is rebound to a tested writer with bounded in-place Windows sharing retries. Search, labels, budgets, seeds and case files are unchanged. Original plan is retained.",
+    "source_root": "C:\\Projects\\chess-bot\\artifacts\\tactical-test-v1\\sources"
+  },
+  "nondeterministic_conditions": [],
+  "positions": 200,
+  "repeats": 3,
+  "split": "test",
+  "status": "validated",
+  "variants": [
+    {
+      "budget": 1000,
+      "complete_timing_positions": 200,
+      "depth_zero": 0,
+      "first_agreement_percent": 60.5,
+      "first_completed": 200,
+      "first_failed": 0,
+      "first_missing": 0,
+      "first_runtime_seconds": 13.118080500009455,
+      "first_successes": 121,
+      "first_total_cutoffs": 19885,
+      "first_total_depth": 458,
+      "first_total_nodes": 200000,
+      "first_total_quiescence_nodes": 0,
+      "first_total_transposition_hits": 0,
+      "median_case_seconds": 0.06458500000007916,
+      "planned_positions": 200,
+      "timing_q1_seconds": 0.0613474750007299,
+      "timing_q3_seconds": 0.06805597499987925,
+      "variant": "plain"
+    },
+    {
+      "budget": 1000,
+      "complete_timing_positions": 200,
+      "depth_zero": 0,
+      "first_agreement_percent": 64.0,
+      "first_completed": 200,
+      "first_failed": 0,
+      "first_missing": 0,
+      "first_runtime_seconds": 27.66980110001532,
+      "first_successes": 128,
+      "first_total_cutoffs": 27435,
+      "first_total_depth": 515,
+      "first_total_nodes": 200000,
+      "first_total_quiescence_nodes": 0,
+      "first_total_transposition_hits": 0,
+      "median_case_seconds": 0.1311376499998005,
+      "planned_positions": 200,
+      "timing_q1_seconds": 0.1144159249997756,
+      "timing_q3_seconds": 0.15100642500055983,
+      "variant": "capture-ordering"
+    },
+    {
+      "budget": 1000,
+      "complete_timing_positions": 200,
+      "depth_zero": 0,
+      "first_agreement_percent": 60.5,
+      "first_completed": 200,
+      "first_failed": 0,
+      "first_missing": 0,
+      "first_runtime_seconds": 16.606844599993565,
+      "first_successes": 121,
+      "first_total_cutoffs": 19865,
+      "first_total_depth": 458,
+      "first_total_nodes": 200000,
+      "first_total_quiescence_nodes": 0,
+      "first_total_transposition_hits": 74,
+      "median_case_seconds": 0.08051024999986112,
+      "planned_positions": 200,
+      "timing_q1_seconds": 0.07536482500108832,
+      "timing_q3_seconds": 0.08849445000032574,
+      "variant": "transposition-table"
+    },
+    {
+      "budget": 1000,
+      "complete_timing_positions": 200,
+      "depth_zero": 0,
+      "first_agreement_percent": 63.0,
+      "first_completed": 200,
+      "first_failed": 0,
+      "first_missing": 0,
+      "first_runtime_seconds": 56.860038999995595,
+      "first_successes": 126,
+      "first_total_cutoffs": 81097,
+      "first_total_depth": 390,
+      "first_total_nodes": 200000,
+      "first_total_quiescence_nodes": 185131,
+      "first_total_transposition_hits": 0,
+      "median_case_seconds": 0.27610064999953465,
+      "planned_positions": 200,
+      "timing_q1_seconds": 0.23721632499837142,
+      "timing_q3_seconds": 0.3104752749995896,
+      "variant": "quiescence-1"
+    },
+    {
+      "budget": 5000,
+      "complete_timing_positions": 200,
+      "depth_zero": 0,
+      "first_agreement_percent": 63.5,
+      "first_completed": 200,
+      "first_failed": 0,
+      "first_missing": 0,
+      "first_runtime_seconds": 65.88181380000606,
+      "first_successes": 127,
+      "first_total_cutoffs": 102886,
+      "first_total_depth": 610,
+      "first_total_nodes": 1000000,
+      "first_total_quiescence_nodes": 0,
+      "first_total_transposition_hits": 0,
+      "median_case_seconds": 0.32511299999896437,
+      "planned_positions": 200,
+      "timing_q1_seconds": 0.310694250000779,
+      "timing_q3_seconds": 0.34509659999957876,
+      "variant": "plain"
+    },
+    {
+      "budget": 5000,
+      "complete_timing_positions": 200,
+      "depth_zero": 0,
+      "first_agreement_percent": 68.5,
+      "first_completed": 200,
+      "first_failed": 0,
+      "first_missing": 0,
+      "first_runtime_seconds": 156.47002959999918,
+      "first_successes": 137,
+      "first_total_cutoffs": 181875,
+      "first_total_depth": 737,
+      "first_total_nodes": 1000000,
+      "first_total_quiescence_nodes": 0,
+      "first_total_transposition_hits": 0,
+      "median_case_seconds": 0.7130811999995785,
+      "planned_positions": 200,
+      "timing_q1_seconds": 0.6089302749996932,
+      "timing_q3_seconds": 0.8960683999998764,
+      "variant": "capture-ordering"
+    },
+    {
+      "budget": 5000,
+      "complete_timing_positions": 200,
+      "depth_zero": 0,
+      "first_agreement_percent": 64.0,
+      "first_completed": 200,
+      "first_failed": 0,
+      "first_missing": 0,
+      "first_runtime_seconds": 85.53927319999093,
+      "first_successes": 128,
+      "first_total_cutoffs": 102549,
+      "first_total_depth": 614,
+      "first_total_nodes": 1000000,
+      "first_total_quiescence_nodes": 0,
+      "first_total_transposition_hits": 1537,
+      "median_case_seconds": 0.4052577000002202,
+      "planned_positions": 200,
+      "timing_q1_seconds": 0.38085275000003094,
+      "timing_q3_seconds": 0.45907802500096295,
+      "variant": "transposition-table"
+    },
+    {
+      "budget": 5000,
+      "complete_timing_positions": 200,
+      "depth_zero": 0,
+      "first_agreement_percent": 67.0,
+      "first_completed": 200,
+      "first_failed": 0,
+      "first_missing": 0,
+      "first_runtime_seconds": 304.7359258000215,
+      "first_successes": 134,
+      "first_total_cutoffs": 467165,
+      "first_total_depth": 554,
+      "first_total_nodes": 1000000,
+      "first_total_quiescence_nodes": 926367,
+      "first_total_transposition_hits": 0,
+      "median_case_seconds": 1.4579588999995394,
+      "planned_positions": 200,
+      "timing_q1_seconds": 1.2271276750011566,
+      "timing_q3_seconds": 1.7097027749991867,
+      "variant": "quiescence-1"
+    },
+    {
+      "budget": 20000,
+      "complete_timing_positions": 200,
+      "depth_zero": 0,
+      "first_agreement_percent": 68.5,
+      "first_completed": 200,
+      "first_failed": 0,
+      "first_missing": 0,
+      "first_runtime_seconds": 265.6466695999843,
+      "first_successes": 137,
+      "first_total_cutoffs": 475128,
+      "first_total_depth": 753,
+      "first_total_nodes": 4000000,
+      "first_total_quiescence_nodes": 0,
+      "first_total_transposition_hits": 0,
+      "median_case_seconds": 1.3153624000005948,
+      "planned_positions": 200,
+      "timing_q1_seconds": 1.2544946250009161,
+      "timing_q3_seconds": 1.3872722750006687,
+      "variant": "plain"
+    },
+    {
+      "budget": 20000,
+      "complete_timing_positions": 200,
+      "depth_zero": 0,
+      "first_agreement_percent": 72.5,
+      "first_completed": 200,
+      "first_failed": 0,
+      "first_missing": 0,
+      "first_runtime_seconds": 630.1482569999971,
+      "first_successes": 145,
+      "first_total_cutoffs": 731027,
+      "first_total_depth": 912,
+      "first_total_nodes": 4000000,
+      "first_total_quiescence_nodes": 0,
+      "first_total_transposition_hits": 0,
+      "median_case_seconds": 3.0843307499999355,
+      "planned_positions": 200,
+      "timing_q1_seconds": 2.550934149999648,
+      "timing_q3_seconds": 3.653674475000116,
+      "variant": "capture-ordering"
+    },
+    {
+      "budget": 20000,
+      "complete_timing_positions": 200,
+      "depth_zero": 0,
+      "first_agreement_percent": 68.0,
+      "first_completed": 200,
+      "first_failed": 0,
+      "first_missing": 0,
+      "first_runtime_seconds": 360.6935147999993,
+      "first_successes": 136,
+      "first_total_cutoffs": 475437,
+      "first_total_depth": 757,
+      "first_total_nodes": 4000000,
+      "first_total_quiescence_nodes": 0,
+      "first_total_transposition_hits": 12423,
+      "median_case_seconds": 1.74260299999969,
+      "planned_positions": 200,
+      "timing_q1_seconds": 1.6061130250000133,
+      "timing_q3_seconds": 1.9076440999992883,
+      "variant": "transposition-table"
+    },
+    {
+      "budget": 20000,
+      "complete_timing_positions": 200,
+      "depth_zero": 0,
+      "first_agreement_percent": 71.0,
+      "first_completed": 200,
+      "first_failed": 0,
+      "first_missing": 0,
+      "first_runtime_seconds": 1207.9199871000073,
+      "first_successes": 142,
+      "first_total_cutoffs": 1854100,
+      "first_total_depth": 695,
+      "first_total_nodes": 4000000,
+      "first_total_quiescence_nodes": 3698573,
+      "first_total_transposition_hits": 0,
+      "median_case_seconds": 5.906081900000572,
+      "planned_positions": 200,
+      "timing_q1_seconds": 5.089350700000068,
+      "timing_q3_seconds": 6.797240724999483,
+      "variant": "quiescence-1"
+    }
+  ]
+}

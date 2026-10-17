@@ -1,0 +1,12 @@
+{
+  "recorded_at": "2026-10-17T15:13:22.214370+00:00",
+  "authorization": "User explicitly requested fixing the problem and resuming.",
+  "reason": "Repeated Windows metadata atomic-replace access/sharing errors.",
+  "scope": "Only run_tactical.write_artifact_json is rebound to a tested writer with bounded in-place Windows sharing retries. Search, labels, budgets, seeds and case files are unchanged. Original plan is retained.",
+  "original_plan_digest": "8cd542fe2144d0d1faefabea5776c41a6a6bbd0aab7d43978e2668d53caa8c0b",
+  "old_writer_sha256": "e2f05f3978d81379a33a7af51c85a146352b0187e358113b78ea014331d27dc9",
+  "new_writer_sha256": "6779c1b7aaa7ea93c288d29654ba51c9c89a42c98e129ce2e75ad3f7ffced01f",
+  "launcher_sha256": "d060071d451ba74af9c750a3a5cc6da311f03dff508a4e1b459c73d2ab1d650b",
+  "source_root": "C:\\Projects\\chess-bot\\artifacts\\tactical-test-v1\\sources",
+  "initial_saved_cases": 2235
+}

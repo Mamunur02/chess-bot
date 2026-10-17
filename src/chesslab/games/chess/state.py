@@ -100,6 +100,10 @@ class ChessState:
         """Serialize the position fields; repetition history is not included."""
         return self.__board.fen(en_passant="fen")
 
+    def to_board(self) -> chess.Board:
+        """Return an independent board with full move history for UCI clients."""
+        return self.__board.copy(stack=True)
+
     def transposition_key(self) -> ChessTranspositionKey:
         """Return a conservative key including repetition-relevant history."""
         replay = self.__board.copy(stack=True)

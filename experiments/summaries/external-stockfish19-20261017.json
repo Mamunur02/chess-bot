@@ -1,0 +1,668 @@
+{
+  "audit": {
+    "legal_replay_and_terminal_outcomes": "passed for all four final games",
+    "limitations": "No exact replay guarantee for time-limited search; raw games and binaries remain local ignored artifacts.",
+    "seed_budget_and_start_identity": "passed",
+    "source_snapshot_hashes": "passed",
+    "timing_reaggregation": "passed"
+  },
+  "engine_advertised_options": {
+    "Clear Hash": {
+      "default": null,
+      "max": null,
+      "min": null,
+      "type": "button",
+      "var": []
+    },
+    "Debug Log File": {
+      "default": "<empty>",
+      "max": null,
+      "min": null,
+      "type": "string",
+      "var": []
+    },
+    "EvalFile": {
+      "default": "nn-1a298aa575a0.nnue",
+      "max": null,
+      "min": null,
+      "type": "string",
+      "var": []
+    },
+    "Hash": {
+      "default": 16,
+      "max": 33554432,
+      "min": 1,
+      "type": "spin",
+      "var": []
+    },
+    "Move Overhead": {
+      "default": 10,
+      "max": 5000,
+      "min": 0,
+      "type": "spin",
+      "var": []
+    },
+    "MultiPV": {
+      "default": 1,
+      "max": 256,
+      "min": 1,
+      "type": "spin",
+      "var": []
+    },
+    "NumaPolicy": {
+      "default": "auto",
+      "max": null,
+      "min": null,
+      "type": "string",
+      "var": []
+    },
+    "Ponder": {
+      "default": false,
+      "max": null,
+      "min": null,
+      "type": "check",
+      "var": []
+    },
+    "Skill Level": {
+      "default": 20,
+      "max": 20,
+      "min": 0,
+      "type": "spin",
+      "var": []
+    },
+    "Syzygy50MoveRule": {
+      "default": true,
+      "max": null,
+      "min": null,
+      "type": "check",
+      "var": []
+    },
+    "SyzygyPath": {
+      "default": "<empty>",
+      "max": null,
+      "min": null,
+      "type": "string",
+      "var": []
+    },
+    "SyzygyProbeDepth": {
+      "default": 1,
+      "max": 100,
+      "min": 1,
+      "type": "spin",
+      "var": []
+    },
+    "SyzygyProbeLimit": {
+      "default": 7,
+      "max": 7,
+      "min": 0,
+      "type": "spin",
+      "var": []
+    },
+    "Threads": {
+      "default": 1,
+      "max": 1024,
+      "min": 1,
+      "type": "spin",
+      "var": []
+    },
+    "UCI_Chess960": {
+      "default": false,
+      "max": null,
+      "min": null,
+      "type": "check",
+      "var": []
+    },
+    "UCI_Elo": {
+      "default": 1320,
+      "max": 3190,
+      "min": 1320,
+      "type": "spin",
+      "var": []
+    },
+    "UCI_LimitStrength": {
+      "default": false,
+      "max": null,
+      "min": null,
+      "type": "check",
+      "var": []
+    },
+    "UCI_ShowWDL": {
+      "default": false,
+      "max": null,
+      "min": null,
+      "type": "check",
+      "var": []
+    },
+    "nodestime": {
+      "default": 0,
+      "max": 10000,
+      "min": 0,
+      "type": "spin",
+      "var": []
+    }
+  },
+  "engine_download": {
+    "archive_sha256": "3c8bf1f9ea66a09350a40df4f632288285ac206d99f33ab5842c408fc30b48a7",
+    "network": "nn-1a298aa575a0.nnue embedded in executable; covered by executable SHA-256",
+    "release": "sf_19",
+    "url": "https://github.com/official-stockfish/Stockfish/releases/download/sf_19/stockfish-windows-x86-64-universal.zip"
+  },
+  "engine_identity": {
+    "author": "the Stockfish developers (see AUTHORS file)",
+    "name": "Stockfish 19"
+  },
+  "engine_managed_settings": {
+    "MultiPV": 1,
+    "Ponder": false,
+    "UCI_Chess960": false
+  },
+  "games": [
+    {
+      "black_agent": "stockfish-19",
+      "engine_startup_seconds": 0.4979846999995061,
+      "initial_fen": "r1bqkb1r/1ppp1ppp/p1n2n2/4p3/B3P3/5N2/PPPP1PPP/RNBQK2R w KQkq - 2 5",
+      "match_metadata": {
+        "budget_kind": "milliseconds",
+        "budget_value": 50,
+        "max_plies": 160,
+        "player_seeds": [
+          229150959604002444050832570135367269816,
+          110329770801684956058589594961819165547
+        ],
+        "root_seed": 103249665291245201840084870758913850561
+      },
+      "pair_index": 0,
+      "plies": 18,
+      "position_name": "open-game",
+      "raw_sha256": "b1e5a6f939adba6dbcf0d0510941a9aba8a32f9a19c7a60ea9d7d1633667a637",
+      "root_seed": 17,
+      "terminal_returns": [
+        -1.0,
+        1.0
+      ],
+      "termination": "CHECKMATE",
+      "white_agent": "material-alpha-beta"
+    },
+    {
+      "black_agent": "material-alpha-beta",
+      "engine_startup_seconds": 0.5158800999997766,
+      "initial_fen": "r1bqkb1r/1ppp1ppp/p1n2n2/4p3/B3P3/5N2/PPPP1PPP/RNBQK2R w KQkq - 2 5",
+      "match_metadata": {
+        "budget_kind": "milliseconds",
+        "budget_value": 50,
+        "max_plies": 160,
+        "player_seeds": [
+          229150959604002444050832570135367269816,
+          110329770801684956058589594961819165547
+        ],
+        "root_seed": 103249665291245201840084870758913850561
+      },
+      "pair_index": 0,
+      "plies": 25,
+      "position_name": "open-game",
+      "raw_sha256": "39cd06fc4c861302d89c69f3cee7601ae78982d5bcca937c4d09ab739383e267",
+      "root_seed": 17,
+      "terminal_returns": [
+        1.0,
+        -1.0
+      ],
+      "termination": "CHECKMATE",
+      "white_agent": "stockfish-19"
+    },
+    {
+      "black_agent": "stockfish-19",
+      "engine_startup_seconds": 0.4804279999989376,
+      "initial_fen": "rnbqk2r/ppp1bppp/4pn2/3p4/2PP4/2N2N2/PP2PPPP/R1BQKB1R w KQkq - 4 5",
+      "match_metadata": {
+        "budget_kind": "milliseconds",
+        "budget_value": 50,
+        "max_plies": 160,
+        "player_seeds": [
+          210609529834178699225421372738400315343,
+          276001508762393885088872616381026899170
+        ],
+        "root_seed": 59443346279739778879781088613072305239
+      },
+      "pair_index": 1,
+      "plies": 22,
+      "position_name": "queens-gambit",
+      "raw_sha256": "c7f7efe28fc990a174603c5b2733c8c86e3757c351da8c8f96c5fc639839e9c1",
+      "root_seed": 17,
+      "terminal_returns": [
+        -1.0,
+        1.0
+      ],
+      "termination": "CHECKMATE",
+      "white_agent": "material-alpha-beta"
+    },
+    {
+      "black_agent": "material-alpha-beta",
+      "engine_startup_seconds": 0.48174030000154744,
+      "initial_fen": "rnbqk2r/ppp1bppp/4pn2/3p4/2PP4/2N2N2/PP2PPPP/R1BQKB1R w KQkq - 4 5",
+      "match_metadata": {
+        "budget_kind": "milliseconds",
+        "budget_value": 50,
+        "max_plies": 160,
+        "player_seeds": [
+          210609529834178699225421372738400315343,
+          276001508762393885088872616381026899170
+        ],
+        "root_seed": 59443346279739778879781088613072305239
+      },
+      "pair_index": 1,
+      "plies": 27,
+      "position_name": "queens-gambit",
+      "raw_sha256": "c6cfb35f7df5552adba5fb1d923b062536e06b09c84f9e094795bfd505823acd",
+      "root_seed": 17,
+      "terminal_returns": [
+        1.0,
+        -1.0
+      ],
+      "termination": "CHECKMATE",
+      "white_agent": "stockfish-19"
+    }
+  ],
+  "hardware": {
+    "cpu": "Intel(R) Core(TM) i7-10875H CPU @ 2.30GHz",
+    "logical_processors": 16,
+    "physical_cores": 8,
+    "physical_memory_bytes": 16954482688,
+    "source": "Windows CIM measured during final run; local CPU only"
+  },
+  "manifest": {
+    "agents": [
+      {
+        "agent": {
+          "capture_ordering": false,
+          "kind": "material_alpha_beta",
+          "quiescence_depth": 0,
+          "transposition_table": false
+        },
+        "name": "material-alpha-beta"
+      },
+      {
+        "agent": {
+          "assets": [],
+          "kind": "external_uci",
+          "options": {
+            "EvalFile": "nn-1a298aa575a0.nnue",
+            "Hash": 16,
+            "Skill Level": 20,
+            "SyzygyPath": "",
+            "Threads": 1,
+            "UCI_LimitStrength": false
+          },
+          "path": "artifacts/engines/stockfish-19/stockfish/stockfish-windows-x86-64-universal.exe",
+          "sha256": "45bc8e4969147db9c2eb533810637994619bff0eacc81ccfd9854394901bcbd0",
+          "timeout_seconds": 10.0
+        },
+        "name": "stockfish-19"
+      }
+    ],
+    "budget": {
+      "kind": "milliseconds",
+      "value": 50
+    },
+    "dataset": {
+      "id": "handselected-openings",
+      "positions": [
+        {
+          "fen": "r1bqkb1r/1ppp1ppp/p1n2n2/4p3/B3P3/5N2/PPPP1PPP/RNBQK2R w KQkq - 2 5",
+          "name": "open-game"
+        },
+        {
+          "fen": "rnbqk2r/ppp1bppp/4pn2/3p4/2PP4/2N2N2/PP2PPPP/R1BQKB1R w KQkq - 4 5",
+          "name": "queens-gambit"
+        }
+      ],
+      "source": "Handselected SAN lines: 1.e4 e5 2.Nf3 Nc6 3.Bb5 a6 4.Ba4 Nf6; 1.d4 d5 2.c4 e6 3.Nc3 Nf6 4.Nf3 Be7. FEN starts, no pre-start repetition history. Development smoke only.",
+      "split": "development",
+      "version": "1"
+    },
+    "max_plies": 160,
+    "name": "external-stockfish19-smoke-v1",
+    "question": "Can our material alpha-beta bot complete reliable colour-paired games against a pinned existing engine under explicit local CPU budgets?",
+    "schema_version": 1,
+    "seeds": [
+      17
+    ]
+  },
+  "metadata": {
+    "active_game": null,
+    "dependency_lock_error": null,
+    "dependency_lock_sha256": "569ca4796c7aebfc828e83f29a7ad76cd1b29242f7599d2dc0aeae3875db749e",
+    "dependency_versions": {
+      "chess": "1.11.2",
+      "chess-ai-lab": "0.1.0",
+      "python-chess": "1.999"
+    },
+    "error": null,
+    "manifest_digest": "6411db1bce07d86271752cf329f07aca7d1f6331c19398b4dbcbaed30fff2f2e",
+    "provenance": {
+      "config_digest": "6411db1bce07d86271752cf329f07aca7d1f6331c19398b4dbcbaed30fff2f2e",
+      "git_commit": "2b591700d28c69b94e00ab877bd9308623781bf7",
+      "git_dirty": true,
+      "git_error": null,
+      "machine": "AMD64",
+      "platform": "Windows-11-10.0.26200-SP0",
+      "processor": "Intel64 Family 6 Model 165 Stepping 2, GenuineIntel",
+      "python_version": "3.12.14",
+      "started_at": "2026-10-17T17:38:31.153927+00:00"
+    },
+    "run_id": "external-stockfish19-smoke-final",
+    "runs_planned": 4,
+    "runs_written": 4,
+    "schema_version": 1,
+    "source_sha256": {
+      "pyproject.toml": "6512acb27bdbaa39855f678a71c979155f2ea7dedc41721ee9d68f37dd2dcce6",
+      "src\\chesslab\\__init__.py": "c0cfb2e60d75ff7ae8db240756999e5782aab5c7b5f7b55b400a3abb98f872a2",
+      "src\\chesslab\\agents\\__init__.py": "2fce4ffcf2a2fb711d30e5e55e8041c18269f200bd8cf0d441063e13d32e39df",
+      "src\\chesslab\\agents\\external_uci.py": "0f49496683fe1a1043cb0724eba181cf118f6d5ceb93c22101561dc838342d82",
+      "src\\chesslab\\agents\\material_alpha_beta.py": "33b160f9cba0cd7f4f9e631ff87d8a5656a9069eed1a8024bb9bd31356bcd8b2",
+      "src\\chesslab\\agents\\material_greedy.py": "6b5c00a449f6f5c4c25034950f0c3285e495c0eaafddb00ef9ca63bb15bed3e0",
+      "src\\chesslab\\agents\\protocols.py": "49550eac7a56b90ec8e6cb19670b4be009683854f8daa84f2adcd0db9efb36b0",
+      "src\\chesslab\\agents\\random_agent.py": "09c06d6f7344ef32f9601c7ecc7983fabc75a318afb7542b032a3a65b6d78665",
+      "src\\chesslab\\benchmark.py": "b540e04bd39876204bbdb4a9a1fe7f3d36ae1d0c7965352dbccbf9da2da53630",
+      "src\\chesslab\\config.py": "0c401a9d3f6ffbf41d5658179a223f93801a91658f67e5a01f96dc7b1daab8c7",
+      "src\\chesslab\\engine\\__init__.py": "2cbdf4891622e71467f2eaa6160f6865f2da60f8a3d404beee544180189bdccf",
+      "src\\chesslab\\engine\\evaluation\\__init__.py": "fa055b3871a862530314490257b8a742959cbb664fa5385bc40591cf7e64721c",
+      "src\\chesslab\\engine\\evaluation\\material.py": "854b28ac0b11de8984a79fadc4a73b253e18b22ce241f308ceb3536888cfd298",
+      "src\\chesslab\\eval\\__init__.py": "436a49929c6cd7b4a8b0aaf5c42d8b24b25a3e855225fd3e69e79151a4091717",
+      "src\\chesslab\\eval\\artifacts.py": "6779c1b7aaa7ea93c288d29654ba51c9c89a42c98e129ce2e75ad3f7ffced01f",
+      "src\\chesslab\\eval\\benchmarks.py": "2673d6db33ad9aa8a9b0e1ec902d2e7961b457dfa340b761ff5333fa5aa10110",
+      "src\\chesslab\\eval\\matches.py": "76b6227af37881850ad31942f56093a195f58b913e2347c3beda4be461781bdd",
+      "src\\chesslab\\experiment.py": "6993f87c8cb0e4b1619b13a3f0578bccc1bda320bdd311487791e6f9d58c6e40",
+      "src\\chesslab\\games\\__init__.py": "b39c1ce492d0d371704784ba37f7008f62ad758944e49967dc8fd70ed922f965",
+      "src\\chesslab\\games\\chess\\__init__.py": "3efd7e60529fb69774d3aa2e7ceb07dff9e7c6c84b52d276accfba1d7da2c7c3",
+      "src\\chesslab\\games\\chess\\perft.py": "e00fd81e8fd0fedb43026e8aa1ba67c3ccb811183f9e573bf0275df0ffaf010f",
+      "src\\chesslab\\games\\chess\\state.py": "2fa3dd7e03aaa4582d6bf8652c5eeb77198a63866e69996a10d30f3b287077f3",
+      "src\\chesslab\\games\\protocols.py": "1e07a405425b910bed192a20a576599bc5f7f555cd258e6e2db9c24f043b0c24",
+      "src\\chesslab\\match_suite.py": "03ab14fd22d7232e1a75da71a65f88023789465771e472d58429c68b0c862681",
+      "src\\chesslab\\puzzles.py": "967bf7aedfaf3bbb7a2912414e73cd7b49e2edd0f61ee736d0726fd51d34bb4b",
+      "src\\chesslab\\search\\__init__.py": "3f18516382ae8799fe6a9b8af2f3dd83b325ee0943ef6672e33907e4ed29c77e",
+      "src\\chesslab\\search\\budgets.py": "3d1034a973a1d66dffb17c88e691c8d614df7ca1152aa7775b15f4d3d124d0c8",
+      "src\\chesslab\\search\\classical\\__init__.py": "e60dd82476ade92358c23fe1a893e01e5d8a802790510349644a55bf542e5843",
+      "src\\chesslab\\search\\classical\\minimax.py": "f3a451321742cb7ba58dd594a902d23a28ccbf4c3e6f4d98f5850ced31b1fb7c",
+      "src\\chesslab\\search\\results.py": "7b1cd8b396a1b790be564c6a018494fed1fcd5c8b39063b33157b4a6da0c4e19",
+      "src\\chesslab\\tactical.py": "137ef311f3f7259035866146221543633b201f66c73aa8d031924cc6259474a0",
+      "src\\chesslab\\uci.py": "42d8c526f5690203dba67d52efc767aa2244afe8ef173abda2e3234107e91a9d",
+      "uv.lock": "569ca4796c7aebfc828e83f29a7ad76cd1b29242f7599d2dc0aeae3875db749e"
+    },
+    "status": "completed"
+  },
+  "previous_attempts": [
+    {
+      "errors": [
+        {
+          "kind": "agent_error",
+          "message": "EngineError: cannot set MultiPV which is automatically managed",
+          "player": 1,
+          "ply_index": 1
+        },
+        {
+          "kind": "agent_error",
+          "message": "EngineError: cannot set MultiPV which is automatically managed",
+          "player": 0,
+          "ply_index": 0
+        },
+        {
+          "kind": "agent_error",
+          "message": "EngineError: cannot set MultiPV which is automatically managed",
+          "player": 1,
+          "ply_index": 1
+        },
+        {
+          "kind": "agent_error",
+          "message": "EngineError: cannot set MultiPV which is automatically managed",
+          "player": 0,
+          "ply_index": 0
+        }
+      ],
+      "metadata": {
+        "active_game": null,
+        "dependency_lock_error": null,
+        "dependency_lock_sha256": "569ca4796c7aebfc828e83f29a7ad76cd1b29242f7599d2dc0aeae3875db749e",
+        "dependency_versions": {
+          "chess": "1.11.2",
+          "chess-ai-lab": "0.1.0",
+          "python-chess": "1.999"
+        },
+        "error": null,
+        "manifest_digest": "1ac360754165abbbbac023d81e173243c5a8bbbd37fa3f1af3fcf413ebcc11c4",
+        "provenance": {
+          "config_digest": "1ac360754165abbbbac023d81e173243c5a8bbbd37fa3f1af3fcf413ebcc11c4",
+          "git_commit": "2b591700d28c69b94e00ab877bd9308623781bf7",
+          "git_dirty": true,
+          "git_error": null,
+          "machine": "AMD64",
+          "platform": "Windows-11-10.0.26200-SP0",
+          "processor": "Intel64 Family 6 Model 165 Stepping 2, GenuineIntel",
+          "python_version": "3.12.14",
+          "started_at": "2026-10-17T17:36:13.350779+00:00"
+        },
+        "run_id": "external-stockfish19-smoke-v1",
+        "runs_planned": 4,
+        "runs_written": 4,
+        "schema_version": 1,
+        "source_sha256": {
+          "pyproject.toml": "6512acb27bdbaa39855f678a71c979155f2ea7dedc41721ee9d68f37dd2dcce6",
+          "src\\chesslab\\__init__.py": "c0cfb2e60d75ff7ae8db240756999e5782aab5c7b5f7b55b400a3abb98f872a2",
+          "src\\chesslab\\agents\\__init__.py": "2fce4ffcf2a2fb711d30e5e55e8041c18269f200bd8cf0d441063e13d32e39df",
+          "src\\chesslab\\agents\\external_uci.py": "24388f70d38f1ff357375700e314c56e45c4f8005748e20a9cce389aff36acb0",
+          "src\\chesslab\\agents\\material_alpha_beta.py": "33b160f9cba0cd7f4f9e631ff87d8a5656a9069eed1a8024bb9bd31356bcd8b2",
+          "src\\chesslab\\agents\\material_greedy.py": "6b5c00a449f6f5c4c25034950f0c3285e495c0eaafddb00ef9ca63bb15bed3e0",
+          "src\\chesslab\\agents\\protocols.py": "49550eac7a56b90ec8e6cb19670b4be009683854f8daa84f2adcd0db9efb36b0",
+          "src\\chesslab\\agents\\random_agent.py": "09c06d6f7344ef32f9601c7ecc7983fabc75a318afb7542b032a3a65b6d78665",
+          "src\\chesslab\\benchmark.py": "b540e04bd39876204bbdb4a9a1fe7f3d36ae1d0c7965352dbccbf9da2da53630",
+          "src\\chesslab\\config.py": "0c401a9d3f6ffbf41d5658179a223f93801a91658f67e5a01f96dc7b1daab8c7",
+          "src\\chesslab\\engine\\__init__.py": "2cbdf4891622e71467f2eaa6160f6865f2da60f8a3d404beee544180189bdccf",
+          "src\\chesslab\\engine\\evaluation\\__init__.py": "fa055b3871a862530314490257b8a742959cbb664fa5385bc40591cf7e64721c",
+          "src\\chesslab\\engine\\evaluation\\material.py": "854b28ac0b11de8984a79fadc4a73b253e18b22ce241f308ceb3536888cfd298",
+          "src\\chesslab\\eval\\__init__.py": "436a49929c6cd7b4a8b0aaf5c42d8b24b25a3e855225fd3e69e79151a4091717",
+          "src\\chesslab\\eval\\artifacts.py": "6779c1b7aaa7ea93c288d29654ba51c9c89a42c98e129ce2e75ad3f7ffced01f",
+          "src\\chesslab\\eval\\benchmarks.py": "2673d6db33ad9aa8a9b0e1ec902d2e7961b457dfa340b761ff5333fa5aa10110",
+          "src\\chesslab\\eval\\matches.py": "76b6227af37881850ad31942f56093a195f58b913e2347c3beda4be461781bdd",
+          "src\\chesslab\\experiment.py": "6993f87c8cb0e4b1619b13a3f0578bccc1bda320bdd311487791e6f9d58c6e40",
+          "src\\chesslab\\games\\__init__.py": "b39c1ce492d0d371704784ba37f7008f62ad758944e49967dc8fd70ed922f965",
+          "src\\chesslab\\games\\chess\\__init__.py": "3efd7e60529fb69774d3aa2e7ceb07dff9e7c6c84b52d276accfba1d7da2c7c3",
+          "src\\chesslab\\games\\chess\\perft.py": "e00fd81e8fd0fedb43026e8aa1ba67c3ccb811183f9e573bf0275df0ffaf010f",
+          "src\\chesslab\\games\\chess\\state.py": "2fa3dd7e03aaa4582d6bf8652c5eeb77198a63866e69996a10d30f3b287077f3",
+          "src\\chesslab\\games\\protocols.py": "1e07a405425b910bed192a20a576599bc5f7f555cd258e6e2db9c24f043b0c24",
+          "src\\chesslab\\match_suite.py": "03ab14fd22d7232e1a75da71a65f88023789465771e472d58429c68b0c862681",
+          "src\\chesslab\\puzzles.py": "967bf7aedfaf3bbb7a2912414e73cd7b49e2edd0f61ee736d0726fd51d34bb4b",
+          "src\\chesslab\\search\\__init__.py": "3f18516382ae8799fe6a9b8af2f3dd83b325ee0943ef6672e33907e4ed29c77e",
+          "src\\chesslab\\search\\budgets.py": "3d1034a973a1d66dffb17c88e691c8d614df7ca1152aa7775b15f4d3d124d0c8",
+          "src\\chesslab\\search\\classical\\__init__.py": "e60dd82476ade92358c23fe1a893e01e5d8a802790510349644a55bf542e5843",
+          "src\\chesslab\\search\\classical\\minimax.py": "f3a451321742cb7ba58dd594a902d23a28ccbf4c3e6f4d98f5850ced31b1fb7c",
+          "src\\chesslab\\search\\results.py": "7b1cd8b396a1b790be564c6a018494fed1fcd5c8b39063b33157b4a6da0c4e19",
+          "src\\chesslab\\tactical.py": "137ef311f3f7259035866146221543633b201f66c73aa8d031924cc6259474a0",
+          "src\\chesslab\\uci.py": "42d8c526f5690203dba67d52efc767aa2244afe8ef173abda2e3234107e91a9d",
+          "uv.lock": "569ca4796c7aebfc828e83f29a7ad76cd1b29242f7599d2dc0aeae3875db749e"
+        },
+        "status": "failed"
+      },
+      "run_id": "external-stockfish19-smoke-v1",
+      "summary": {
+        "agents": [
+          {
+            "agent": "material-alpha-beta",
+            "decision_seconds_median": 0.05008615000224381,
+            "decision_seconds_total": 0.10017230000448762,
+            "draws": 0,
+            "losses": 0,
+            "score_fraction_completed": null,
+            "timed_decisions": 2,
+            "wins": 0
+          },
+          {
+            "agent": "stockfish-19",
+            "decision_seconds_median": null,
+            "decision_seconds_total": 0,
+            "draws": 0,
+            "losses": 0,
+            "score_fraction_completed": null,
+            "timed_decisions": 0,
+            "wins": 0
+          }
+        ],
+        "completed": 0,
+        "engine_cleanup_failures": 0,
+        "failed": 4,
+        "games_planned": 4,
+        "games_recorded": 4,
+        "interrupted": 0,
+        "manifest_digest": "1ac360754165abbbbac023d81e173243c5a8bbbd37fa3f1af3fcf413ebcc11c4",
+        "pairs_completed": 0,
+        "pairs_planned": 2,
+        "pairs_without_two_completed_games": 2,
+        "total_plies": 2,
+        "unrecorded": 0
+      }
+    },
+    {
+      "errors": [
+        null,
+        null,
+        null,
+        null
+      ],
+      "metadata": {
+        "active_game": null,
+        "dependency_lock_error": null,
+        "dependency_lock_sha256": "569ca4796c7aebfc828e83f29a7ad76cd1b29242f7599d2dc0aeae3875db749e",
+        "dependency_versions": {
+          "chess": "1.11.2",
+          "chess-ai-lab": "0.1.0",
+          "python-chess": "1.999"
+        },
+        "error": null,
+        "manifest_digest": "6411db1bce07d86271752cf329f07aca7d1f6331c19398b4dbcbaed30fff2f2e",
+        "provenance": {
+          "config_digest": "6411db1bce07d86271752cf329f07aca7d1f6331c19398b4dbcbaed30fff2f2e",
+          "git_commit": "2b591700d28c69b94e00ab877bd9308623781bf7",
+          "git_dirty": true,
+          "git_error": null,
+          "machine": "AMD64",
+          "platform": "Windows-11-10.0.26200-SP0",
+          "processor": "Intel64 Family 6 Model 165 Stepping 2, GenuineIntel",
+          "python_version": "3.12.14",
+          "started_at": "2026-10-17T17:36:37.754366+00:00"
+        },
+        "run_id": "external-stockfish19-smoke-v2",
+        "runs_planned": 4,
+        "runs_written": 4,
+        "schema_version": 1,
+        "source_sha256": {
+          "pyproject.toml": "6512acb27bdbaa39855f678a71c979155f2ea7dedc41721ee9d68f37dd2dcce6",
+          "src\\chesslab\\__init__.py": "c0cfb2e60d75ff7ae8db240756999e5782aab5c7b5f7b55b400a3abb98f872a2",
+          "src\\chesslab\\agents\\__init__.py": "2fce4ffcf2a2fb711d30e5e55e8041c18269f200bd8cf0d441063e13d32e39df",
+          "src\\chesslab\\agents\\external_uci.py": "7b7a4b4af54f96c997d6e743e7a172782f57a314ffd6b9285278f2898f9e48d0",
+          "src\\chesslab\\agents\\material_alpha_beta.py": "33b160f9cba0cd7f4f9e631ff87d8a5656a9069eed1a8024bb9bd31356bcd8b2",
+          "src\\chesslab\\agents\\material_greedy.py": "6b5c00a449f6f5c4c25034950f0c3285e495c0eaafddb00ef9ca63bb15bed3e0",
+          "src\\chesslab\\agents\\protocols.py": "49550eac7a56b90ec8e6cb19670b4be009683854f8daa84f2adcd0db9efb36b0",
+          "src\\chesslab\\agents\\random_agent.py": "09c06d6f7344ef32f9601c7ecc7983fabc75a318afb7542b032a3a65b6d78665",
+          "src\\chesslab\\benchmark.py": "b540e04bd39876204bbdb4a9a1fe7f3d36ae1d0c7965352dbccbf9da2da53630",
+          "src\\chesslab\\config.py": "0c401a9d3f6ffbf41d5658179a223f93801a91658f67e5a01f96dc7b1daab8c7",
+          "src\\chesslab\\engine\\__init__.py": "2cbdf4891622e71467f2eaa6160f6865f2da60f8a3d404beee544180189bdccf",
+          "src\\chesslab\\engine\\evaluation\\__init__.py": "fa055b3871a862530314490257b8a742959cbb664fa5385bc40591cf7e64721c",
+          "src\\chesslab\\engine\\evaluation\\material.py": "854b28ac0b11de8984a79fadc4a73b253e18b22ce241f308ceb3536888cfd298",
+          "src\\chesslab\\eval\\__init__.py": "436a49929c6cd7b4a8b0aaf5c42d8b24b25a3e855225fd3e69e79151a4091717",
+          "src\\chesslab\\eval\\artifacts.py": "6779c1b7aaa7ea93c288d29654ba51c9c89a42c98e129ce2e75ad3f7ffced01f",
+          "src\\chesslab\\eval\\benchmarks.py": "2673d6db33ad9aa8a9b0e1ec902d2e7961b457dfa340b761ff5333fa5aa10110",
+          "src\\chesslab\\eval\\matches.py": "76b6227af37881850ad31942f56093a195f58b913e2347c3beda4be461781bdd",
+          "src\\chesslab\\experiment.py": "6993f87c8cb0e4b1619b13a3f0578bccc1bda320bdd311487791e6f9d58c6e40",
+          "src\\chesslab\\games\\__init__.py": "b39c1ce492d0d371704784ba37f7008f62ad758944e49967dc8fd70ed922f965",
+          "src\\chesslab\\games\\chess\\__init__.py": "3efd7e60529fb69774d3aa2e7ceb07dff9e7c6c84b52d276accfba1d7da2c7c3",
+          "src\\chesslab\\games\\chess\\perft.py": "e00fd81e8fd0fedb43026e8aa1ba67c3ccb811183f9e573bf0275df0ffaf010f",
+          "src\\chesslab\\games\\chess\\state.py": "2fa3dd7e03aaa4582d6bf8652c5eeb77198a63866e69996a10d30f3b287077f3",
+          "src\\chesslab\\games\\protocols.py": "1e07a405425b910bed192a20a576599bc5f7f555cd258e6e2db9c24f043b0c24",
+          "src\\chesslab\\match_suite.py": "03ab14fd22d7232e1a75da71a65f88023789465771e472d58429c68b0c862681",
+          "src\\chesslab\\puzzles.py": "967bf7aedfaf3bbb7a2912414e73cd7b49e2edd0f61ee736d0726fd51d34bb4b",
+          "src\\chesslab\\search\\__init__.py": "3f18516382ae8799fe6a9b8af2f3dd83b325ee0943ef6672e33907e4ed29c77e",
+          "src\\chesslab\\search\\budgets.py": "3d1034a973a1d66dffb17c88e691c8d614df7ca1152aa7775b15f4d3d124d0c8",
+          "src\\chesslab\\search\\classical\\__init__.py": "e60dd82476ade92358c23fe1a893e01e5d8a802790510349644a55bf542e5843",
+          "src\\chesslab\\search\\classical\\minimax.py": "f3a451321742cb7ba58dd594a902d23a28ccbf4c3e6f4d98f5850ced31b1fb7c",
+          "src\\chesslab\\search\\results.py": "7b1cd8b396a1b790be564c6a018494fed1fcd5c8b39063b33157b4a6da0c4e19",
+          "src\\chesslab\\tactical.py": "137ef311f3f7259035866146221543633b201f66c73aa8d031924cc6259474a0",
+          "src\\chesslab\\uci.py": "42d8c526f5690203dba67d52efc767aa2244afe8ef173abda2e3234107e91a9d",
+          "uv.lock": "569ca4796c7aebfc828e83f29a7ad76cd1b29242f7599d2dc0aeae3875db749e"
+        },
+        "status": "completed"
+      },
+      "run_id": "external-stockfish19-smoke-v2",
+      "summary": {
+        "agents": [
+          {
+            "agent": "material-alpha-beta",
+            "decision_seconds_median": 0.050061449999702745,
+            "decision_seconds_total": 2.803874800007179,
+            "draws": 0,
+            "losses": 4,
+            "score_fraction_completed": 0.0,
+            "timed_decisions": 56,
+            "wins": 0
+          },
+          {
+            "agent": "stockfish-19",
+            "decision_seconds_median": 0.050794650000170805,
+            "decision_seconds_total": 4.57515589999457,
+            "draws": 0,
+            "losses": 0,
+            "score_fraction_completed": 1.0,
+            "timed_decisions": 58,
+            "wins": 4
+          }
+        ],
+        "completed": 4,
+        "engine_cleanup_failures": 0,
+        "failed": 0,
+        "games_planned": 4,
+        "games_recorded": 4,
+        "interrupted": 0,
+        "manifest_digest": "6411db1bce07d86271752cf329f07aca7d1f6331c19398b4dbcbaed30fff2f2e",
+        "pairs_completed": 2,
+        "pairs_planned": 2,
+        "pairs_without_two_completed_games": 0,
+        "total_plies": 114,
+        "unrecorded": 0
+      }
+    }
+  ],
+  "purpose": "Development smoke comparison only; no Elo, population strength or tactical-quality claim. No settings selected using held-out puzzle results.",
+  "summary": {
+    "agents": [
+      {
+        "agent": "material-alpha-beta",
+        "decision_seconds_median": 0.050070199999026954,
+        "decision_seconds_total": 2.2532722000141803,
+        "draws": 0,
+        "losses": 4,
+        "score_fraction_completed": 0.0,
+        "timed_decisions": 45,
+        "wins": 0
+      },
+      {
+        "agent": "stockfish-19",
+        "decision_seconds_median": 0.05077719999826513,
+        "decision_seconds_total": 4.03368820000469,
+        "draws": 0,
+        "losses": 0,
+        "score_fraction_completed": 1.0,
+        "timed_decisions": 47,
+        "wins": 4
+      }
+    ],
+    "completed": 4,
+    "engine_cleanup_failures": 0,
+    "failed": 0,
+    "games_planned": 4,
+    "games_recorded": 4,
+    "interrupted": 0,
+    "manifest_digest": "6411db1bce07d86271752cf329f07aca7d1f6331c19398b4dbcbaed30fff2f2e",
+    "pairs_completed": 2,
+    "pairs_planned": 2,
+    "pairs_without_two_completed_games": 0,
+    "total_plies": 92,
+    "unrecorded": 0
+  }
+}

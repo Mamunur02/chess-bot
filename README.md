@@ -31,9 +31,17 @@ So far, I have built:
   win/draw/loss counts, and explicit incomplete-pair coverage.
 
 The engine currently evaluates positions using material only. It does not yet
-contain a learned model, MCTS, a training pipeline, or a substantive benchmark
-dataset. I have not measured or claimed an Elo rating or any other formal
-strength result.
+contain a learned model, MCTS, or a training pipeline. I have completed a first
+held-out study on 200 versioned Lichess tactical positions, comparing four search
+configurations at three node budgets with three timing passes. I have not
+measured or claimed an Elo rating or a general playing-strength improvement.
+
+The [first study memo](reports/tactical-study-v1/research-memo.md) reports the
+quality/runtime trade-offs, paired uncertainty and recording interruptions.
+At 5,000 nodes, capture ordering matched 137/200 accepted first moves versus
+127/200 for plain search, at a median paired runtime ratio of 2.24x. This measures
+first-move solution agreement, not complete puzzle solving or Elo. The
+[data/protocol guide](docs/tactical-data.md) describes reproduction and provenance.
 
 ## How I will evaluate performance
 
@@ -119,17 +127,20 @@ near-mate fixtures and does not establish playing strength.
 
 ## Next steps
 
-The classical baseline and comparison infrastructure are implemented and
-verified. Before making substantive research claims, I still need to:
-
-- select and version a substantive benchmark dataset;
-- define separate tuning and held-out test splits; and
-- choose a primary research metric and suitable uncertainty analysis.
+The classical baseline, first versioned tactical dataset, held-out comparison
+and external UCI match integration are implemented and verified. A local four-game
+colour-paired smoke comparison against Stockfish 19 completed with four Stockfish
+wins and no final-run failures; this does not establish Elo. See the
+[measured summary](experiments/summaries/external-stockfish19-20261017.md) and
+[external opponent guide](docs/external-opponents.md). Next, add shared fresh
+tactical comparisons and one learned bot, then other methods in manageable stages. The precise research question is still developing.
+No learning method has been implemented yet. I will keep the first result frozen
+and use fresh confirmatory positions for later comparisons.
 
 The first development-only ablation is recorded in
 [`experiments/summaries/development-ablation-20261006.md`](experiments/summaries/development-ablation-20261006.md).
 
-Once that foundation is ready, I will choose a more focused research direction.
+The longer-term research direction is still open.
 The options I am considering include:
 
 - replacing or extending the handcrafted evaluator with a learned evaluator

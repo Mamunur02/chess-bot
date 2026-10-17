@@ -1,0 +1,44 @@
+{
+  "compressed_source_bytes": 307234795,
+  "compressed_source_sha256": "76335bfa7d7c4a7f93c1366d81549e53951ebb79dd43d34904cab8f22d962f8d",
+  "history": "Reconstructed from source FEN; pre-FEN repetition unavailable.",
+  "http_etag": "6abf70a1-125007eb",
+  "http_last_modified": "Fri, 02 Oct 2026 08:51:45 GMT",
+  "independent_components": 1200,
+  "license": "CC0-1.0",
+  "preparation_version": "lichess-reservoir-components-v1",
+  "rejected": [],
+  "reservoir_actual": 1200,
+  "reservoir_requested": 1200,
+  "retrieved_date": "2026-10-17",
+  "schema_version": 1,
+  "seed": 20261017,
+  "selection": "Uniform source-row reservoir, validate, one per connected game/position/ID group, shuffle, take disjoint splits; no rating filter.",
+  "source_csv_sha256": "ec2dd1a8f9cbd139ebb4aee228f72e77f8e2a581a24d25f61f71e6cf306b10f8",
+  "source_fields": [
+    "PuzzleId",
+    "FEN",
+    "Moves",
+    "Rating",
+    "RatingDeviation",
+    "Popularity",
+    "NbPlays",
+    "Themes",
+    "GameUrl",
+    "OpeningTags",
+    "DailyDate"
+  ],
+  "source_rows": 6157341,
+  "source_url": "https://database.lichess.org/lichess_db_puzzle.csv.zst",
+  "split_counts": {
+    "development": 50,
+    "test": 200,
+    "validation": 50
+  },
+  "split_sha256": {
+    "development": "767557215b8087b7f258c7fd4c7801145115349f84d82c22e74172fe8c8c8a1e",
+    "test": "418fafe5a71bc37beadf94a12c3cfa0b94c4a272dcf57b108858ea52460d51d0",
+    "validation": "3d6db8874dd9908924f9cefd746842854d447f36803219ae6600cdfd957645e3"
+  },
+  "valid_rows": 1200
+}
