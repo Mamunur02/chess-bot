@@ -65,6 +65,29 @@ class MatchAgentConfig:
         }
 
 
+def match_agent_config_from_dict(value: object) -> MatchAgentConfig:
+    """Parse one named internal or external agent for shared evaluations."""
+    entry = json_object(value, "named agent")
+    reject_unknown_fields(entry, {"name", "agent"}, "named agent")
+    agent_name = nonempty_string(entry.get("name"), "agent.name")
+    settings = json_object(entry.get("agent"), "agent")
+    external = None
+    if settings.get("kind") == "external_uci":
+        external = UciConfig.from_dict(settings)
+        search = None
+    elif settings.get("kind") == "random":
+        reject_unknown_fields(settings, {"kind"}, "random agent")
+        search = None
+    else:
+        reject_unknown_fields(
+            settings,
+            {"kind", "capture_ordering", "transposition_table", "quiescence_depth"},
+            "material agent",
+        )
+        search = benchmark_agent_config_from_dict(settings)
+    return MatchAgentConfig(agent_name, search, external)
+
+
 @dataclass(frozen=True, slots=True)
 class MatchSuiteSpec:
     """Validated common inputs for exactly two agents and paired games.
@@ -184,27 +207,7 @@ def match_suite_spec_from_dict(value: object) -> MatchSuiteSpec:
     raw_agents = data.get("agents")
     if not isinstance(raw_agents, list) or len(raw_agents) != 2:
         raise ValueError("exactly two named agents are required")
-    agents: list[MatchAgentConfig] = []
-    for item in raw_agents:
-        entry = json_object(item, "named agent")
-        reject_unknown_fields(entry, {"name", "agent"}, "named agent")
-        agent_name = nonempty_string(entry.get("name"), "agent.name")
-        settings = json_object(entry.get("agent"), "agent")
-        external = None
-        if settings.get("kind") == "external_uci":
-            external = UciConfig.from_dict(settings)
-            search = None
-        elif settings.get("kind") == "random":
-            reject_unknown_fields(settings, {"kind"}, "random agent")
-            search = None
-        else:
-            reject_unknown_fields(
-                settings,
-                {"kind", "capture_ordering", "transposition_table", "quiescence_depth"},
-                "material agent",
-            )
-            search = benchmark_agent_config_from_dict(settings)
-        agents.append(MatchAgentConfig(agent_name, search, external))
+    agents = [match_agent_config_from_dict(item) for item in raw_agents]
     if agents[0].name == agents[1].name:
         raise ValueError("agent names must be unique")
     return MatchSuiteSpec(

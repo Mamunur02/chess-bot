@@ -1,0 +1,918 @@
+{
+  "audit": {
+    "schedule_legality_labels_timings_and_summary": "passed",
+    "script_sha256": "362ddd3c81c6c1f4d4f2416862123cc65f480ef04a54881cfadfb3a0cc0cd76a",
+    "source_snapshots": "passed"
+  },
+  "cases": [
+    {
+      "action": "g5h7",
+      "agent": "material-alpha-beta",
+      "agreement": true,
+      "case_sha256": "57598672c48ea8be24600f051e1c85f8eeabb1e5d7535d6ac9cc7f52bffcee9e",
+      "cleanup_error": null,
+      "error": null,
+      "index": 0,
+      "phase": "completed",
+      "position": "TorkW"
+    },
+    {
+      "action": "f3e3",
+      "agent": "random",
+      "agreement": false,
+      "case_sha256": "c4b509ee3365a8d43ddc72bb69bd2d6e2d740c29a6356ca324ee248fcd23ea2f",
+      "cleanup_error": null,
+      "error": null,
+      "index": 1,
+      "phase": "completed",
+      "position": "TorkW"
+    },
+    {
+      "action": "f3f6",
+      "agent": "material-greedy",
+      "agreement": false,
+      "case_sha256": "22bdf3caab866d68b05fc73e6f757d6f294dd45072264e050ce5fd1582b9f5d6",
+      "cleanup_error": null,
+      "error": null,
+      "index": 2,
+      "phase": "completed",
+      "position": "TorkW"
+    },
+    {
+      "action": "g5h7",
+      "agent": "stockfish-19",
+      "agreement": true,
+      "case_sha256": "83971f0adbd61a255f2e0945856d147fdfe8a57cdd36610aa9bee70de3ad8a20",
+      "cleanup_error": null,
+      "error": null,
+      "index": 3,
+      "phase": "completed",
+      "position": "TorkW"
+    },
+    {
+      "action": "g7g6",
+      "agent": "random",
+      "agreement": false,
+      "case_sha256": "ed6da0ac21b789e023fe0ee0e89432fcecfb554a3a46db26df2c6c47173be285",
+      "cleanup_error": null,
+      "error": null,
+      "index": 4,
+      "phase": "completed",
+      "position": "wmUul"
+    },
+    {
+      "action": "e8c7",
+      "agent": "material-greedy",
+      "agreement": false,
+      "case_sha256": "2b7d6322a44c989d17c06e63d1711b7d73d9a6c615186a7a21a7935ec22ae7c1",
+      "cleanup_error": null,
+      "error": null,
+      "index": 5,
+      "phase": "completed",
+      "position": "wmUul"
+    },
+    {
+      "action": "g7g5",
+      "agent": "stockfish-19",
+      "agreement": true,
+      "case_sha256": "6a75cc8c8a94b645f7ffd3dcc23d757eb03aea6114c3ca1c9d46bdb3ea8d730d",
+      "cleanup_error": null,
+      "error": null,
+      "index": 6,
+      "phase": "completed",
+      "position": "wmUul"
+    },
+    {
+      "action": "e8c7",
+      "agent": "material-alpha-beta",
+      "agreement": false,
+      "case_sha256": "315c24d34a69d3852bae8edc942ae15c9c133de86f2d98fcd4cccbb7372f076c",
+      "cleanup_error": null,
+      "error": null,
+      "index": 7,
+      "phase": "completed",
+      "position": "wmUul"
+    },
+    {
+      "action": "e4c6",
+      "agent": "material-greedy",
+      "agreement": true,
+      "case_sha256": "5e3478ccf7c60748a071be859ef9f912e510aa8c6fa7c01cf9be37c4099b1e38",
+      "cleanup_error": null,
+      "error": null,
+      "index": 8,
+      "phase": "completed",
+      "position": "UcSun"
+    },
+    {
+      "action": "e4c6",
+      "agent": "stockfish-19",
+      "agreement": true,
+      "case_sha256": "5864ebdd70033ef4d72f69f158c71379e71ea2818390d963daa53955b9fc5248",
+      "cleanup_error": null,
+      "error": null,
+      "index": 9,
+      "phase": "completed",
+      "position": "UcSun"
+    },
+    {
+      "action": "e4d5",
+      "agent": "material-alpha-beta",
+      "agreement": false,
+      "case_sha256": "3db75153794be098b728e031d104b9a6a5def542f03cd889a4410da45a0ae433",
+      "cleanup_error": null,
+      "error": null,
+      "index": 10,
+      "phase": "completed",
+      "position": "UcSun"
+    },
+    {
+      "action": "a4a5",
+      "agent": "random",
+      "agreement": false,
+      "case_sha256": "830ca8b892179e2b111f2c98ce977d6aa92f885dc0dc6a13fc79deec487769d6",
+      "cleanup_error": null,
+      "error": null,
+      "index": 11,
+      "phase": "completed",
+      "position": "UcSun"
+    },
+    {
+      "action": "e6d6",
+      "agent": "stockfish-19",
+      "agreement": true,
+      "case_sha256": "f61eb2352959686ff6b7f979aa91bff4a85cfafbd4d777fb66387a63da6895cc",
+      "cleanup_error": null,
+      "error": null,
+      "index": 12,
+      "phase": "completed",
+      "position": "iSTcB"
+    },
+    {
+      "action": "e6d6",
+      "agent": "material-alpha-beta",
+      "agreement": true,
+      "case_sha256": "0536cd5aea8c7a769cee934705d1ef3203224580d6a5ea04578ccb40996bdea1",
+      "cleanup_error": null,
+      "error": null,
+      "index": 13,
+      "phase": "completed",
+      "position": "iSTcB"
+    },
+    {
+      "action": "a2a3",
+      "agent": "random",
+      "agreement": false,
+      "case_sha256": "727f022aaa7ee839bac183252b6d76be6daeadfeffde057e44437e1d30a55d88",
+      "cleanup_error": null,
+      "error": null,
+      "index": 14,
+      "phase": "completed",
+      "position": "iSTcB"
+    },
+    {
+      "action": "e6d7",
+      "agent": "material-greedy",
+      "agreement": false,
+      "case_sha256": "d7db7d6285429b6141067f23d92983316c1a31d239d54153e6887b03a3abbd78",
+      "cleanup_error": null,
+      "error": null,
+      "index": 15,
+      "phase": "completed",
+      "position": "iSTcB"
+    },
+    {
+      "action": "b1c3",
+      "agent": "material-alpha-beta",
+      "agreement": true,
+      "case_sha256": "c147361112c5d65670c3a57f4d3f84e0bd3af1f7b500799c9e4e0ee059d30036",
+      "cleanup_error": null,
+      "error": null,
+      "index": 16,
+      "phase": "completed",
+      "position": "1jSo1"
+    },
+    {
+      "action": "g2h2",
+      "agent": "random",
+      "agreement": false,
+      "case_sha256": "405b3e2528b1fba27eb0f73baca4098c3237219d471778b8552a37d81b57f574",
+      "cleanup_error": null,
+      "error": null,
+      "index": 17,
+      "phase": "completed",
+      "position": "1jSo1"
+    },
+    {
+      "action": "g2f3",
+      "agent": "material-greedy",
+      "agreement": false,
+      "case_sha256": "50ad7a7ae1984919cb121fe9c11177b8eefa3e12b921de336c669663fa30c806",
+      "cleanup_error": null,
+      "error": null,
+      "index": 18,
+      "phase": "completed",
+      "position": "1jSo1"
+    },
+    {
+      "action": "b1c3",
+      "agent": "stockfish-19",
+      "agreement": true,
+      "case_sha256": "63d6e35e2b2c77b96b1b856c120f89a736087f8fe31e0c8d0d2d3ba39cbd31e2",
+      "cleanup_error": null,
+      "error": null,
+      "index": 19,
+      "phase": "completed",
+      "position": "1jSo1"
+    },
+    {
+      "action": "g5d2",
+      "agent": "random",
+      "agreement": false,
+      "case_sha256": "75fdb4738a9c9bbdf9696a549b47353ed160bd178844c43f665d1f9be876e31b",
+      "cleanup_error": null,
+      "error": null,
+      "index": 20,
+      "phase": "completed",
+      "position": "3WsN5"
+    },
+    {
+      "action": "d3b5",
+      "agent": "material-greedy",
+      "agreement": false,
+      "case_sha256": "0d05f248a1c61faf580e1c6175f69ebfe9a792f6c7bb539395a39ac3d82d0664",
+      "cleanup_error": null,
+      "error": null,
+      "index": 21,
+      "phase": "completed",
+      "position": "3WsN5"
+    },
+    {
+      "action": "e4d6",
+      "agent": "stockfish-19",
+      "agreement": true,
+      "case_sha256": "296173bce2059d485161ab213e020336d3372a199382cdf5fabffd0f30fb9239",
+      "cleanup_error": null,
+      "error": null,
+      "index": 22,
+      "phase": "completed",
+      "position": "3WsN5"
+    },
+    {
+      "action": "d3b5",
+      "agent": "material-alpha-beta",
+      "agreement": false,
+      "case_sha256": "280221d388383be98e729d62e655e36c4bb7d59bb7440a1c54a2e253ef6d69b5",
+      "cleanup_error": null,
+      "error": null,
+      "index": 23,
+      "phase": "completed",
+      "position": "3WsN5"
+    },
+    {
+      "action": "b4e1",
+      "agent": "material-greedy",
+      "agreement": true,
+      "case_sha256": "957f050a2b2623b06e22a00372b26a25ba8d7ef579c3d28363a7c8dfb90f04fd",
+      "cleanup_error": null,
+      "error": null,
+      "index": 24,
+      "phase": "completed",
+      "position": "LHG8e"
+    },
+    {
+      "action": "b4e1",
+      "agent": "stockfish-19",
+      "agreement": true,
+      "case_sha256": "e4b361a115dd27b350c5a0d80121c3146939bc1cf264b51784f60c663fbecd95",
+      "cleanup_error": null,
+      "error": null,
+      "index": 25,
+      "phase": "completed",
+      "position": "LHG8e"
+    },
+    {
+      "action": "b4e1",
+      "agent": "material-alpha-beta",
+      "agreement": true,
+      "case_sha256": "d4347b8f332961372d1ae15fa0ccca23aa35f422c57465b22444d57328b7a2c9",
+      "cleanup_error": null,
+      "error": null,
+      "index": 26,
+      "phase": "completed",
+      "position": "LHG8e"
+    },
+    {
+      "action": "d7g4",
+      "agent": "random",
+      "agreement": false,
+      "case_sha256": "0fd2e246d2ec8f3d2551022ec5759f9af76b30d6b73d8906156b93f7d039e639",
+      "cleanup_error": null,
+      "error": null,
+      "index": 27,
+      "phase": "completed",
+      "position": "LHG8e"
+    },
+    {
+      "action": "e7g5",
+      "agent": "stockfish-19",
+      "agreement": true,
+      "case_sha256": "3a6273041320d614a9108ebb04c3a52dbe9bedfe4afb5afc1b7f97be1dd742a8",
+      "cleanup_error": null,
+      "error": null,
+      "index": 28,
+      "phase": "completed",
+      "position": "9rN6s"
+    },
+    {
+      "action": "e7g5",
+      "agent": "material-alpha-beta",
+      "agreement": true,
+      "case_sha256": "76652f897f5b9da1566cd577605660cc4efa985ece8d059e2d840a0486cb889a",
+      "cleanup_error": null,
+      "error": null,
+      "index": 29,
+      "phase": "completed",
+      "position": "9rN6s"
+    },
+    {
+      "action": "a8a3",
+      "agent": "random",
+      "agreement": false,
+      "case_sha256": "63285e7bd98e1ebebc35b0f8e4bf6ec7bde0f0f8ecfcc245bfd0b00d9e88f736",
+      "cleanup_error": null,
+      "error": null,
+      "index": 30,
+      "phase": "completed",
+      "position": "9rN6s"
+    },
+    {
+      "action": "g6e4",
+      "agent": "material-greedy",
+      "agreement": false,
+      "case_sha256": "2b43e401fc5db0c0ec094cd782448391bf57c39277fc719b93aa370f68c858c5",
+      "cleanup_error": null,
+      "error": null,
+      "index": 31,
+      "phase": "completed",
+      "position": "9rN6s"
+    },
+    {
+      "action": "d6c5",
+      "agent": "material-alpha-beta",
+      "agreement": false,
+      "case_sha256": "1db95cb1f9bb2112b22c2239762085293260a844cf2e75cf1e4ca5267223b8cd",
+      "cleanup_error": null,
+      "error": null,
+      "index": 32,
+      "phase": "completed",
+      "position": "kOC06"
+    },
+    {
+      "action": "g2g3",
+      "agent": "random",
+      "agreement": false,
+      "case_sha256": "9496cf2b3aa2e9c648cc2ab303e5ff6b05e0089a9c0ad8ca20d9d2cdd39a18d0",
+      "cleanup_error": null,
+      "error": null,
+      "index": 33,
+      "phase": "completed",
+      "position": "kOC06"
+    },
+    {
+      "action": "d6c5",
+      "agent": "material-greedy",
+      "agreement": false,
+      "case_sha256": "71c3de20d0f538e28178c40773a735b68f7cdc7076b9b0cf10dcd7121b72886b",
+      "cleanup_error": null,
+      "error": null,
+      "index": 34,
+      "phase": "completed",
+      "position": "kOC06"
+    },
+    {
+      "action": "e1e7",
+      "agent": "stockfish-19",
+      "agreement": true,
+      "case_sha256": "f5f6b30f9a629cc63524239ad9d242038a9bb682d987f3fd89f266f34f38c143",
+      "cleanup_error": null,
+      "error": null,
+      "index": 35,
+      "phase": "completed",
+      "position": "kOC06"
+    },
+    {
+      "action": "d7e5",
+      "agent": "random",
+      "agreement": false,
+      "case_sha256": "185441c0ab6a645e979d5876cb3196fcce809b4e11df2b0314553f7c866bc4cb",
+      "cleanup_error": null,
+      "error": null,
+      "index": 36,
+      "phase": "completed",
+      "position": "lMHG7"
+    },
+    {
+      "action": "f4f3",
+      "agent": "material-greedy",
+      "agreement": false,
+      "case_sha256": "26f65d0c1c3572501c4734dabda4f3d95b33e11e850f97e7acd01b292f248fd5",
+      "cleanup_error": null,
+      "error": null,
+      "index": 37,
+      "phase": "completed",
+      "position": "lMHG7"
+    },
+    {
+      "action": "f4g4",
+      "agent": "stockfish-19",
+      "agreement": true,
+      "case_sha256": "88ebe6e935be096c4f0b9debe5027968b9d13628e6da98fbe56a01e7bd147972",
+      "cleanup_error": null,
+      "error": null,
+      "index": 38,
+      "phase": "completed",
+      "position": "lMHG7"
+    },
+    {
+      "action": "f4g4",
+      "agent": "material-alpha-beta",
+      "agreement": true,
+      "case_sha256": "12bd2bbd5b35a5a3d225ed552074c2ead08054495da271197615519b8f51cb0c",
+      "cleanup_error": null,
+      "error": null,
+      "index": 39,
+      "phase": "completed",
+      "position": "lMHG7"
+    }
+  ],
+  "engines": {
+    "stockfish-19": {
+      "advertised_options": {
+        "Clear Hash": {
+          "default": null,
+          "max": null,
+          "min": null,
+          "type": "button",
+          "var": []
+        },
+        "Debug Log File": {
+          "default": "<empty>",
+          "max": null,
+          "min": null,
+          "type": "string",
+          "var": []
+        },
+        "EvalFile": {
+          "default": "nn-1a298aa575a0.nnue",
+          "max": null,
+          "min": null,
+          "type": "string",
+          "var": []
+        },
+        "Hash": {
+          "default": 16,
+          "max": 33554432,
+          "min": 1,
+          "type": "spin",
+          "var": []
+        },
+        "Move Overhead": {
+          "default": 10,
+          "max": 5000,
+          "min": 0,
+          "type": "spin",
+          "var": []
+        },
+        "MultiPV": {
+          "default": 1,
+          "max": 256,
+          "min": 1,
+          "type": "spin",
+          "var": []
+        },
+        "NumaPolicy": {
+          "default": "auto",
+          "max": null,
+          "min": null,
+          "type": "string",
+          "var": []
+        },
+        "Ponder": {
+          "default": false,
+          "max": null,
+          "min": null,
+          "type": "check",
+          "var": []
+        },
+        "Skill Level": {
+          "default": 20,
+          "max": 20,
+          "min": 0,
+          "type": "spin",
+          "var": []
+        },
+        "Syzygy50MoveRule": {
+          "default": true,
+          "max": null,
+          "min": null,
+          "type": "check",
+          "var": []
+        },
+        "SyzygyPath": {
+          "default": "<empty>",
+          "max": null,
+          "min": null,
+          "type": "string",
+          "var": []
+        },
+        "SyzygyProbeDepth": {
+          "default": 1,
+          "max": 100,
+          "min": 1,
+          "type": "spin",
+          "var": []
+        },
+        "SyzygyProbeLimit": {
+          "default": 7,
+          "max": 7,
+          "min": 0,
+          "type": "spin",
+          "var": []
+        },
+        "Threads": {
+          "default": 1,
+          "max": 1024,
+          "min": 1,
+          "type": "spin",
+          "var": []
+        },
+        "UCI_Chess960": {
+          "default": false,
+          "max": null,
+          "min": null,
+          "type": "check",
+          "var": []
+        },
+        "UCI_Elo": {
+          "default": 1320,
+          "max": 3190,
+          "min": 1320,
+          "type": "spin",
+          "var": []
+        },
+        "UCI_LimitStrength": {
+          "default": false,
+          "max": null,
+          "min": null,
+          "type": "check",
+          "var": []
+        },
+        "UCI_ShowWDL": {
+          "default": false,
+          "max": null,
+          "min": null,
+          "type": "check",
+          "var": []
+        },
+        "nodestime": {
+          "default": 0,
+          "max": 10000,
+          "min": 0,
+          "type": "spin",
+          "var": []
+        }
+      },
+      "assets": [],
+      "config": {
+        "assets": [],
+        "kind": "external_uci",
+        "options": {
+          "EvalFile": "nn-1a298aa575a0.nnue",
+          "Hash": 16,
+          "Skill Level": 20,
+          "SyzygyPath": "",
+          "Threads": 1,
+          "UCI_LimitStrength": false
+        },
+        "path": "artifacts/engines/stockfish-19/stockfish/stockfish-windows-x86-64-universal.exe",
+        "sha256": "45bc8e4969147db9c2eb533810637994619bff0eacc81ccfd9854394901bcbd0",
+        "timeout_seconds": 10.0
+      },
+      "executable": "C:\\Projects\\chess-bot\\artifacts\\engines\\stockfish-19\\stockfish\\stockfish-windows-x86-64-universal.exe",
+      "executable_sha256": "45bc8e4969147db9c2eb533810637994619bff0eacc81ccfd9854394901bcbd0",
+      "identity": {
+        "author": "the Stockfish developers (see AUTHORS file)",
+        "name": "Stockfish 19"
+      },
+      "managed_settings": {
+        "MultiPV": 1,
+        "Ponder": false,
+        "UCI_Chess960": false
+      },
+      "seed_policy": "caller RNG unused; engine-specific seed only via options"
+    }
+  },
+  "hardware": {
+    "cpu": {
+      "Name": "Intel(R) Core(TM) i7-10875H CPU @ 2.30GHz",
+      "NumberOfCores": 8,
+      "NumberOfLogicalProcessors": 16
+    },
+    "measured_at_utc": "2026-10-17T17:48:49.7051378Z",
+    "physical_memory_bytes": 16954482688,
+    "source": "Windows CIM measured on the comparison host"
+  },
+  "interpretation": "First-move source-solution agreement only. Development positions are observed; no held-out, Elo or population claim.",
+  "manifest": {
+    "agents": [
+      {
+        "agent": {
+          "capture_ordering": false,
+          "kind": "material_alpha_beta",
+          "quiescence_depth": 0,
+          "transposition_table": false
+        },
+        "name": "material-alpha-beta"
+      },
+      {
+        "agent": {
+          "kind": "random"
+        },
+        "name": "random"
+      },
+      {
+        "agent": {
+          "capture_ordering": false,
+          "kind": "material_greedy",
+          "quiescence_depth": 0,
+          "transposition_table": false
+        },
+        "name": "material-greedy"
+      },
+      {
+        "agent": {
+          "assets": [],
+          "kind": "external_uci",
+          "options": {
+            "EvalFile": "nn-1a298aa575a0.nnue",
+            "Hash": 16,
+            "Skill Level": 20,
+            "SyzygyPath": "",
+            "Threads": 1,
+            "UCI_LimitStrength": false
+          },
+          "path": "artifacts/engines/stockfish-19/stockfish/stockfish-windows-x86-64-universal.exe",
+          "sha256": "45bc8e4969147db9c2eb533810637994619bff0eacc81ccfd9854394901bcbd0",
+          "timeout_seconds": 10.0
+        },
+        "name": "stockfish-19"
+      }
+    ],
+    "budget": {
+      "kind": "milliseconds",
+      "value": 50
+    },
+    "dataset": {
+      "id": "lichess-development-first-10",
+      "positions": [
+        {
+          "expected_moves": [
+            "g5h7"
+          ],
+          "fen": "3r1k2/ppp2ppp/2n2q2/4p1N1/8/1P3Q2/PP3PPP/4R1K1 w - - 2 19",
+          "name": "TorkW"
+        },
+        {
+          "expected_moves": [
+            "g7g5"
+          ],
+          "fen": "4n3/6p1/5k2/2r5/p1b1BK1R/P6P/1P1R4/8 b - - 1 52",
+          "name": "wmUul"
+        },
+        {
+          "expected_moves": [
+            "e4c6"
+          ],
+          "fen": "r2qr3/p2b1pk1/1pn3pp/4p3/Q1PpB3/3P2P1/3NPP1P/RR4K1 w - - 0 17",
+          "name": "UcSun"
+        },
+        {
+          "expected_moves": [
+            "e6d6"
+          ],
+          "fen": "8/1pkn2pp/p3Q3/2p1P3/3p1r2/8/P1q2P1P/1R3RK1 w - - 0 24",
+          "name": "iSTcB"
+        },
+        {
+          "expected_moves": [
+            "b1c3"
+          ],
+          "fen": "4k2r/1ppn1pp1/1p5p/n3p3/2P5/3P2PP/qPQN1PK1/1N3R2 w k - 1 17",
+          "name": "1jSo1"
+        },
+        {
+          "expected_moves": [
+            "e4d6"
+          ],
+          "fen": "2r1k2r/1b3ppp/pb2p3/1p2q1B1/4N3/P1PB3P/1P2Q1P1/3R3K w k - 1 22",
+          "name": "3WsN5"
+        },
+        {
+          "expected_moves": [
+            "b4e1"
+          ],
+          "fen": "5r2/1p1b1Nk1/3p2p1/3Q3p/1qBP4/pP1R3P/P1P3P1/1K2R3 b - - 0 25",
+          "name": "LHG8e"
+        },
+        {
+          "expected_moves": [
+            "e7g5"
+          ],
+          "fen": "r5k1/1p1nb1pp/3p2b1/1N1Pp3/1n2P3/2N1K1P1/1P1B2BP/7R b - - 0 23",
+          "name": "9rN6s"
+        },
+        {
+          "expected_moves": [
+            "e1e7"
+          ],
+          "fen": "8/2r3kp/3Q1np1/2q5/8/2PP3P/5PP1/4R1K1 w - - 3 33",
+          "name": "kOC06"
+        },
+        {
+          "expected_moves": [
+            "f4g4"
+          ],
+          "fen": "rbb1k2r/pp1n1p2/2p1p3/1PPpP1p1/P2P1qP1/2N2N1p/1B2BP2/R2Q1RK1 b kq - 0 18",
+          "name": "lMHG7"
+        }
+      ],
+      "source": "First 10 positions in existing development.json, preparation lichess-reservoir-components-v1. Source CSV SHA-256 ec2dd1a8f9cbd139ebb4aee228f72e77f8e2a581a24d25f61f71e6cf306b10f8. CC0 Lichess puzzles. Previously observed pilot positions; not held-out or tuning evidence. One retained source-game group each; solver FEN after setup move.",
+      "split": "development",
+      "version": "767557215b8087b7f258c7fd4c7801145115349f84d82c22e74172fe8c8c8a1e"
+    },
+    "name": "shared-development-tactics-v1",
+    "question": "Can internal baselines and a pinned external engine be compared on identical development tactical positions with explicit budgets and reliable failure accounting?",
+    "schema_version": 1,
+    "seeds": [
+      20261017
+    ]
+  },
+  "metadata": {
+    "active_case": null,
+    "dependency_lock_error": null,
+    "dependency_lock_sha256": "569ca4796c7aebfc828e83f29a7ad76cd1b29242f7599d2dc0aeae3875db749e",
+    "dependency_versions": {
+      "chess": "1.11.2",
+      "chess-ai-lab": "0.1.0",
+      "python-chess": "1.999"
+    },
+    "error": null,
+    "manifest_digest": "880817d1d06f49a37b3a7dfbb162a105abbb7a29f8cd30ecddf6be75c22a24f4",
+    "provenance": {
+      "config_digest": "880817d1d06f49a37b3a7dfbb162a105abbb7a29f8cd30ecddf6be75c22a24f4",
+      "git_commit": "3c5cf263795bd8b38024cc0098ed5a63807bd408",
+      "git_dirty": true,
+      "git_error": null,
+      "machine": "AMD64",
+      "platform": "Windows-11-10.0.26200-SP0",
+      "processor": "Intel64 Family 6 Model 165 Stepping 2, GenuineIntel",
+      "python_version": "3.12.14",
+      "started_at": "2026-10-17T17:47:19.035029+00:00"
+    },
+    "run_id": "shared-development-tactics-v1",
+    "runs_planned": 40,
+    "runs_written": 40,
+    "schema_version": 1,
+    "source_sha256": {
+      "pyproject.toml": "6512acb27bdbaa39855f678a71c979155f2ea7dedc41721ee9d68f37dd2dcce6",
+      "src/chesslab/__init__.py": "c0cfb2e60d75ff7ae8db240756999e5782aab5c7b5f7b55b400a3abb98f872a2",
+      "src/chesslab/agents/__init__.py": "2fce4ffcf2a2fb711d30e5e55e8041c18269f200bd8cf0d441063e13d32e39df",
+      "src/chesslab/agents/external_uci.py": "9e9f7d6d0346ac769cc0fbe5276d32e19b2152cb547a848c6fe278ae1753abaf",
+      "src/chesslab/agents/material_alpha_beta.py": "33b160f9cba0cd7f4f9e631ff87d8a5656a9069eed1a8024bb9bd31356bcd8b2",
+      "src/chesslab/agents/material_greedy.py": "6b5c00a449f6f5c4c25034950f0c3285e495c0eaafddb00ef9ca63bb15bed3e0",
+      "src/chesslab/agents/protocols.py": "49550eac7a56b90ec8e6cb19670b4be009683854f8daa84f2adcd0db9efb36b0",
+      "src/chesslab/agents/random_agent.py": "09c06d6f7344ef32f9601c7ecc7983fabc75a318afb7542b032a3a65b6d78665",
+      "src/chesslab/benchmark.py": "b540e04bd39876204bbdb4a9a1fe7f3d36ae1d0c7965352dbccbf9da2da53630",
+      "src/chesslab/compare_tactics.py": "d1f38b0268c3372139c8a58442fd08105ae47d890aab34042621ffebf4b6592c",
+      "src/chesslab/config.py": "0c401a9d3f6ffbf41d5658179a223f93801a91658f67e5a01f96dc7b1daab8c7",
+      "src/chesslab/engine/__init__.py": "2cbdf4891622e71467f2eaa6160f6865f2da60f8a3d404beee544180189bdccf",
+      "src/chesslab/engine/evaluation/__init__.py": "fa055b3871a862530314490257b8a742959cbb664fa5385bc40591cf7e64721c",
+      "src/chesslab/engine/evaluation/material.py": "854b28ac0b11de8984a79fadc4a73b253e18b22ce241f308ceb3536888cfd298",
+      "src/chesslab/eval/__init__.py": "436a49929c6cd7b4a8b0aaf5c42d8b24b25a3e855225fd3e69e79151a4091717",
+      "src/chesslab/eval/artifacts.py": "6779c1b7aaa7ea93c288d29654ba51c9c89a42c98e129ce2e75ad3f7ffced01f",
+      "src/chesslab/eval/benchmarks.py": "2673d6db33ad9aa8a9b0e1ec902d2e7961b457dfa340b761ff5333fa5aa10110",
+      "src/chesslab/eval/matches.py": "76b6227af37881850ad31942f56093a195f58b913e2347c3beda4be461781bdd",
+      "src/chesslab/experiment.py": "6993f87c8cb0e4b1619b13a3f0578bccc1bda320bdd311487791e6f9d58c6e40",
+      "src/chesslab/games/__init__.py": "b39c1ce492d0d371704784ba37f7008f62ad758944e49967dc8fd70ed922f965",
+      "src/chesslab/games/chess/__init__.py": "3efd7e60529fb69774d3aa2e7ceb07dff9e7c6c84b52d276accfba1d7da2c7c3",
+      "src/chesslab/games/chess/perft.py": "e00fd81e8fd0fedb43026e8aa1ba67c3ccb811183f9e573bf0275df0ffaf010f",
+      "src/chesslab/games/chess/state.py": "2fa3dd7e03aaa4582d6bf8652c5eeb77198a63866e69996a10d30f3b287077f3",
+      "src/chesslab/games/protocols.py": "1e07a405425b910bed192a20a576599bc5f7f555cd258e6e2db9c24f043b0c24",
+      "src/chesslab/match_suite.py": "11d389d591d37d8cf1dffc3295aadfc9697b2c943fa6ad445b92e321e592f308",
+      "src/chesslab/puzzles.py": "967bf7aedfaf3bbb7a2912414e73cd7b49e2edd0f61ee736d0726fd51d34bb4b",
+      "src/chesslab/search/__init__.py": "3f18516382ae8799fe6a9b8af2f3dd83b325ee0943ef6672e33907e4ed29c77e",
+      "src/chesslab/search/budgets.py": "3d1034a973a1d66dffb17c88e691c8d614df7ca1152aa7775b15f4d3d124d0c8",
+      "src/chesslab/search/classical/__init__.py": "e60dd82476ade92358c23fe1a893e01e5d8a802790510349644a55bf542e5843",
+      "src/chesslab/search/classical/minimax.py": "f3a451321742cb7ba58dd594a902d23a28ccbf4c3e6f4d98f5850ced31b1fb7c",
+      "src/chesslab/search/results.py": "7b1cd8b396a1b790be564c6a018494fed1fcd5c8b39063b33157b4a6da0c4e19",
+      "src/chesslab/tactical.py": "137ef311f3f7259035866146221543633b201f66c73aa8d031924cc6259474a0",
+      "src/chesslab/uci.py": "42d8c526f5690203dba67d52efc767aa2244afe8ef173abda2e3234107e91a9d",
+      "uv.lock": "569ca4796c7aebfc828e83f29a7ad76cd1b29242f7599d2dc0aeae3875db749e"
+    },
+    "status": "completed"
+  },
+  "summary": {
+    "agents": [
+      {
+        "accepted_first_moves": 6,
+        "agent": "material-alpha-beta",
+        "agreement_fraction_completed": 0.6,
+        "agreement_fraction_planned": 0.6,
+        "completed": 10,
+        "decision_seconds_median": 0.05007180000029621,
+        "decision_seconds_total": 0.5006499999944936,
+        "failed": 0,
+        "interrupted": 0,
+        "missing": 0,
+        "planned": 10,
+        "setup_seconds_total": 0.0007982999995874707
+      },
+      {
+        "accepted_first_moves": 0,
+        "agent": "random",
+        "agreement_fraction_completed": 0.0,
+        "agreement_fraction_planned": 0.0,
+        "completed": 10,
+        "decision_seconds_median": 9.210000098391902e-05,
+        "decision_seconds_total": 0.0010371000025770627,
+        "failed": 0,
+        "interrupted": 0,
+        "missing": 0,
+        "planned": 10,
+        "setup_seconds_total": 0.0007651000050827861
+      },
+      {
+        "accepted_first_moves": 2,
+        "agent": "material-greedy",
+        "agreement_fraction_completed": 0.2,
+        "agreement_fraction_planned": 0.2,
+        "completed": 10,
+        "decision_seconds_median": 0.0021891999986110022,
+        "decision_seconds_total": 0.021796999993966892,
+        "failed": 0,
+        "interrupted": 0,
+        "missing": 0,
+        "planned": 10,
+        "setup_seconds_total": 0.0007043000005069189
+      },
+      {
+        "accepted_first_moves": 10,
+        "agent": "stockfish-19",
+        "agreement_fraction_completed": 1.0,
+        "agreement_fraction_planned": 1.0,
+        "completed": 10,
+        "decision_seconds_median": 0.05578290000084962,
+        "decision_seconds_total": 0.4698965000025055,
+        "failed": 0,
+        "interrupted": 0,
+        "missing": 0,
+        "planned": 10,
+        "setup_seconds_total": 4.928616999994119
+      }
+    ],
+    "cleanup_failures": 0,
+    "failed": 0,
+    "interrupted": 0,
+    "manifest_digest": "880817d1d06f49a37b3a7dfbb162a105abbb7a29f8cd30ecddf6be75c22a24f4",
+    "missing": 0,
+    "paired_with_first_agent": [
+      {
+        "candidate": "random",
+        "candidate_only_agreement": 0,
+        "complete_pairs": 10,
+        "incomplete_pairs": 0,
+        "reference": "material-alpha-beta",
+        "reference_only_agreement": 6
+      },
+      {
+        "candidate": "material-greedy",
+        "candidate_only_agreement": 1,
+        "complete_pairs": 10,
+        "incomplete_pairs": 0,
+        "reference": "material-alpha-beta",
+        "reference_only_agreement": 5
+      },
+      {
+        "candidate": "stockfish-19",
+        "candidate_only_agreement": 4,
+        "complete_pairs": 10,
+        "incomplete_pairs": 0,
+        "reference": "material-alpha-beta",
+        "reference_only_agreement": 0
+      }
+    ],
+    "planned": 40,
+    "recorded": 40
+  }
+}

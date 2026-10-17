@@ -132,8 +132,13 @@ and external UCI match integration are implemented and verified. A local four-ga
 colour-paired smoke comparison against Stockfish 19 completed with four Stockfish
 wins and no final-run failures; this does not establish Elo. See the
 [measured summary](experiments/summaries/external-stockfish19-20261017.md) and
-[external opponent guide](docs/external-opponents.md). Next, add shared fresh
-tactical comparisons and one learned bot, then other methods in manageable stages. The precise research question is still developing.
+[external opponent guide](docs/external-opponents.md). Shared internal/external
+tactical evaluation is also working: a ten-position development smoke measured
+6/10 accepted first moves for plain alpha-beta and 10/10 for Stockfish, without
+failures. These observed development inputs support no held-out accuracy claim.
+See the [shared tactics report](experiments/summaries/shared-development-tactics-20261017.md).
+The next decision is the first learned method; see the
+[bounded options](docs/research/first-learned-bot-decision.md). The precise research question is still developing.
 No learning method has been implemented yet. I will keep the first result frozen
 and use fresh confirmatory positions for later comparisons.
 

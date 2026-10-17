@@ -93,5 +93,6 @@ pipeline, model dependency, data purchase or API spending is introduced here.
 
 The original 200-position held-out tactical study remains frozen and observed;
 it must not become tuning data. Its fixed-node results are not directly
-comparable with a timed external-engine game. A shared fresh tactical comparison
-with external agents is still a separate task.
+comparable with a timed external-engine game. Shared tactical evaluation is now implemented; see
+[tactical comparisons](tactical-comparisons.md). Its development smoke uses
+previously observed positions; fresh confirmatory inputs are still needed.

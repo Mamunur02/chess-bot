@@ -174,6 +174,22 @@ def test_configuration_and_cleanup_failures_retained(
     assert "quit hung" in str(agent.metadata["cleanup_error"])
 
 
+def test_prepare_is_idempotent_and_keeps_engine_for_decision(
+    config: UciConfig,
+    engine: FakeEngine,
+) -> None:
+    agent = ExternalUciAgent(config)
+    agent.prepare()
+    original = agent.engine
+    agent.prepare()
+    assert agent.engine is original
+    assert "startup_seconds" in agent.metadata
+    agent.select_action(ChessState(), DepthBudget(1), random.Random(0))
+    assert len(agent.decisions) == 1
+    agent.close()
+    assert engine.close_calls == 1
+
+
 def test_hash_mismatch_prevents_process_launch(
     config: UciConfig, engine: FakeEngine
 ) -> None:

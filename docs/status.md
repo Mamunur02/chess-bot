@@ -4,6 +4,24 @@ Last updated: 2026-10-17
 
 ## Current milestone
 
+Milestone 19 complete: one shared tactical runner now evaluates internal and
+external agents under the same explicit budget and labelled inputs. It reuses
+agent settings, separates setup from decision time, rotates agent order, records
+failures/interruption/missing pairs and audits raw results/source/engine pins.
+A development-only smoke completed 40/40 searches on ten previously observed
+positions: plain alpha-beta 6/10, random 0/10, greedy 2/10, Stockfish 19 10/10
+accepted first moves; zero search or cleanup failures. No held-out/Elo claim.
+See `docs/tactical-comparisons.md` and
+`experiments/summaries/shared-development-tactics-20261017.md`.
+
+Verification: 248 tests passed; Ruff and mypy src/src-tests passed. No dependency
+was added. Frozen study artifacts/protocol remain untouched. The next work needs
+the user's first learning-method choice, with bounded options in
+`docs/research/first-learned-bot-decision.md`; no training/data pipeline was started.
+Commit/push remains explicitly authorized.
+
+### Preserved milestone 18 history
+
 Milestone 18 complete: external UCI opponents integrated into colour-paired
 matches, with binary pins, full board history, lifecycle/watchdog handling,
 failure records, timings and source/version metadata. No dependency was added.
@@ -255,9 +273,9 @@ No held-out accuracy, Elo, or strength improvement is claimed.
 
 ## Planned, not implemented
 
-- Shared fresh tactical comparisons including external agents, followed by one
-  learned bot with explicit objectives, data splits and resource settings.
-  External UCI matches are implemented; learned/RL/self-play/LLM pipelines are not.
+- One learned bot after the user chooses its objective/method and data/resource
+  settings. Shared internal/external tactics and UCI matches are implemented.
+  Learned/RL/self-play/LLM training pipelines remain unimplemented.
 - Richer quiescence policies such as check generation, delta pruning, or
   selective-depth adaptation.
 - Learned models, MCTS experiments, datasets, interfaces, and deployment.
@@ -302,8 +320,10 @@ make practical comparisons work now and add methods progressively; do not demand
 a fixed ML question before shared setup. The external UCI opponent bridge and
 first ordinary-game colour-paired smoke
 comparison are now complete. Match configs accept internal or pinned external
-agents. Next add shared fresh tactical comparison inputs, then choose one learned
-method and its objective/data/splits before implementing training.
+agents. Shared tactical comparison is also implemented and smoke-tested on
+observed development inputs. Now obtain the user's first learned-method choice
+and agree objective/data/splits before starting training. A fresh confirmatory
+evaluation set is still required before any tuned/learned study.
 Do not build every training pipeline upfront or continue optimisation by default.
 Do not repeat the original tactical-vs-Elo choice. A later confirmatory study
 must use fresh held-out positions; the original test set is now observed.

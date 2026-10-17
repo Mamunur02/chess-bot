@@ -1,0 +1,131 @@
+{
+  "schema_version": 1,
+  "name": "shared-development-tactics-v1",
+  "question": "Can internal baselines and a pinned external engine be compared on identical development tactical positions with explicit budgets and reliable failure accounting?",
+  "dataset": {
+    "id": "lichess-development-first-10",
+    "version": "767557215b8087b7f258c7fd4c7801145115349f84d82c22e74172fe8c8c8a1e",
+    "source": "First 10 positions in existing development.json, preparation lichess-reservoir-components-v1. Source CSV SHA-256 ec2dd1a8f9cbd139ebb4aee228f72e77f8e2a581a24d25f61f71e6cf306b10f8. CC0 Lichess puzzles. Previously observed pilot positions; not held-out or tuning evidence. One retained source-game group each; solver FEN after setup move.",
+    "split": "development",
+    "positions": [
+      {
+        "name": "TorkW",
+        "fen": "3r1k2/ppp2ppp/2n2q2/4p1N1/8/1P3Q2/PP3PPP/4R1K1 w - - 2 19",
+        "expected_moves": [
+          "g5h7"
+        ]
+      },
+      {
+        "name": "wmUul",
+        "fen": "4n3/6p1/5k2/2r5/p1b1BK1R/P6P/1P1R4/8 b - - 1 52",
+        "expected_moves": [
+          "g7g5"
+        ]
+      },
+      {
+        "name": "UcSun",
+        "fen": "r2qr3/p2b1pk1/1pn3pp/4p3/Q1PpB3/3P2P1/3NPP1P/RR4K1 w - - 0 17",
+        "expected_moves": [
+          "e4c6"
+        ]
+      },
+      {
+        "name": "iSTcB",
+        "fen": "8/1pkn2pp/p3Q3/2p1P3/3p1r2/8/P1q2P1P/1R3RK1 w - - 0 24",
+        "expected_moves": [
+          "e6d6"
+        ]
+      },
+      {
+        "name": "1jSo1",
+        "fen": "4k2r/1ppn1pp1/1p5p/n3p3/2P5/3P2PP/qPQN1PK1/1N3R2 w k - 1 17",
+        "expected_moves": [
+          "b1c3"
+        ]
+      },
+      {
+        "name": "3WsN5",
+        "fen": "2r1k2r/1b3ppp/pb2p3/1p2q1B1/4N3/P1PB3P/1P2Q1P1/3R3K w k - 1 22",
+        "expected_moves": [
+          "e4d6"
+        ]
+      },
+      {
+        "name": "LHG8e",
+        "fen": "5r2/1p1b1Nk1/3p2p1/3Q3p/1qBP4/pP1R3P/P1P3P1/1K2R3 b - - 0 25",
+        "expected_moves": [
+          "b4e1"
+        ]
+      },
+      {
+        "name": "9rN6s",
+        "fen": "r5k1/1p1nb1pp/3p2b1/1N1Pp3/1n2P3/2N1K1P1/1P1B2BP/7R b - - 0 23",
+        "expected_moves": [
+          "e7g5"
+        ]
+      },
+      {
+        "name": "kOC06",
+        "fen": "8/2r3kp/3Q1np1/2q5/8/2PP3P/5PP1/4R1K1 w - - 3 33",
+        "expected_moves": [
+          "e1e7"
+        ]
+      },
+      {
+        "name": "lMHG7",
+        "fen": "rbb1k2r/pp1n1p2/2p1p3/1PPpP1p1/P2P1qP1/2N2N1p/1B2BP2/R2Q1RK1 b kq - 0 18",
+        "expected_moves": [
+          "f4g4"
+        ]
+      }
+    ]
+  },
+  "agents": [
+    {
+      "name": "material-alpha-beta",
+      "agent": {
+        "kind": "material_alpha_beta",
+        "capture_ordering": false,
+        "transposition_table": false,
+        "quiescence_depth": 0
+      }
+    },
+    {
+      "name": "random",
+      "agent": {
+        "kind": "random"
+      }
+    },
+    {
+      "name": "material-greedy",
+      "agent": {
+        "kind": "material_greedy"
+      }
+    },
+    {
+      "name": "stockfish-19",
+      "agent": {
+        "kind": "external_uci",
+        "path": "artifacts/engines/stockfish-19/stockfish/stockfish-windows-x86-64-universal.exe",
+        "sha256": "45bc8e4969147db9c2eb533810637994619bff0eacc81ccfd9854394901bcbd0",
+        "options": {
+          "Threads": 1,
+          "Hash": 16,
+          "Skill Level": 20,
+          "UCI_LimitStrength": false,
+          "SyzygyPath": "",
+          "EvalFile": "nn-1a298aa575a0.nnue"
+        },
+        "timeout_seconds": 10,
+        "assets": []
+      }
+    }
+  ],
+  "seeds": [
+    20261017
+  ],
+  "budget": {
+    "kind": "milliseconds",
+    "value": 50
+  }
+}

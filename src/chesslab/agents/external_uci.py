@@ -180,6 +180,20 @@ class ExternalUciAgent:
         self.metadata["status"] = "ready"
         return engine
 
+    def prepare(self) -> None:
+        """Start/configure before timing a decision; close on startup failure."""
+        if self.closed:
+            raise RuntimeError("UCI agent is closed")
+        if self.engine is None:
+            try:
+                self._start()
+            except BaseException as error:
+                self.metadata.update(
+                    {"status": "failed", "error": f"{type(error).__name__}: {error}"}
+                )
+                self.close()
+                raise
+
     def select_action(
         self,
         state: GameState[chess.Move],

@@ -22,8 +22,8 @@ from scratch within one week.
 | Component | Actual state | Relevant next work |
 | --- | --- | --- |
 | Own bot | Random, material-greedy and material alpha-beta agents implemented | Use these as working bots and simple controls |
-| Evaluation | Tactical first-move agreement, runtime/node diagnostics and internal colour-paired matches implemented | Reuse them for comparisons; retain failure denominators |
-| External opponents | UCI server plus pinned external UCI agents in match suites, with lifecycle/failure/provenance records | Extend shared tactical evaluation to external agents |
+| Evaluation | Shared internal/external tactical first-move agreement, runtime/node diagnostics and colour-paired matches implemented | Add the chosen learned method; retain failure denominators |
+| External opponents | UCI server plus pinned external UCI agents in matches and tactical comparisons, with lifecycle/failure/provenance records | Use the same bridge for a compatible learned comparator if chosen |
 | Evaluation data | Versioned 50/50/200 Lichess puzzle splits; 200-position test already evaluated | Preserve original result; use fresh test data for later tuned comparisons |
 | Ordinary-game comparison starts | Two versioned development opening starts; completed four-game colour-paired Stockfish 19 smoke | Broaden starts before making strength claims |
 | Learning data | No human-game policy dataset, engine-labelled value dataset or replay/training pipeline prepared | Prepare the appropriate small dataset when a first learned method is chosen |
@@ -31,13 +31,12 @@ from scratch within one week.
 
 ## Immediate implementation sequence
 
-1. Connect external UCI opponents to the current match/evaluation workflow. A
-   locally pinned Stockfish binary is a proposed first reference, not an already
-   installed/adopted opponent. `python-chess` already provides the UCI client API;
+1. Completed: connect external UCI opponents to the match/evaluation workflow.
+   Stockfish 19 is now locally pinned and used as the first existing reference. `python-chess` already provides the UCI client API;
    no universal agent framework is needed. Preserve board history, clean up
    subprocesses, record engine identity/binary/network versions/options and test
    failures with mocked engines. Keep default tests binary/network independent.
-2. Run a small smoke comparison of the existing bot with that reference, using
+2. Completed: run a small smoke comparison of the existing bot with that reference, using
    explicit settings and colour-swapped starts. Then produce one understandable
    comparison table: game outcomes, tactical agreement, decision runtime,
    compute settings and failures. Do not infer a calibrated Elo from a few games.
@@ -94,3 +93,8 @@ are complete. See `../external-opponents.md` and the measured external-engine
 summary. External tactical agreement and learned training remain future work.
 The current user explicitly authorized committing and pushing reviewed work;
 that supersedes the earlier no-commit instruction in this historical scope note.
+
+Implementation update for milestone 19: shared internal/external tactical
+evaluation is now implemented and a 40-case development smoke is complete.
+The ten inputs were already observed; fresh confirmatory data remain necessary.
+The remaining method decision is documented in `first-learned-bot-decision.md`.
