@@ -1,0 +1,48 @@
+{
+  "schema_version": 1,
+  "name": "linear-v1-material-matches",
+  "question": "Can our first frozen learned evaluator play reliably against the unchanged material baseline under matched time budgets?",
+  "dataset": {
+    "id": "handselected-openings",
+    "version": "1",
+    "source": "Handselected SAN lines: 1.e4 e5 2.Nf3 Nc6 3.Bb5 a6 4.Ba4 Nf6; 1.d4 d5 2.c4 e6 3.Nc3 Nf6 4.Nf3 Be7. FEN starts, no pre-start repetition history. Development smoke only.",
+    "split": "development",
+    "positions": [
+      {
+        "name": "open-game",
+        "fen": "r1bqkb1r/1ppp1ppp/p1n2n2/4p3/B3P3/5N2/PPPP1PPP/RNBQK2R w KQkq - 2 5"
+      },
+      {
+        "name": "queens-gambit",
+        "fen": "rnbqk2r/ppp1bppp/4pn2/3p4/2PP4/2N2N2/PP2PPPP/R1BQKB1R w KQkq - 4 5"
+      }
+    ]
+  },
+  "agents": [
+    {
+      "name": "material-alpha-beta",
+      "agent": {
+        "kind": "material_alpha_beta",
+        "capture_ordering": false,
+        "transposition_table": false,
+        "quiescence_depth": 0
+      }
+    },
+    {
+      "name": "linear-v1",
+      "agent": {
+        "kind": "linear_alpha_beta",
+        "path": "artifacts/linear-evaluator-model-v1/model.json",
+        "sha256": "93adbed58f5b19e4835d37526cb7218b51a707c60286e2635944afa3b1475b3e"
+      }
+    }
+  ],
+  "seeds": [
+    17
+  ],
+  "budget": {
+    "kind": "milliseconds",
+    "value": 50
+  },
+  "max_plies": 160
+}

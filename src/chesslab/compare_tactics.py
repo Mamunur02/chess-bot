@@ -181,8 +181,8 @@ def run_case(
     budget: SearchBudget,
 ) -> TacticalCase:
     """Prepare outside the decision timer; fresh process/cache for every case."""
-    agent = config.build()
     setup_start = perf_counter()
+    agent = None
     setup_seconds = 0.0
     elapsed = None
     action = None
@@ -192,6 +192,7 @@ def run_case(
     diagnostics: dict[str, object] = {}
     engine: dict[str, object] = {}
     try:
+        agent = config.build()
         state = ChessState.from_fen(position.fen)
         if isinstance(agent, ExternalUciAgent):
             agent.prepare()

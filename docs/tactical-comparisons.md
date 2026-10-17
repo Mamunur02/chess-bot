@@ -36,8 +36,9 @@ history. Harness RNG seeds do not seed engines implicitly.
 `setup_seconds` covers state preparation plus external process startup, executable
 hashing, configuration and ready handshake. The separate decision wall timer
 covers `select_action`, including protocol/first-search overhead. Shutdown is
-excluded and errors retained. `setup_seconds` does not cover configuration object
-construction. Limits remain cooperative and machines/load affect timings.
+excluded and errors retained. Setup also covers agent construction and learned
+checkpoint loading/hash validation. Limits remain cooperative and machines/load
+affect timings.
 Random and greedy accept but ignore search budgets; their small runtimes do not
 represent equal-compute searched agents. Engine node/depth metrics are diagnostic
 and cannot be treated as equal work across implementations.

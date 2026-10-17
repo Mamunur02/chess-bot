@@ -4,6 +4,34 @@ Last updated: 2026-10-17
 
 ## Current milestone
 
+Milestone 20 complete: our own supervised linear evaluator is trained and usable
+through plain alpha-beta, shared tactics/matches and the UCI server. Ordinary
+Python handles inference; NumPy 2.5.4 was used only in an existing isolated
+training environment. No production dependency or lockfile changed.
+
+The grouped rollout pilot produced 512/128/128 labelled train/validation/test
+positions from 64/16/16 trajectories, with old evaluation identities excluded.
+Validation selected lambda 0.1 before a separate new-test assessment. New-test
+RMSE was 373.90 cp learned versus 389.20 material; MAE was slightly worse
+(283.52 versus 282.48). Observed development tactics: learned 5/10 versus material
+6/10 at both 1,000 nodes and 50 ms. Four learned-vs-material games yielded one
+learned win, one draw and two ply-limit interruptions, with no complete pairs.
+Stockfish won all four additional learned-vs-reference smoke games. No Elo or
+playing-strength improvement is inferred. The first label attempt's 117 bound
+failures and the before-fit label-policy amendment are preserved and disclosed.
+See `docs/learned-evaluator.md` and
+`experiments/summaries/linear-evaluator-pilot-v1.md` for provenance and limitations.
+
+Verification: 273 tests passed; Ruff and mypy src/src-tests passed; NumPy analytic
+ridge self-test and independent pilot audit passed. Original tactical report
+files remain byte-identical. Raw datasets/checkpoints/engines stay ignored.
+The user selected option 1 and commit/push authorization remains active. The next
+meaningful input is the next training-data source: bounded public human games
+or engine-guided generated trajectories, with a new sealed test set before tuning.
+This pilot model and both observed test sets must remain fixed.
+
+### Preserved milestone 19 history
+
 Milestone 19 complete: one shared tactical runner now evaluates internal and
 external agents under the same explicit budget and labelled inputs. It reuses
 agent settings, separates setup from decision time, rotates agent order, records
@@ -273,9 +301,9 @@ No held-out accuracy, Elo, or strength improvement is claimed.
 
 ## Planned, not implemented
 
-- One learned bot after the user chooses its objective/method and data/resource
-  settings. Shared internal/external tactics and UCI matches are implemented.
-  Learned/RL/self-play/LLM training pipelines remain unimplemented.
+- A more representative next training-data version after source selection, using
+  fresh source-group splits and a new sealed test set. The first supervised linear
+  evaluator is implemented; neural/RL/self-play/LLM pipelines remain unimplemented.
 - Richer quiescence policies such as check generation, delta pruning, or
   selective-depth adaptation.
 - Learned models, MCTS experiments, datasets, interfaces, and deployment.
@@ -321,9 +349,10 @@ a fixed ML question before shared setup. The external UCI opponent bridge and
 first ordinary-game colour-paired smoke
 comparison are now complete. Match configs accept internal or pinned external
 agents. Shared tactical comparison is also implemented and smoke-tested on
-observed development inputs. Now obtain the user's first learned-method choice
-and agree objective/data/splits before starting training. A fresh confirmatory
-evaluation set is still required before any tuned/learned study.
+observed development inputs. The user then chose the supervised evaluator;
+the first grouped-data linear pilot is complete. Preserve its checkpoint,
+selection/test results and failures. Next choose a new training-data source,
+freeze fresh splits/evaluation inputs and do not tune on either observed test set.
 Do not build every training pipeline upfront or continue optimisation by default.
 Do not repeat the original tactical-vs-Elo choice. A later confirmatory study
 must use fresh held-out positions; the original test set is now observed.

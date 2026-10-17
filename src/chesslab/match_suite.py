@@ -13,6 +13,7 @@ import chess
 
 from chesslab.agents import Agent, RandomAgent
 from chesslab.agents.external_uci import ExternalUciAgent, UciConfig, file_sha256
+from chesslab.agents.linear_alpha_beta import LinearAgentConfig
 from chesslab.benchmark import (
     benchmark_agent_config_from_dict,
     search_budget_from_dict,
@@ -46,8 +47,11 @@ class MatchAgentConfig:
     name: str
     search: BenchmarkAgentConfig | None = None
     external: UciConfig | None = None
+    learned: LinearAgentConfig | None = None
 
     def build(self) -> Agent[GameState[chess.Move], chess.Move]:
+        if self.learned is not None:
+            return self.learned.build()
         if self.external is not None:
             return ExternalUciAgent(self.external)
         return RandomAgent[chess.Move]() if self.search is None else self.search.build()
@@ -56,7 +60,9 @@ class MatchAgentConfig:
         return {
             "name": self.name,
             "agent": (
-                self.external.to_dict()
+                self.learned.to_dict()
+                if self.learned is not None
+                else self.external.to_dict()
                 if self.external is not None
                 else {"kind": "random"}
                 if self.search is None
@@ -72,7 +78,11 @@ def match_agent_config_from_dict(value: object) -> MatchAgentConfig:
     agent_name = nonempty_string(entry.get("name"), "agent.name")
     settings = json_object(entry.get("agent"), "agent")
     external = None
-    if settings.get("kind") == "external_uci":
+    learned = None
+    if settings.get("kind") == "linear_alpha_beta":
+        learned = LinearAgentConfig.from_dict(settings)
+        search = None
+    elif settings.get("kind") == "external_uci":
         external = UciConfig.from_dict(settings)
         search = None
     elif settings.get("kind") == "random":
@@ -85,7 +95,7 @@ def match_agent_config_from_dict(value: object) -> MatchAgentConfig:
             "material agent",
         )
         search = benchmark_agent_config_from_dict(settings)
-    return MatchAgentConfig(agent_name, search, external)
+    return MatchAgentConfig(agent_name, search, external, learned)
 
 
 @dataclass(frozen=True, slots=True)
@@ -363,7 +373,10 @@ def run_match_suite(
         repository, output.name, spec.digest, spec.games_planned
     )
     external_suite = any(agent.external is not None for agent in spec.agents)
-    if external_suite:
+    collect_diagnostics = external_suite or any(
+        agent.learned is not None for agent in spec.agents
+    )
+    if collect_diagnostics:
         # Dirty-tree runs remain reconstructable after subsequent source edits.
         source = repository / "src"
         shutil.copytree(
@@ -407,7 +420,7 @@ def run_match_suite(
                     agents = (white.build(), black.build())
                     engines: dict[str, object] = {}
                     try:
-                        timing = {"collect_timing": True} if external_suite else {}
+                        timing = {"collect_timing": True} if collect_diagnostics else {}
                         result = run_match(
                             ChessState.from_fen(position.fen),
                             agents,

@@ -1,0 +1,57 @@
+{
+  "schema_version": 1,
+  "name": "linear-v1-stockfish-matches",
+  "question": "Additional practical integration smoke after the learned checkpoint froze; no model selection, Elo or confirmatory-strength claim.",
+  "dataset": {
+    "id": "handselected-openings",
+    "version": "1",
+    "source": "Handselected SAN lines: 1.e4 e5 2.Nf3 Nc6 3.Bb5 a6 4.Ba4 Nf6; 1.d4 d5 2.c4 e6 3.Nc3 Nf6 4.Nf3 Be7. FEN starts, no pre-start repetition history. Development smoke only.",
+    "split": "development",
+    "positions": [
+      {
+        "name": "open-game",
+        "fen": "r1bqkb1r/1ppp1ppp/p1n2n2/4p3/B3P3/5N2/PPPP1PPP/RNBQK2R w KQkq - 2 5"
+      },
+      {
+        "name": "queens-gambit",
+        "fen": "rnbqk2r/ppp1bppp/4pn2/3p4/2PP4/2N2N2/PP2PPPP/R1BQKB1R w KQkq - 4 5"
+      }
+    ]
+  },
+  "agents": [
+    {
+      "name": "linear-v1",
+      "agent": {
+        "kind": "linear_alpha_beta",
+        "path": "artifacts/linear-evaluator-model-v1/model.json",
+        "sha256": "93adbed58f5b19e4835d37526cb7218b51a707c60286e2635944afa3b1475b3e"
+      }
+    },
+    {
+      "name": "stockfish-19",
+      "agent": {
+        "kind": "external_uci",
+        "path": "artifacts/engines/stockfish-19/stockfish/stockfish-windows-x86-64-universal.exe",
+        "sha256": "45bc8e4969147db9c2eb533810637994619bff0eacc81ccfd9854394901bcbd0",
+        "options": {
+          "Threads": 1,
+          "Hash": 16,
+          "Skill Level": 20,
+          "UCI_LimitStrength": false,
+          "SyzygyPath": "",
+          "EvalFile": "nn-1a298aa575a0.nnue"
+        },
+        "timeout_seconds": 10,
+        "assets": []
+      }
+    }
+  ],
+  "seeds": [
+    17
+  ],
+  "budget": {
+    "kind": "milliseconds",
+    "value": 50
+  },
+  "max_plies": 160
+}

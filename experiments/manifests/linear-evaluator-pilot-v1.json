@@ -1,0 +1,63 @@
+{
+  "schema_version": 1,
+  "seed": 20261018,
+  "groups": {
+    "train": 64,
+    "validation": 16,
+    "test": 16
+  },
+  "sample_plies": [
+    12,
+    20,
+    28,
+    36,
+    44,
+    52,
+    60,
+    68
+  ],
+  "max_plies": 80,
+  "max_attempts": 1000,
+  "label_nodes": 2000,
+  "clip_cp": 2000,
+  "max_label_seconds": 600,
+  "teacher": {
+    "kind": "external_uci",
+    "path": "artifacts/engines/stockfish-19/stockfish/stockfish-windows-x86-64-universal.exe",
+    "sha256": "45bc8e4969147db9c2eb533810637994619bff0eacc81ccfd9854394901bcbd0",
+    "options": {
+      "Threads": 1,
+      "Hash": 16,
+      "Skill Level": 20,
+      "UCI_LimitStrength": false,
+      "SyzygyPath": "",
+      "EvalFile": "nn-1a298aa575a0.nnue"
+    },
+    "timeout_seconds": 10,
+    "assets": []
+  },
+  "exclusions": [
+    {
+      "path": "data/lichess/prepared-v1-verified/development.json",
+      "sha256": "767557215b8087b7f258c7fd4c7801145115349f84d82c22e74172fe8c8c8a1e"
+    },
+    {
+      "path": "data/lichess/prepared-v1-verified/validation.json",
+      "sha256": "3d6db8874dd9908924f9cefd746842854d447f36803219ae6600cdfd957645e3"
+    },
+    {
+      "path": "data/lichess/prepared-v1-verified/test.json",
+      "sha256": "418fafe5a71bc37beadf94a12c3cfa0b94c4a272dcf57b108858ea52460d51d0"
+    },
+    {
+      "path": "experiments/manifests/external-stockfish19-smoke-v1.json",
+      "sha256": "4f8598c3c057e067417d47a7fa268e036d072180d7b935abc40ffd94d8b3254f"
+    }
+  ],
+  "lambdas": [
+    0.1,
+    1,
+    10,
+    100
+  ]
+}

@@ -21,12 +21,12 @@ from scratch within one week.
 
 | Component | Actual state | Relevant next work |
 | --- | --- | --- |
-| Own bot | Random, material-greedy and material alpha-beta agents implemented | Use these as working bots and simple controls |
+| Own bot | Random, greedy, material alpha-beta and our trained linear-evaluator alpha-beta implemented | Preserve the first learned result; choose the next training-data source |
 | Evaluation | Shared internal/external tactical first-move agreement, runtime/node diagnostics and colour-paired matches implemented | Add the chosen learned method; retain failure denominators |
 | External opponents | UCI server plus pinned external UCI agents in matches and tactical comparisons, with lifecycle/failure/provenance records | Use the same bridge for a compatible learned comparator if chosen |
 | Evaluation data | Versioned 50/50/200 Lichess puzzle splits; 200-position test already evaluated | Preserve original result; use fresh test data for later tuned comparisons |
 | Ordinary-game comparison starts | Two versioned development opening starts; completed four-game colour-paired Stockfish 19 smoke | Broaden starts before making strength claims |
-| Learning data | No human-game policy dataset, engine-labelled value dataset or replay/training pipeline prepared | Prepare the appropriate small dataset when a first learned method is chosen |
+| Learning data | First grouped engine-labelled rollout pilot complete (512/128/128 positions); no human-game policy or RL corpus | Choose a more representative data version and fresh test split |
 | RL/self-play and LLM methods | Not implemented | Add a bounded method or compatible existing bot when ready; define objectives/budgets first |
 
 ## Immediate implementation sequence
@@ -98,3 +98,8 @@ Implementation update for milestone 19: shared internal/external tactical
 evaluation is now implemented and a 40-case development smoke is complete.
 The ten inputs were already observed; fresh confirmatory data remain necessary.
 The remaining method decision is documented in `first-learned-bot-decision.md`.
+
+Milestone 20: the user selected the supervised evaluator and the first linear
+pilot is implemented and measured. See `../learned-evaluator.md`. The next input
+is a new training-data source, not a permanent research-question gate. Keep the
+original puzzle test and the new value-prediction test observed/frozen.

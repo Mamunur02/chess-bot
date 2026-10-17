@@ -1,5 +1,6 @@
 """Minimal synchronous UCI interface for the material alpha-beta baseline."""
 
+import argparse
 import random
 import sys
 from collections.abc import Sequence
@@ -7,6 +8,7 @@ from typing import Protocol, TextIO
 
 import chess
 
+from chesslab.agents.linear_alpha_beta import LinearAgentConfig
 from chesslab.agents.material_alpha_beta import MaterialAlphaBetaAgent
 from chesslab.games import GameState
 from chesslab.games.chess import ChessState
@@ -200,7 +202,29 @@ def run_uci(
             break
 
 
-def main() -> None:
-    """Run the baseline engine over standard input and output."""
-    session = UciSession(MaterialAlphaBetaAgent(), random.Random(0))
+def main(argv: Sequence[str] | None = None) -> None:
+    """Serve material search or an explicitly pinned learned evaluator."""
+    parser = argparse.ArgumentParser(description=__doc__)
+    parser.add_argument("--model")
+    parser.add_argument("--model-sha256")
+    args = parser.parse_args(argv)
+    if bool(args.model) != bool(args.model_sha256):
+        parser.error("--model and --model-sha256 must be supplied together")
+    agent: UciSearchAgent = MaterialAlphaBetaAgent()
+    if args.model:
+        try:
+            agent = LinearAgentConfig.from_dict(
+                {
+                    "kind": "linear_alpha_beta",
+                    "path": args.model,
+                    "sha256": args.model_sha256,
+                }
+            ).build()
+        except (OSError, ValueError) as error:
+            parser.error(str(error))
+    session = UciSession(agent, random.Random(0))
     run_uci(sys.stdin, sys.stdout, session)
+
+
+if __name__ == "__main__":
+    main()

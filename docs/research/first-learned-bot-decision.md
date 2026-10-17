@@ -1,4 +1,9 @@
-# First learned bot: input needed
+# First learned bot: supervised evaluator selected
+
+Selected by the user on 2026-10-17: option 1, our own supervised evaluator.
+The first linear pilot is now implemented; see `../learned-evaluator.md` and
+`../../experiments/summaries/linear-evaluator-pilot-v1.md`. The original proposal
+below is preserved for context; its first-method decision is resolved.
 
 Prepared 2026-10-17 after external matches and shared tactical comparisons.
 These are proposals, not implemented methods or measured learning results. No

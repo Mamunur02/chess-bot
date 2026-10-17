@@ -1,9 +1,9 @@
 # Chess Agent Project
 
 I'm building a chess agent and a reproducible framework for testing it. The
-current focus is a trustworthy classical baseline: correct chess rules, simple
-agents, alpha-beta search, controlled compute budgets, and enough logging to
-support honest comparisons.
+current work combines a classical foundation with a first supervised evaluator:
+correct chess rules, alpha-beta search, controlled budgets and reproducible
+comparisons.
 
 My goal is not just to make the strongest engine I can. I want to understand
 which changes improve performance, what they cost, and whether the result holds
@@ -30,8 +30,9 @@ So far, I have built:
 - a head-to-head suite runner with swapped agent colours, raw game records,
   win/draw/loss counts, and explicit incomplete-pair coverage.
 
-The engine currently evaluates positions using material only. It does not yet
-contain a learned model, MCTS, or a training pipeline. I have completed a first
+The default engine uses material evaluation. A supervised linear evaluator is
+also trained and connected to the same search and comparisons. MCTS and
+RL/self-play pipelines remain future work. I have completed a first
 held-out study on 200 versioned Lichess tactical positions, comparing four search
 configurations at three node budgets with three timing passes. I have not
 measured or claimed an Elo rating or a general playing-strength improvement.
@@ -137,10 +138,15 @@ tactical evaluation is also working: a ten-position development smoke measured
 6/10 accepted first moves for plain alpha-beta and 10/10 for Stockfish, without
 failures. These observed development inputs support no held-out accuracy claim.
 See the [shared tactics report](experiments/summaries/shared-development-tactics-20261017.md).
-The next decision is the first learned method; see the
-[bounded options](docs/research/first-learned-bot-decision.md). The precise research question is still developing.
-No learning method has been implemented yet. I will keep the first result frozen
-and use fresh confirmatory positions for later comparisons.
+The first supervised linear evaluator is now trained. Its pilot has mixed
+results: lower teacher-label test RMSE, slightly worse MAE, and 5/10 versus
+material's 6/10 on observed development tactics. This does not establish stronger
+play. See the [learned bot guide](docs/learned-evaluator.md) and
+[pilot results](experiments/summaries/linear-evaluator-pilot-v1.md).
+Next choose a new training-data source and fresh evaluation splits. The precise
+research question is still developing. Neural/RL/LLM methods remain future work.
+I will keep the first results frozen and use fresh confirmatory positions for
+later comparisons.
 
 The first development-only ablation is recorded in
 [`experiments/summaries/development-ablation-20261006.md`](experiments/summaries/development-ablation-20261006.md).
@@ -148,7 +154,7 @@ The first development-only ablation is recorded in
 The longer-term research direction is still open.
 The options I am considering include:
 
-- replacing or extending the handcrafted evaluator with a learned evaluator
+- extending the first learned evaluator using a more representative data source,
   while keeping the alpha-beta search framework fixed;
 - modelling human move choices, possibly conditioned on player strength;
 - comparing MCTS variants across games under controlled budgets;
@@ -156,8 +162,8 @@ The options I am considering include:
   simpler game; and
 - exploring a tool-using language-model layer around a legal chess engine.
 
-These are possible directions, not completed features or claims of novelty. I
-have not selected the final direction yet.
+These are possible extensions, with no claims of novelty. The long-term research
+direction remains open.
 
 ## Documentation
 
