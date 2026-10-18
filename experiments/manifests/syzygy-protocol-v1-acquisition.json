@@ -1,0 +1,156 @@
+{
+  "completed_at_utc": "2026-10-18T22:19:48.978788Z",
+  "error": null,
+  "failed_source_url": null,
+  "protocol": "opponent-dependence-protocol-v1",
+  "publisher_notices": [
+    {
+      "notice": "The pinned Syzygy README states that tablebase files may be freely redistributed. This records the publisher's statement and does not independently determine legal status.",
+      "source_url": "https://raw.githubusercontent.com/syzygy1/tb/0bb8aeee525f364bb750f96df312a1a7c9b54398/README.md"
+    },
+    {
+      "notice": "The checksum documentation says embedded table hashes are not ordinary MD5 digests.",
+      "source_url": "https://raw.githubusercontent.com/syzygy1/tb/0bb8aeee525f364bb750f96df312a1a7c9b54398/README.md"
+    }
+  ],
+  "resources": {
+    "checksum_readme": {
+      "bytes": 7043,
+      "local_sha256": "0eeb6c83b1cbce8c097c9fb15ddd9eaf3440e2a751a2297dc676909b9dc32f87",
+      "name": "checksum_readme",
+      "retrieved_at_utc": "2026-10-18T22:19:47.687256Z",
+      "source_url": "https://raw.githubusercontent.com/syzygy1/tb/0bb8aeee525f364bb750f96df312a1a7c9b54398/README.md",
+      "status": "retrieved"
+    },
+    "checksum_source": {
+      "bytes": 3106,
+      "local_sha256": "f53d63834895df8115e0bc477603cfc7bd598a426f94679e78807a36ef9ba9cf",
+      "name": "checksum_source",
+      "retrieved_at_utc": "2026-10-18T22:19:47.919246Z",
+      "source_url": "https://raw.githubusercontent.com/syzygy1/tb/0bb8aeee525f364bb750f96df312a1a7c9b54398/src/checksum.c",
+      "status": "retrieved"
+    },
+    "dtz345_checksums": {
+      "bytes": 6630,
+      "local_sha256": "de10c6bc9bc93af39b7bf3a6f954b73928b5d8695e3c21d52deb5179605f0cfa",
+      "name": "dtz345_checksums",
+      "retrieved_at_utc": "2026-10-18T22:19:47.445891Z",
+      "source_url": "https://raw.githubusercontent.com/syzygy1/tb/0bb8aeee525f364bb750f96df312a1a7c9b54398/checksums/dtz345.txt",
+      "status": "retrieved"
+    },
+    "lichess_sha256_list": {
+      "bytes": 240370,
+      "local_sha256": "6dc75697fd9af1e171f45b48ceed5910a913054bf9f48b8c83163232d784a783",
+      "name": "lichess_sha256_list",
+      "retrieved_at_utc": "2026-10-18T22:19:46.897488Z",
+      "source_url": "https://tablebase.lichess.ovh/tables/standard/sha256",
+      "status": "retrieved"
+    },
+    "wdl345_checksums": {
+      "bytes": 6630,
+      "local_sha256": "4a7945c55dce320fec9d904f452ec2df4c3c13383c1cf1a5c61a8d4172b7288a",
+      "name": "wdl345_checksums",
+      "retrieved_at_utc": "2026-10-18T22:19:47.228951Z",
+      "source_url": "https://raw.githubusercontent.com/syzygy1/tb/0bb8aeee525f364bb750f96df312a1a7c9b54398/checksums/wdl345.txt",
+      "status": "retrieved"
+    }
+  },
+  "schema_version": 1,
+  "started_at_utc": "2026-10-18T22:19:46.265541Z",
+  "status": "complete",
+  "tables": {
+    "KQvK.rtbw": {
+      "bytes": 272,
+      "local_sha256": "517667dff787162dbb1ed9d5d6484d30ee854e686ee0675c08d99ecf045d2d50",
+      "name": "KQvK.rtbw",
+      "publisher_sha256": "517667dff787162dbb1ed9d5d6484d30ee854e686ee0675c08d99ecf045d2d50",
+      "retrieved_at_utc": "2026-10-18T22:19:48.854055Z",
+      "source_url": "https://tablebase.lichess.ovh/tables/standard/3-4-5-wdl/KQvK.rtbw",
+      "status": "retrieved",
+      "verification": "passed",
+      "whole_file_sha256_match": true
+    },
+    "KQvK.rtbz": {
+      "bytes": 5392,
+      "local_sha256": "71ea9444fa5bd42897d781a0c356975ea6f23e0f65a4254e470897031c161c8c",
+      "name": "KQvK.rtbz",
+      "publisher_sha256": "71ea9444fa5bd42897d781a0c356975ea6f23e0f65a4254e470897031c161c8c",
+      "retrieved_at_utc": "2026-10-18T22:19:48.977231Z",
+      "source_url": "https://tablebase.lichess.ovh/tables/standard/3-4-5-dtz/KQvK.rtbz",
+      "status": "retrieved",
+      "verification": "passed",
+      "whole_file_sha256_match": true
+    },
+    "KQvKR.rtbw": {
+      "bytes": 20496,
+      "local_sha256": "8cdbe3c8e098037875de5854c656f8afeadb8327c85b5b7b1cac81719afd3e2c",
+      "name": "KQvKR.rtbw",
+      "publisher_sha256": "8cdbe3c8e098037875de5854c656f8afeadb8327c85b5b7b1cac81719afd3e2c",
+      "retrieved_at_utc": "2026-10-18T22:19:48.350016Z",
+      "source_url": "https://tablebase.lichess.ovh/tables/standard/3-4-5-wdl/KQvKR.rtbw",
+      "status": "retrieved",
+      "verification": "passed",
+      "whole_file_sha256_match": true
+    },
+    "KQvKR.rtbz": {
+      "bytes": 309008,
+      "local_sha256": "0c15a2aaa3bdef39da4c26932006b5d38b55b8e3ad13e8a44815d63f84738618",
+      "name": "KQvKR.rtbz",
+      "publisher_sha256": "0c15a2aaa3bdef39da4c26932006b5d38b55b8e3ad13e8a44815d63f84738618",
+      "retrieved_at_utc": "2026-10-18T22:19:48.577819Z",
+      "source_url": "https://tablebase.lichess.ovh/tables/standard/3-4-5-dtz/KQvKR.rtbz",
+      "status": "retrieved",
+      "verification": "passed",
+      "whole_file_sha256_match": true
+    },
+    "KRvK.rtbw": {
+      "bytes": 208,
+      "local_sha256": "386fbde73308e49a4207836922c68b30b664e83c5a37f7fa37305a15cd16f2f1",
+      "name": "KRvK.rtbw",
+      "publisher_sha256": "386fbde73308e49a4207836922c68b30b664e83c5a37f7fa37305a15cd16f2f1",
+      "retrieved_at_utc": "2026-10-18T22:19:48.686930Z",
+      "source_url": "https://tablebase.lichess.ovh/tables/standard/3-4-5-wdl/KRvK.rtbw",
+      "status": "retrieved",
+      "verification": "passed",
+      "whole_file_sha256_match": true
+    },
+    "KRvK.rtbz": {
+      "bytes": 7632,
+      "local_sha256": "cab59f42e75c2a25da3939231850a79fa838593fff5c28d7772da92062ed965a",
+      "name": "KRvK.rtbz",
+      "publisher_sha256": "cab59f42e75c2a25da3939231850a79fa838593fff5c28d7772da92062ed965a",
+      "retrieved_at_utc": "2026-10-18T22:19:48.773793Z",
+      "source_url": "https://tablebase.lichess.ovh/tables/standard/3-4-5-dtz/KRvK.rtbz",
+      "status": "retrieved",
+      "verification": "passed",
+      "whole_file_sha256_match": true
+    },
+    "KRvKR.rtbw": {
+      "bytes": 12944,
+      "local_sha256": "797081b5b3fbac20c4baa5453d68bdae1425b63895f5c9a5ac5c68ea63a97712",
+      "name": "KRvKR.rtbw",
+      "publisher_sha256": "797081b5b3fbac20c4baa5453d68bdae1425b63895f5c9a5ac5c68ea63a97712",
+      "retrieved_at_utc": "2026-10-18T22:19:48.085133Z",
+      "source_url": "https://tablebase.lichess.ovh/tables/standard/3-4-5-wdl/KRvKR.rtbw",
+      "status": "retrieved",
+      "verification": "passed",
+      "whole_file_sha256_match": true
+    },
+    "KRvKR.rtbz": {
+      "bytes": 3408,
+      "local_sha256": "c23fa5a0209204b847232ed49e079c099cf603b43d6ace9e27257793b1839850",
+      "name": "KRvKR.rtbz",
+      "publisher_sha256": "c23fa5a0209204b847232ed49e079c099cf603b43d6ace9e27257793b1839850",
+      "retrieved_at_utc": "2026-10-18T22:19:48.214657Z",
+      "source_url": "https://tablebase.lichess.ovh/tables/standard/3-4-5-dtz/KRvKR.rtbz",
+      "status": "retrieved",
+      "verification": "passed",
+      "whole_file_sha256_match": true
+    }
+  },
+  "verification_policy": {
+    "syzygy_embedded_checksum": "not_performed",
+    "syzygy_embedded_checksum_reason": "The pinned README/source are recorded for audit, but the generator-specific checksum algorithm is not reimplemented.",
+    "whole_file_sha256": "compare each file against Lichess /sha256 list"
+  }
+}

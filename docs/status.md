@@ -1,6 +1,52 @@
 # Project status
 
-Last updated: 2026-10-17
+Last updated: 2026-10-18
+
+## Research implementation underway
+
+The 18 October implementation handover authorizes the neural study and normal
+reviewed commits/pushes. The rule/reference adapter, canonical split identities,
+serial acquisition and exact 775-feature encoder are implemented. All eight
+Syzygy files have been acquired and match publisher whole-file SHA-256 values.
+An opt-in real-table check also passed embedded trailer comparisons and
+theoretical Bellman consistency on fixed boards and colour exchanges. The
+generator-specific checksum algorithm was not recomputed.
+
+Dataset screening and the learning pipeline are still in progress; no neural
+training or method comparison has run. The full suite passed 332 tests before
+the subsequent encoder/dataset additions; final checkpoint checks follow those
+changes. See `docs/research/opponent-dependence-implementation.md` for the current
+schedule, environment, corrections, and next actions. The older planning and
+milestone records below remain historical evidence.
+
+## Approved research direction (planning record)
+
+Current planning authority: `docs/research/opponent-dependence-protocol-v1.md`.
+It specifies algorithms, reference/draw semantics, generated data, neural
+architecture, training defaults, five-seed comparisons, statistical analysis,
+runtime/strength evaluation, both extensions and bounded feasibility gates.
+Earlier drafts and the decisions ledger are historical. This chat remains
+planning-only; no experiments have run. Dataset hashes, dependency/model
+versions and measured runtime choices are implementation artifacts, not
+outstanding discussion questions.
+
+The user approved a two-week RL study of dependence on opponent mistakes,
+with secondary tactical/runtime and playing-strength evaluation, including
+relative Elo with uncertainty where supported. See
+`docs/research/opponent-dependence-protocol-v1.md` for scope and resource limits.
+Next: a separate implementation chat should validate data acquisition and
+semantics, implement the bounded pilot, and freeze its resolved configuration.
+No RL implementation, training or cloud run has started.
+The milestone 20 results and earlier evidence below remain unchanged.
+
+Initial planning work on 2026-10-18: targeted literature memo and development
+protocol draft added. Close prior work rules out claiming search-informed TD
+as new. Protocol v1 distinguishes theoretical board WDL from actual games with
+automatic draw claims. Local inventory found RTX 2070 Max-Q (8 GiB), no PyTorch in inspected
+project/plot environments, and no Syzygy tables under data/artifacts. No new
+training, paid compute or experimental performance measurements. See
+`docs/research/opponent-dependence-literature.md` and
+`docs/research/opponent-dependence-protocol-draft.md`.
 
 ## Current milestone
 
