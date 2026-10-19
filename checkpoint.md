@@ -4,10 +4,12 @@
 
 The user directly reconfirmed commit/push authorization in chat on 19 October
 2026. The earlier automatic-review rejection is historical; this verified
-implementation is being committed under that renewed authorization. Earlier
+implementation was committed as `c223910` under that renewed authorization. Earlier
 README/practical-scope edits and historical untracked docs remain preserved
 outside this checkpoint. Use Git log/status and the new-chat handover for the
-resulting commit and remote state.
+resulting commit and remote state. The complete copyable handover is
+`docs/research/new-chat-handover-20261019.md`. Its documentation commit follows
+the implementation commit; inspect Git log/tracking for push confirmation.
 
 Implementation stopped with 13% five-hour / 68% weekly remaining. On the later
 handover/commit request the usage readout was 97% / 67% remaining; these are
