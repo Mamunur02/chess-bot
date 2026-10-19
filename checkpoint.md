@@ -1,5 +1,57 @@
 # Resume checkpoint
 
+## Completed pilot checkpoint: 19 October 2026
+
+Real development-only seed9001 pilot COMPLETE, all three betas:512 decisions,
+512 transitions,33 updates each; finite recorded loss/gradient norms and changed
+parameters. Training seconds28.277/115.072/108.858; total260.715 seconds.
+Raw artifacts: artifacts/opponent-dependence-v1/pilot-9001-v1/.
+Compact measured report/projection: experiments/summaries/endgame-pilot-9001-v1.md
+and .json. Source/checkpoint hashes and episode decision totals independently
+verified. Pilot process exited0; all agents finished; no experiment left running.
+Astra scientific review and Luna bounded implementation used actual selected
+models gpt-6-astra and gpt-6-luna. Root reviewed changes and audited artifacts.
+
+Checks:429 passed5 skipped default (12.05s, elevated UCI);56 passed optional
+neural/interaction/targets/pilot (14.52s);19 pilot-only (12.76s); Ruff . passed;
+mypy src plus pilot passed48 files. A new test initially lacked math import;
+early Ruff also flagged line length. Both fixed before pilot. No hidden failures.
+No production dependency added. Preserved user README/practical scope edits and
+three untracked historical documents remain excluded from commits.
+
+Budget NOT frozen; core matrix NOT launched. Training-only estimates including
+matched-time and30% contingency:9.252h at2000;24.842h at5000;50.826h at10000;
+102.793h at20000. Missing full-size pretraining/evaluation/overhead/cost inputs
+prevent approval of any budget. These are extrapolations, not measurements.
+Next smallest task: implement/test a bounded development-only evaluation and
+full-size pretraining cost-calibration harness, then complete projection and
+freeze largest qualifying budget. Read measured report for explicit inventory
+and formulas; do not restart pilot or inspect final performance for tuning.
+
+Latest usage before checkpoint26% five-hour/56% weekly remaining; stopping
+conservatively before10% after reviewed commit/push. No reset credit or paid
+resource used. Inspect Git log/status for resulting commit and push state.
+Reproduction uses a FRESH output directory; exact pilot/check commands in report
+and preceding checkpoint remain valid. Do not overwrite pilot-9001-v1.
+
+
+## Active continuation: 19 October 2026
+
+HEAD 798c029 on codex/opponent-dependence, matching origin tracking locally.
+User authorizes normal reviewed commits/pushes. Preexisting README/practical
+scope edits and three historical untracked documents remain excluded.
+Initial usage87% five-hour/65% weekly remaining; subsequent64%/62%.
+No Python process was present in the elevated CIM inspection. No pilot launched
+at this checkpoint. GPT-6 Astra completed read-only scientific review; GPT-6
+Luna is adding successful runner regression and small accounting disclosures.
+No new semantic blocker found; initial validation forwards need recording.
+Target neural leaves are not full branch-expansion counts; query timings are
+nested inside simulation overhead. Full budget projection must scale updates
+separately from decisions (33 pilot updates versus219 at2000 transitions),
+include five full-size pretraining blocks and all evaluation/matched-time work.
+Do not freeze a budget or run core matrix from pilot training time alone.
+
+
 ## Final checkpoint: 19 October 2026
 
 The user directly reconfirmed commit/push authorization in chat on 19 October

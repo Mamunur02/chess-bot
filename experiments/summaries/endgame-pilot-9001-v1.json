@@ -1,0 +1,252 @@
+{
+  "artifact": "artifacts/opponent-dependence-v1/pilot-9001-v1/pilot.json",
+  "artifact_sha256": "3b4ae6defd8b0fad6b3c66380ab8c6681990deb7f8309ed3dc2142a109b3186c",
+  "status": "complete",
+  "git": {
+    "diff_sha256": "8219ec900933e319fc9cd1c87e863e6fdfb22d21d556407466de6fba8d04eaa4",
+    "head": "798c029d17d5f2c2324e7300c16f8b1bffe07a9a",
+    "status": "M README.md\n M checkpoint.md\n M docs/research/practical-project-scope.md\n M scripts/run_endgame_pilot.py\n M tests/test_endgame_pilot.py\n?? docs/research/opponent-dependence-decisions.md\n?? docs/research/opponent-dependence-protocol-draft.md\n?? docs/research/opponent-dependence-scope.md"
+  },
+  "source_sha256": {
+    "scripts/run_endgame_pilot.py": "825afa31c9a64952d3bf23ad69acb54a54f26f4f1770148ab3697837044c0ba6",
+    "src/chesslab/endgames/acquisition.py": "3f6da3ba5a72b9763b00748f770ae5fe451138dd1a64a9517577fcddbdd9d8b9",
+    "src/chesslab/endgames/dataset.py": "1629bc9f2b222452cae4ff89fec94ddd02ec67fb7f0596f04661883e347d47fa",
+    "src/chesslab/endgames/encoding.py": "bf8331f8c9bb0b2cec9d624940789fc1559e5ac15346c0efc25a3e5a57baaced",
+    "src/chesslab/endgames/identity.py": "97c2993f2a64ddc84f1e1d4dfa98bacf8fe5131b40bc9a45fbeb1ba73ff723e8",
+    "src/chesslab/endgames/interaction.py": "6801015204f62327531f5d7bb9257acf5942e8f64c311f631e65b7941143356a",
+    "src/chesslab/endgames/neural.py": "13c67955fd93ae10d3870023b1117757106ac7b9e9510f54f63dc48962e39efd",
+    "src/chesslab/endgames/opponent.py": "567cca7ca705827e0958a83b35949cc3b429ee5197f2874adba49defaf1ae4e3",
+    "src/chesslab/endgames/reference.py": "412b28ac6da7523b6517fbbae946cb2d955205442f8c819cf835a31b7d01ac2f",
+    "src/chesslab/endgames/replay.py": "bc1df435350e5ebdf64511ecfb2779fc5ac274f621a36a081a0969f3b650c0b4",
+    "src/chesslab/endgames/rules.py": "4d9eff2a058a6a84ce225864d1e0b82dcc2f474fa75aaf2579433b1877c3414f",
+    "src/chesslab/endgames/targets.py": "6e25186248d675fba1b1ac999542be4556c7e1f8ef3611ec443a3dad79be304b"
+  },
+  "development": {
+    "deterministic_selection": "sha256(pilot-v1|KRvKR|canonical_position)",
+    "jsonl_sha256": "9e01ee9507d9969f1875cf381569e89f84fdfbddc760acf44fbf11f4c3043c56",
+    "manifest": "artifacts\\opponent-dependence-v1\\development\\krvkr-development.manifest.json",
+    "partition": "KRvKR-development",
+    "training_count": 1600,
+    "validation_count": 400,
+    "verified_seed": 1101
+  },
+  "dependencies": {
+    "numpy": "2.5.4",
+    "python-chess": "1.999",
+    "torch": "2.7.0+cpu"
+  },
+  "platform": {
+    "platform": "Windows-11-10.0.26200-SP0",
+    "processor": "Intel64 Family 6 Model 165 Stepping 2, GenuineIntel",
+    "python": "3.12.14 (main, Aug 25 2026, 14:01:42) [MSC v.1944 64 bit (AMD64)]"
+  },
+  "threads": {
+    "interop": 1,
+    "intraop": 1
+  },
+  "compute": {
+    "deterministic_algorithms": true,
+    "device": "cpu"
+  },
+  "pretraining": {
+    "best_epoch": 2,
+    "config": {
+      "batch_size": 256,
+      "learning_rate": 0.001,
+      "max_epochs": 30,
+      "min_delta": 0.0001,
+      "patience": 5,
+      "seed": 9001
+    },
+    "epochs": [
+      {
+        "epoch": 1,
+        "training_mse": 0.26852760672569276,
+        "validation_mse": 0.22685256600379944
+      },
+      {
+        "epoch": 2,
+        "training_mse": 0.21905067563056946,
+        "validation_mse": 0.2018689662218094
+      },
+      {
+        "epoch": 3,
+        "training_mse": 0.20311894178390502,
+        "validation_mse": 0.20700155198574066
+      },
+      {
+        "epoch": 4,
+        "training_mse": 0.19890285432338714,
+        "validation_mse": 0.20374402403831482
+      },
+      {
+        "epoch": 5,
+        "training_mse": 0.19154956340789794,
+        "validation_mse": 0.20429211854934692
+      },
+      {
+        "epoch": 6,
+        "training_mse": 0.18404320538043975,
+        "validation_mse": 0.20789897441864014
+      },
+      {
+        "epoch": 7,
+        "training_mse": 0.1752783864736557,
+        "validation_mse": 0.2133719027042389
+      }
+    ],
+    "frozen_validation_forward_boards": 400,
+    "frozen_validation_mse": 0.2018689695577634,
+    "initial_checkpoint_sha256": "95eacc9d206bce4252e71a3298222be1113f80eecdcd90aae1512994708d639d",
+    "pretrained_checkpoint_sha256": "b2852a2d676143c7b939b9383e59b3f0ebcb8e9d6ce9d3cd328263eaf509dade",
+    "seconds": 3.2822217000066303,
+    "stop_reason": "early_stopping",
+    "training_forward_boards": 11200,
+    "untrained_validation_forward_boards": 400,
+    "untrained_validation_mse": 0.2826424737349914,
+    "validation_forward_boards": 2800
+  },
+  "labeling": {
+    "label_counts": {
+      "-0.0": 1436,
+      "-1.0": 556,
+      "1.0": 8
+    },
+    "raw_wdl_counts": {
+      "-2": 8,
+      "0": 1436,
+      "2": 556
+    },
+    "seconds": 0.4320859999861568,
+    "tablebase_probe_calls": 4000,
+    "tablebase_probe_seconds": 0.2940307990938891
+  },
+  "peak_memory": {
+    "bytes": 411742208,
+    "kind": "process_lifetime_peak_working_set"
+  },
+  "pilot_elapsed_seconds": 260.714911499992,
+  "methods": [
+    {
+      "beta": 0.0,
+      "status": "complete",
+      "decisions": 512,
+      "transitions": 512,
+      "updates": 33,
+      "parameters_changed": true,
+      "method_training_seconds": 28.27657960000215,
+      "target_building_seconds": 13.761642200028291,
+      "optimizer_seconds": 0.12495889991987497,
+      "simulator_and_online_inference_seconds": 14.389970600052038,
+      "online_forward_boards": 7513,
+      "target_forward_boards": 16508,
+      "optimizer_forward_boards": 1056,
+      "interaction_tablebase_probe_calls": 9370,
+      "interaction_tablebase_probe_seconds": 1.640182399918558,
+      "opponent_opportunities": 152,
+      "opponent_worsenings": 73,
+      "opponent_category_loss": 82,
+      "final_checkpoint_sha256": "f4bcf73eeb5b1575051cf046bf77d3b63aa94efed78512e780c90ff81b9e0fda"
+    },
+    {
+      "beta": 0.5,
+      "status": "complete",
+      "decisions": 512,
+      "transitions": 512,
+      "updates": 33,
+      "parameters_changed": true,
+      "method_training_seconds": 115.07189349998953,
+      "target_building_seconds": 101.01550049992511,
+      "optimizer_seconds": 0.12538300000596792,
+      "simulator_and_online_inference_seconds": 13.931001300079515,
+      "online_forward_boards": 7193,
+      "target_forward_boards": 134569,
+      "optimizer_forward_boards": 1056,
+      "interaction_tablebase_probe_calls": 10102,
+      "interaction_tablebase_probe_seconds": 1.9692247018101625,
+      "opponent_opportunities": 179,
+      "opponent_worsenings": 85,
+      "opponent_category_loss": 95,
+      "final_checkpoint_sha256": "34a0e8150b6f582d18001b4ec3d691daa6711599557bf16d8be631f5ea0f2881"
+    },
+    {
+      "beta": 1.0,
+      "status": "complete",
+      "decisions": 512,
+      "transitions": 512,
+      "updates": 33,
+      "parameters_changed": true,
+      "method_training_seconds": 108.85750370001188,
+      "target_building_seconds": 95.28258639987325,
+      "optimizer_seconds": 0.12410070004989393,
+      "simulator_and_online_inference_seconds": 13.45081090007443,
+      "online_forward_boards": 7604,
+      "target_forward_boards": 130676,
+      "optimizer_forward_boards": 1056,
+      "interaction_tablebase_probe_calls": 8992,
+      "interaction_tablebase_probe_seconds": 1.5265004983521067,
+      "opponent_opportunities": 131,
+      "opponent_worsenings": 62,
+      "opponent_category_loss": 74,
+      "final_checkpoint_sha256": "15628d0d6f0ca3415b51f2c9ca11ffed8fb14ad3e7dada4f954d73d58a61103a"
+    }
+  ],
+  "training_only_projection": [
+    {
+      "decisions": 2000,
+      "updates_assuming_all_transitions_recorded": 219.0,
+      "method_seconds": [
+        148.36735722883680909090909091,
+        725.6256552370686,
+        685.6956990142690
+      ],
+      "main_training_hours": 6.498702964500726,
+      "matched_training_hours": 0.6181973217868200378787878788,
+      "training_only_hours_with_30pct_contingency": 9.251970372173804938131313131
+    },
+    {
+      "decisions": 5000,
+      "updates_assuming_all_transitions_recorded": 594.0,
+      "method_seconds": [
+        390.4858764402006,
+        1956.580837569847,
+        1848.6759429946548
+      ],
+      "main_training_hours": 17.48226107085293,
+      "matched_training_hours": 1.6270244851675025,
+      "training_only_hours_with_30pct_contingency": 24.842071222826544916666666667
+    },
+    {
+      "decisions": 10000,
+      "updates_assuming_all_transitions_recorded": 1219.0,
+      "method_seconds": [
+        794.0167417924737515151515152,
+        4008.1728081244776666666666667,
+        3786.9763496286323
+      ],
+      "main_training_hours": 35.7881912481066,
+      "matched_training_hours": 3.3084030908019739646464646467,
+      "training_only_hours_with_30pct_contingency": 50.825572640581232820707070708
+    },
+    {
+      "decisions": 20000,
+      "updates_assuming_all_transitions_recorded": 2469.0,
+      "method_seconds": [
+        1601.0784724970210545454545455,
+        8111.356749233739,
+        7663.5771628965853
+      ],
+      "main_training_hours": 72.40005160261394,
+      "matched_training_hours": 6.6711603020709210606060606061,
+      "training_only_hours_with_30pct_contingency": 102.79257547609025293434343434
+    }
+  ],
+  "budget_frozen": false,
+  "missing_costs": [
+    "Five full-size pretraining blocks (20000/2500, up to30 epochs)",
+    "Evaluation benchmark, actual games and runtime passes",
+    "Checkpoint/failure/reporting overhead",
+    "Local electricity and any incremental hardware cost"
+  ],
+  "projection_warning": "Extrapolation from development seed9001 at p0.5, not measured core execution or complete feasibility evidence"
+}

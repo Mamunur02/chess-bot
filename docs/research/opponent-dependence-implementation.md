@@ -1,5 +1,17 @@
 # Implementation log
 
+## Completed development pilot, 19 October 2026
+
+Seed9001 completed512 decisions and33 updates per beta, with finite gradients
+and changed parameters. Method training times28.277/115.072/108.858 seconds;
+full pilot260.715 seconds. This is feasibility evidence only. The complete
+resource gate remains open: full-size pretraining and evaluation costs still
+need calibration; no budget frozen and no core matrix launched. See
+`experiments/summaries/endgame-pilot-9001-v1.md` and companion measured JSON.
+Final checks429 passed5 skipped default;56 optional neural tests passed; Ruff
+and mypy src plus pilot passed. Earlier unrun/in-progress notes are historical.
+
+
 ## Review and resume, 19 October 2026
 
 Final verification:429 passed,4 skipped default tests;18 optional pilot tests;

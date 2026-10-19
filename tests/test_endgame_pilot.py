@@ -2,6 +2,7 @@
 
 import importlib.util
 import json
+import math
 import sys
 from pathlib import Path
 from tempfile import TemporaryDirectory
@@ -169,3 +170,144 @@ def test_runner_perspective_seed_and_active_failure(tmp_path, monkeypatch, error
     assert method["partial_transitions"] == 0
     assert method["elapsed_seconds"] >= 0
     assert streams == ["replay", "starts", "exploration", "opponent"]
+
+
+def test_successful_three_method_run_records_training_and_costs(tmp_path, monkeypatch):
+    torch = pytest.importorskip("torch")
+    import argparse
+    from dataclasses import replace
+    from types import SimpleNamespace
+
+    import chesslab.endgames.neural as neural
+
+    fen = "7k/8/8/8/8/8/8/KR5r w - - 0 1"
+    rows = [{"fen": fen} for _ in range(2000)]
+    monkeypatch.setattr(pilot, "_load_development", lambda _: (rows, "fixture"))
+    monkeypatch.setattr(pilot, "_git_state", lambda _: {"head": "fixture"})
+    monkeypatch.setattr(
+        pilot,
+        "verify_acquisition_manifest",
+        lambda *_: {"table_sha256": {"fixture": "hash"}},
+    )
+    table_state = {"closed": False}
+
+    def open_tablebase(_):
+        def close():
+            table_state["closed"] = True
+
+        return SimpleNamespace(
+            probe_wdl=lambda board: 0,
+            probe_dtz=lambda board: 0,
+            close=close,
+        )
+
+    monkeypatch.setattr(
+        pilot.chess.syzygy,
+        "open_tablebase",
+        open_tablebase,
+    )
+    monkeypatch.setattr(
+        pilot,
+        "evaluate",
+        lambda *_: SimpleNamespace(value=1, raw_wdl=2),
+    )
+
+    # Keep the real pretrainer, trainer, target builder and simulator, with a
+    # single small supervised epoch and an abbreviated warmup for this test.
+    original_pretraining_config = neural.PretrainingConfig
+    monkeypatch.setattr(
+        neural,
+        "PretrainingConfig",
+        lambda: replace(
+            original_pretraining_config(), batch_size=1600, max_epochs=1
+        ),
+    )
+    monkeypatch.setattr(pilot, "REPLAY_WARMUP", 8)
+    monkeypatch.setattr(pilot, "UPDATE_INTERVAL", 4)
+    monkeypatch.setattr(pilot, "REPLAY_BATCH_SIZE", 2)
+
+    initial_states = []
+    streams = []
+    original_rng = pilot.make_rng
+
+    def recording_rng(seed, stream):
+        streams.append((seed, stream))
+        return original_rng(seed, stream)
+
+    monkeypatch.setattr(pilot, "make_rng", recording_rng)
+    original_trainer = neural.RLValueTrainer
+
+    class RecordingTrainer(original_trainer):
+        def __init__(self, online, **kwargs):
+            initial_states.append(
+                {
+                    name: value.detach().clone()
+                    for name, value in online.state_dict().items()
+                }
+            )
+            super().__init__(online, **kwargs)
+
+    monkeypatch.setattr(neural, "RLValueTrainer", RecordingTrainer)
+
+    acquisition = tmp_path / "acquisition.json"
+    acquisition.write_text("{}", encoding="utf-8")
+    output = tmp_path / "successful-pilot"
+    args = argparse.Namespace(
+        decisions=12,
+        threads=1,
+        output_dir=output,
+        development_dir=tmp_path,
+        acquisition_manifest=acquisition,
+        tablebase_dir=tmp_path,
+    )
+
+    manifest = pilot.run_pilot(args)
+
+    assert manifest["status"] == "complete"
+    assert len(manifest["methods"]) == 3
+    assert manifest["pretraining"]["untrained_validation_forward_boards"] == 400
+    assert manifest["pretraining"]["frozen_validation_forward_boards"] == 400
+    accounting = manifest["cost_accounting"][
+        "simulator_and_online_inference_seconds"
+    ]
+    assert all(name in accounting for name in ("encoding", "replay", "logging"))
+    assert "must not be added again" in accounting
+    assert "nonterminal network leaves" in manifest["cost_accounting"][
+        "target_forward_leaves"
+    ]
+    assert len(initial_states) == 3
+    assert table_state["closed"] is True
+    assert streams == [
+        (pilot.PILOT_SEED, stream)
+        for _ in pilot.BETAS
+        for stream in ("replay", "starts", "exploration", "opponent")
+    ]
+    pretrained = torch.load(
+        output / "pretrained-checkpoint.pt", weights_only=True
+    )
+    for state in initial_states:
+        assert all(torch.equal(state[name], pretrained[name]) for name in pretrained)
+
+    for beta in pilot.BETAS:
+        method = json.loads((output / f"beta-{beta:.1f}.json").read_text())
+        assert method["status"] == "complete"
+        assert method["decisions"] == method["transitions"] == 12
+        assert method["updates"] == 2
+        assert method["parameters_changed"] is True
+        assert method["interaction_tablebase_probe_calls"] > 0
+        assert method["online_forward_boards"] > 0
+        assert (
+            method["target_forward_boards"]
+            == method["target_forward_leaves"]
+            > 0
+        )
+        assert method["interaction_forward_evaluations"] > 0
+        assert all(
+            math.isfinite(record[key])
+            for record in method["update_records"]
+            for key in ("loss", "gradient_norm")
+        )
+        assert (output / f"beta-{beta:.1f}-checkpoint.pt").is_file()
+
+    assert (output / "initial-checkpoint.pt").is_file()
+    assert (output / "resolved-config.json").is_file()

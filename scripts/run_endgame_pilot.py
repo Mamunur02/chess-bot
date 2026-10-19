@@ -315,6 +315,19 @@ def run_pilot(args: argparse.Namespace) -> dict[str, object]:
     manifest: dict[str, object] = {
         "protocol": "opponent-dependence-protocol-v1",
         "status": "running",
+        "cost_accounting": {
+            "simulator_and_online_inference_seconds": (
+                "Residual wall time after separately timed target construction and "
+                "optimizer work; includes simulation, online inference, encoding, "
+                "replay, logging, opponent selection, reference queries, and runtime "
+                "overhead. Reference query seconds are a nested diagnostic and must "
+                "not be added again."
+            ),
+            "target_forward_leaves": (
+                "Counts nonterminal network leaves evaluated during target building; "
+                "terminal branches require no network forward."
+            ),
+        },
         "started_at_utc": _utc_now(),
         "arguments": {"decisions": args.decisions, "threads": args.threads},
         "pilot_seed": PILOT_SEED,
@@ -421,9 +434,8 @@ def run_pilot(args: argparse.Namespace) -> dict[str, object]:
             initial.eval()
             initial_path = output / "initial-checkpoint.pt"
             initial_hash = _save_checkpoint(torch, initial, initial_path)
-            initial_mse = _mse(
-                BatchPredictor(initial), validation_boards, validation_labels
-            )
+            initial_predictor = BatchPredictor(initial)
+            initial_mse = _mse(initial_predictor, validation_boards, validation_labels)
             train_learners = [not board.turn for board in train_boards]
             validation_learners = [not board.turn for board in validation_boards]
             config = PretrainingConfig()
@@ -483,6 +495,9 @@ def run_pilot(args: argparse.Namespace) -> dict[str, object]:
                 "stop_reason": pretraining.stop_reason,
                 "untrained_validation_mse": initial_mse,
                 "frozen_validation_mse": frozen_mse,
+                "untrained_validation_forward_boards": (
+                    initial_predictor.boards_evaluated
+                ),
                 "initial_checkpoint_sha256": initial_hash,
                 "pretrained_checkpoint_sha256": pretrained_hash,
                 "seconds": pretraining_seconds,
