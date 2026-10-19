@@ -1,5 +1,87 @@
 # Resume checkpoint
 
+## Final checkpoint: 19 October 2026
+
+The user directly reconfirmed commit/push authorization in chat on 19 October
+2026. The earlier automatic-review rejection is historical; this verified
+implementation is being committed under that renewed authorization. Earlier
+README/practical-scope edits and historical untracked docs remain preserved
+outside this checkpoint. Use Git log/status and the new-chat handover for the
+resulting commit and remote state.
+
+Implementation stopped with 13% five-hour / 68% weekly remaining. On the later
+handover/commit request the usage readout was 97% / 67% remaining; these are
+historical readings, not permission to skip a fresh check on resume. No reset
+credit was used. No background experiment or active implementation agent remains.
+
+Stopping conservatively before the mandatory reserve: latest usage16% five-hour,
+69% weekly remaining. No reset credit, cloud resource, pilot or training process
+was started. Astra review finished; Luna implementation agent was interrupted
+before the reserve, and root completed final repairs/tests. No agents are doing
+further work. Earlier sections below are historical progress records.
+
+Completed pilot repairs: importlib collection, platform metadata, opposite-turn
+learner encoding for -v(s) labels, initialization/shuffle seed9001, shared named
+RNG streams, generated-row ownership_split and verified table_sha256 interfaces,
+per-method failure/interruption status, partial accounting, query timings,
+optimizer/pretraining forward counts, deterministic CPU settings, throughput,
+and correctly typed Windows memory-query handles. Memory peaks are explicitly
+process-lifetime, not isolated per-method peaks. Final full pilot remains UNRUN.
+
+Final checks (each separately observed):
+- Full default suite:429 passed,4 skipped in10.62s, outside sandbox for UCI.
+- Optional neural/interaction/targets:37 passed in10.67s.
+- Optional pilot suite:18 passed in7.86s, including runner failure/interruption,
+  both encoding perspectives and seed/stream assertions.
+- Ruff check . passed; mypy src plus scripts/run_endgame_pilot.py passed48files.
+- Fresh structural audit passed29,500 keys; real development loader accepted
+  2,000 rows; acquisition verifier checked all8 local table hashes.
+
+Preserved failures: initial standalone script mypy failed because src-layout
+imports lacked stubs and optional Torch was absent; combined src/script check
+now passes with a precise optional import annotation. First optional pilot test
+run failed4 tests because Windows ctypes truncated the process handle
+(0xc0000008); corrected signatures passed the rerun. Earlier full collection
+failure is repaired. No experimental result is inferred from fixtures.
+
+Artifacts: artifacts/opponent-dependence-v1/partition-audit-20261019.json;
+pytest-full-20261019-final and pytest-pilot-final-b-20261019 under artifacts.
+Prior document edits (README, practical scope, historical scope/draft/decisions)
+remain preserved and excluded from this implementation checkpoint.
+
+Next: review the repaired runner once more, then run the development-only pilot
+from a fresh output directory. No core matrix until complete cost projection
+includes pretraining/evaluation/matched-time work and30% contingency.
+
+```powershell
+artifacts/neural-env/Scripts/python.exe scripts/run_endgame_pilot.py --development-dir artifacts/opponent-dependence-v1/development --tablebase-dir data/syzygy/protocol-v1 --acquisition-manifest experiments/manifests/syzygy-protocol-v1-acquisition.json --output-dir artifacts/opponent-dependence-v1/pilot-9001-v1 --decisions 512 --threads 1
+uv --cache-dir artifacts/uv-cache run --no-sync --python .venv/Scripts/python.exe pytest --basetemp artifacts/pytest-RESUME-UNIQUE
+uv --cache-dir artifacts/uv-cache run --no-sync --python .venv/Scripts/python.exe ruff check .
+uv --cache-dir artifacts/uv-cache run --no-sync --python .venv/Scripts/python.exe mypy src scripts/run_endgame_pilot.py
+```
+
+## Active resume: 19 October 2026
+
+The stop below is historical. Work resumed with 95% five-hour / 81% weekly
+remaining; the latest subsequent check was 73% / 77%. Stop at 10% remaining
+in either window. No reset credit or paid compute used.
+
+GPT-6 Astra (`gpt-6-astra`) completed the scientific review; GPT-6 Luna
+(`gpt-6-luna`) is repairing only the pilot script and its tests. No experiment
+is running. Neural/interaction/targets passed 37 optional CPU tests in 10.67s;
+audit/interaction passed 15 default-environment tests in 0.43s. Fresh structural
+audit passed 29,500 keys with zero failures at
+`artifacts/opponent-dependence-v1/partition-audit-20261019.json`.
+
+Review found pilot bugs beyond the collection failure: platform module called
+as function, fixed-White encoding inconsistent with -v(s) labels, initialization
+seed1101 instead of9001, beta-specific RNG streams, and incomplete failure/cost
+records. Repairs must pass runner regressions and full checks before a pilot.
+No current full-suite pass, new commit, pilot measurement or core budget freeze
+is claimed. The original user document edits remain preserved.
+
+## Historical stop: 18 October 2026
+
 STOPPED FOR USAGE LIMIT. The latest readout was 3% five-hour remaining / 85%
 weekly remaining. The preceding check was 13%; concurrent task usage crossed
 the requested 10% boundary between polls. No further implementation is authorized

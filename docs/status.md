@@ -1,6 +1,30 @@
 # Project status
 
-Last updated: 2026-10-18
+Last updated: 2026-10-19
+
+Final resume checks:429 passed,4 skipped in the default suite;18 optional pilot
+tests and37 optional neural/interaction/target tests passed. Ruff passed and
+mypy src plus the pilot script passed48 files. Pilot import, perspective,
+seed/stream pairing, dataset/acquisition interfaces, Windows memory handles,
+failure records and cost accounting were repaired. No pilot or core matrix has
+run; stopping before the account reserve. See root checkpoint.md for commands
+and preserved failures. Earlier in-progress notes below are historical.
+
+## Resume verification on 19 October
+
+The structural audit was rerun successfully: 29,500 canonical positions across
+development and five KRvKR partitions, with correct quotas, ownership, source
+and data hashes, and no duplicate keys. Report:
+`artifacts/opponent-dependence-v1/partition-audit-20261019.json`. This checks
+start-board separation, not later trajectory overlap; final performance labels
+have not been inspected for tuning.
+
+Optional CPU neural/interaction/target checks passed 37 tests; lightweight
+audit/interaction checks passed 15 tests. These are focused checks, not a new
+full-suite pass. Astra scientific review identified pilot runner defects in
+learner-perspective encoding, seed/stream pairing, metadata, failure records
+and cost accounting. Repairs and full verification are in progress; no pilot
+or core matrix has been launched. Earlier verification below is historical.
 
 ## Research implementation underway
 

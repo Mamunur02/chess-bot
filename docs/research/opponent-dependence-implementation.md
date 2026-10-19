@@ -1,5 +1,33 @@
 # Implementation log
 
+## Review and resume, 19 October 2026
+
+Final verification:429 passed,4 skipped default tests;18 optional pilot tests;
+37 optional neural/interaction/target tests; Ruff and combined mypy src/pilot
+(48files) passed. Real development-loader and8-table hash verification passed.
+Additional boundary repairs corrected ownership_split/table_sha256 interfaces
+and Windows ctypes process-handle width. The failed memory-query test run is
+recorded in checkpoint.md. No pilot launched; resume from that checkpoint.
+
+The fresh structural audit passed all 29,500 starts, quotas, canonical ownership,
+source/data hashes and duplicate checks. Its report is
+`artifacts/opponent-dependence-v1/partition-audit-20261019.json`; held-out
+performance labels remain outside tuning. Trajectory overlap still requires
+later reporting.
+
+Review used the explicitly selected `gpt-6-astra`; bounded pilot repairs use
+`gpt-6-luna`. Review found a platform metadata crash, incorrect fixed-White
+supervised encoding despite labels being negative side-to-move WDL, pilot
+initialization using the generation seed, unnecessarily unpaired method streams,
+and incomplete failure/cost accounting. These were found before any pilot run.
+The existing full-suite collection failure is also being repaired. No method
+performance comparison or feasibility conclusion follows from these code checks.
+
+Verified during resume: optional CPU neural/interaction/target tests, 37 passed;
+default audit/interaction tests, 15 passed; mypy src, 47 files passed. Full-suite
+and runner verification remain required after repairs. No paid compute or
+training process has been started in this resume so far.
+
 Implementation began on 18 October 2026 under protocol v1. The user authorized
 the neural phase, bounded Luna implementation tasks, Astra scientific review,
 and normal reviewed commits and pushes. Earlier infrastructure-only and
