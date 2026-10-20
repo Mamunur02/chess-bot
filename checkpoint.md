@@ -1,5 +1,22 @@
 # Resume checkpoint
 
+## New-chat handover: 20 October 2026
+
+Complete continuation instructions are in
+`docs/research/new-chat-handover-20261020.md`. Read that file in full instead of
+treating the older 19 October handover's "pilot unrun" instructions as current.
+Commit fe57385 is pushed; it contains the completed seed9001 pilot record.
+This documentation-only checkpoint follows it; inspect Git log/tracking for
+its resulting hash. User directly reconfirmed "Also commit and push."
+
+Next: development-only evaluation/full-size pretraining cost calibration, then
+complete resource projection and budget freeze. No core matrix or budget freeze
+has occurred. All pilot measurements, verification, limitations, preserved
+changes, scientific invariants and commands are included in the new handover.
+No implementation or experiment was launched for this documentation request.
+Fresh account reading was92% five-hour/99% weekly remaining; check again on
+resume. Previous usage-stop readings below are history. No reset credit used.
+
 ## Completed pilot checkpoint: 19 October 2026
 
 Real development-only seed9001 pilot COMPLETE, all three betas:512 decisions,
