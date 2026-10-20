@@ -1,4 +1,20 @@
 # Resume checkpoint
+## Latest documentation handover: 20 October 2026
+
+Read `docs/research/new-chat-handover-20261020-continuation.md` first, then the
+original 20 October handover and all required context. Commit418965a is pushed;
+this documentation-only update follows it. User explicitly requested a new-chat
+prompt and commit/push. No research implementation or experiment is part of this
+documentation request. Preexisting document changes remain excluded.
+
+Correction to the usage record below: agents stopped at18%/87%, but the final
+reading after checkpoint/push was5% five-hour /85% weekly remaining. The10%
+reserve was breached. Begin future checkpointing much earlier; use35% remaining
+as an operational trigger, earlier when consumption is rapid. No reset used.
+A fresh reading for this documentation request was66%/79%; check anew on resume.
+The supplement preserves the evaluation design, exact unfinished state,
+verification requirements and full original handover by explicit reference.
+
 ## Usage-limited continuation: 20 October 2026
 
 Started at HEAD1705d96 on codex/opponent-dependence, matching local origin
