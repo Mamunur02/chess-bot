@@ -1,4 +1,51 @@
+## Verified evaluation checkpoint: 20 October 2026
+
+Fixed-start evaluation primitives and tests are complete. Luna implemented;
+Astra independently reviewed scientific semantics and cadence. Root repaired
+opponent reference-failure accounting and documented completed-selection-only
+neural counters (failed calls can perform uncounted work). Callback persistence
+failures propagate; the future harness must preserve them. No calibration run,
+full projection, budget freeze or core execution occurred. No reset used.
+
+Checks: full suite447 passed5 skipped in11.97s, elevated Windows UCI, before
+last small failure-accounting patch; final focused20 passed in0.25s; final Ruff
+passed; final mypy src plus pilot passed49files. Each command exited0. Agents
+finished; no experiment process launched. Usage57/78 initially,35/74 at checkpoint
+trigger,27/73 before review,17/71 before final documentation (remaining percent).
+Initial ownership failure and root review correction remain recorded below.
+
+Cadence resolved after Astra review: static quality/MSE at all main saved
+checkpoints; games/latency only final main, matched and frozen.200 static and65
+full bundles,600000 choices and MSE predictions,39000 games,201500 latency
+choices. Preserve exact zero-step aliases/provenance within seed; no intermediate
+game curves claimed. This resolves schedule only, not the resource gate.
+
+Resume: read docs/research/new-chat-handover-20261020-evaluation.md alongside
+prior handovers. Next implement/test the development-only calibration runner,
+then isolate measurements and complete the projection/gate. Never rerun pilot.
+Final verification commands used workspace uv cache and explicit .venv Python;
+pytest basetemps artifacts/pytest-evaluation-20261020-full and
+artifacts/pytest-eval-final-20261020. Inspect Git log/tracking for commit/push.
+Preserved user documents excluded. No production dependency added.
 # Resume checkpoint
+## Evaluation primitives in progress: 20 October 2026
+
+Started at 2e9ed03, matching origin/codex/opponent-dependence. Required handovers
+and context read. Preexisting five document changes preserved. Initial usage
+57% five-hour/78% weekly remaining; later46%/76%,39%/75%,35%/74%.
+Checkpointing began at35%; no reset credit used. No Python process appeared in
+Get-Process python* before implementation. No experiment or timing run launched.
+
+GPT-6 Luna (actual gpt-6-luna) implemented evaluation.py and focused tests.
+Root found a blocker: game learner_reference_errors counted exceptions rather
+than selected-q versus best-q mistakes. Repair and stronger semantic tests are
+in progress; do not treat passing initial8 tests as scientific verification.
+Initial bare git status failed on ownership; command-scoped safe.directory
+succeeded. No global Git setting changed. New continuation details/cadence and
+remaining roadmap are in docs/research/new-chat-handover-20261020-evaluation.md.
+No calibration runner, calibration measurements, complete projection, budget
+freeze or core matrix exists from this turn. Pilot seed9001 remains untouched.
+
 ## Latest documentation handover: 20 October 2026
 
 Read `docs/research/new-chat-handover-20261020-continuation.md` first, then the
@@ -350,3 +397,4 @@ No background experiment should be assumed from this file. At checkpoint creatio
 data-generation processes had finished and no pilot/training process was running.
 Subagent sessions are transient; resume from actual files and records, not an
 assumption that those sessions continue after the chat stops.
+
