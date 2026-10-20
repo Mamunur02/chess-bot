@@ -1,4 +1,68 @@
 # Resume checkpoint
+## Usage-limited continuation: 20 October 2026
+
+Started at HEAD1705d96 on codex/opponent-dependence, matching local origin
+tracking; fe57385 and1705d96 present. Only the five documented preexisting
+README/practical-scope/historical-document changes were present and remain
+preserved. Account checks:64%/94%,32%/89%, then18%/87% remaining (five-hour/weekly).
+Stopped active agents at18% to preserve the10% reserve. No reset credit used.
+
+Read the20 October handover and required context. Selected actual gpt-6-astra
+for scientific review and gpt-6-luna for bounded implementation. Agents were
+stopped before writing any implementation files. No source/test changes,
+calibration harness, experiment, new measurement, complete projection or budget
+freeze resulted. No tests were run because there were no code changes. No Python
+process appeared in Get-Process python* at start or final inspection. No cloud
+resource created; no cash spent. The completed seed9001 pilot remains untouched.
+
+Next bounded implementation, before measurements:
+- Add fixed-start evaluation primitives using existing select_learner_move at
+  epsilon0, child_board, terminal_reward and choose_action. Existing
+  run_interaction samples starts until a training decision budget and is not
+  suitable for fixed-start evaluation games. Preserve full history, terminal
+  checks,400-ply truncation with reward=None, visited learner reference errors,
+  neural counts, canonical keys and incremental partial/failure records.
+- Benchmark learner is board.turn; MSE learner is not board.turn with label
+  -reference.value. Test both colours, claim semantics, deterministic ties,
+  perspective and truncations. Do not access final data.
+- Then implement scripts/run_endgame_calibration.py and its tests using the
+  pilot's verified development loader; verify existing pretrained/three beta
+  checkpoints against pilot.json. Use fresh outputs, paired named streams,
+  bounded items/deadline and complete source/data/environment/Git provenance.
+- Full-size timing surrogate: repeat development1600/400 subsets to20000/2500,
+  measure full encoding and30 optimizer epochs with existing pretrain;
+  patience31 forces workload ONLY in explicitly labelled timing surrogate.
+  This is not independent training evidence or a prediction of actual stopping.
+
+Astra proposed the following explicit evaluation cadence for subsequent review
+and durable configuration before final-data access (not yet implemented/frozen):
+static quality+MSE at all saved main checkpoints, actual play+latency at finals
+and frozen controls. Protocol does not mandate full games at intermediates.
+Deduplicating identical zero-step evaluations within each seed gives200 static
+bundles (600000 choices and600000 MSE predictions),65 full final/frozen bundles
+(39000 games;13000 per p;201500 timing/warmup choices).400ply bound is15.6million
+plies, not expected duration. Reuse zero-step records only with matching model,
+starts,RNG and config; do not pool across seeds. This resolves conservative
+245-bundle planning overhead without omitting prescribed final evaluations.
+Complete projection still needs measured full-size pretraining, evaluation,
+checkpoint/loading/reporting overhead, uncertainty and explicit energy/cash
+assumptions. No candidate budget is approved.
+
+Resume: check account usage FIRST, then read this checkpoint and
+ docs/research/new-chat-handover-20261020.md. Use one bounded writer at a time;
+large repeated context ingestion across agents consumed substantial shared
+allowance before implementation. Inspect Git status/log for this documentation
+checkpoint's commit/push result. Do not rerun the completed pilot.
+
+Verification commands once implementation exists (fresh basetemp each run):
+```powershell
+git -c safe.directory=C:/Projects/chess-bot status -sb
+uv --cache-dir artifacts/uv-cache run --no-sync --python .venv/Scripts/python.exe pytest --basetemp artifacts/pytest-calibration-RESUME
+uv --cache-dir artifacts/uv-cache run --no-sync --python .venv/Scripts/python.exe ruff check .
+uv --cache-dir artifacts/uv-cache run --no-sync --python .venv/Scripts/python.exe mypy src scripts/run_endgame_pilot.py
+```
+Extend mypy/optional-neural checks to new calibration files when created.
+
 
 ## New-chat handover: 20 October 2026
 
