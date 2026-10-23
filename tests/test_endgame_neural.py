@@ -193,3 +193,64 @@ def test_nonfinite_validation_is_not_hidden_by_checkpoint_restore() -> None:
             seed=9001,
             config=neural.PretrainingConfig(max_epochs=1),
         )
+
+
+def test_pretraining_progress_preserves_exact_training_result() -> None:
+    features = torch.zeros((4, 775))
+    labels = [1.0, -1.0, 0.0, 0.5]
+    config = neural.PretrainingConfig(batch_size=2, max_epochs=2)
+    baseline = neural.pretrain(
+        neural.ValueNetwork(101), features, labels, features, labels,
+        seed=101, config=config,
+    )
+    records: list[neural.EpochRecord] = []
+    observed = neural.pretrain(
+        neural.ValueNetwork(101), features, labels, features, labels,
+        seed=101, config=config, deadline_check=lambda: False,
+        progress_callback=records.append,
+    )
+    assert tuple(records) == observed.epochs == baseline.epochs
+    assert observed.best_epoch == baseline.best_epoch
+    for name, value in baseline.best_state_dict.items():
+        torch.testing.assert_close(
+            value, observed.best_state_dict[name], rtol=0, atol=0
+        )
+
+
+@pytest.mark.parametrize("stop_at", [1, 4, 5, 6, 7])
+def test_pretraining_deadline_preserves_completed_epoch_progress(stop_at: int) -> None:
+    checks = 0
+    records: list[neural.EpochRecord] = []
+
+    def deadline() -> bool:
+        nonlocal checks
+        checks += 1
+        return checks >= stop_at
+
+    with pytest.raises(TimeoutError, match="pretraining deadline exceeded"):
+        neural.pretrain(
+            neural.ValueNetwork(101), torch.zeros((4, 775)), [0.0] * 4,
+            torch.zeros((2, 775)), [0.0] * 2, seed=101,
+            config=neural.PretrainingConfig(batch_size=2, max_epochs=2),
+            deadline_check=deadline, progress_callback=records.append,
+        )
+    # Checks: entry, epoch, batch1, batch2, validation, after epoch, next epoch.
+    assert len(records) == (1 if stop_at >= 6 else 0)
+
+
+@pytest.mark.parametrize("error", [OSError("persistence failed"), KeyboardInterrupt()])
+def test_pretraining_callback_failure_propagates(error: BaseException) -> None:
+    records: list[neural.EpochRecord] = []
+
+    def persist(record: neural.EpochRecord) -> None:
+        records.append(record)
+        raise error
+
+    with pytest.raises(type(error)):
+        neural.pretrain(
+            neural.ValueNetwork(101), torch.zeros((1, 775)), [0.0],
+            torch.zeros((1, 775)), [0.0], seed=101,
+            config=neural.PretrainingConfig(max_epochs=2), progress_callback=persist,
+        )
+    assert len(records) == 1
+    assert records[0].epoch == 1

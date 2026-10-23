@@ -9,7 +9,7 @@ from __future__ import annotations
 
 import copy
 import math
-from collections.abc import Sequence
+from collections.abc import Callable, Sequence
 from dataclasses import dataclass
 from typing import Literal
 
@@ -330,6 +330,8 @@ def pretrain(
     *,
     seed: int,
     config: PretrainingConfig = PretrainingConfig(),
+    deadline_check: Callable[[], bool] | None = None,
+    progress_callback: Callable[[EpochRecord], None] | None = None,
 ) -> PretrainingResult:
     """Train with protocol MSE/Adam settings and restore the earliest best model.
 
@@ -337,8 +339,18 @@ def pretrain(
     ``pretraining-shuffle`` stream and is separate from model initialization.
     The routine accepts already encoded examples so dataset access and label
     policy remain with the caller.
+
+    Optional cooperative deadlines raise TimeoutError between bounded operations;
+    an in-flight tensor operation cannot be preempted. Completed epochs are sent
+    to the callback for caller-owned persistence. Callback exceptions propagate.
+    Interrupted training does not restore a checkpoint or return a success result.
     """
 
+    def check_deadline() -> None:
+        if deadline_check is not None and deadline_check():
+            raise TimeoutError("pretraining deadline exceeded")
+
+    check_deadline()
     device = next(model.parameters()).device
     train_x = _matrix(training_features, device)
     train_y = _labels(training_labels, device)
@@ -357,10 +369,12 @@ def pretrain(
     stop_reason: Literal["early_stopping", "max_epochs"] = "max_epochs"
 
     for epoch in range(1, config.max_epochs + 1):
+        check_deadline()
         model.train()
         permutation = torch.randperm(len(train_x), generator=shuffle_generator)
         training_sum = 0.0
         for start in range(0, len(train_x), config.batch_size):
+            check_deadline()
             indices = permutation[start : start + config.batch_size].to(device)
             batch_x = train_x[indices]
             batch_y = train_y[indices]
@@ -375,6 +389,7 @@ def pretrain(
             _require_finite_parameters(parameters)
             training_sum += float(loss.detach().cpu().item()) * len(indices)
 
+        check_deadline()
         model.eval()
         with torch.no_grad():
             validation_mse = float(
@@ -396,6 +411,9 @@ def pretrain(
             epoch,
             model.state_dict(),
         )
+        if progress_callback is not None:
+            progress_callback(record)
+        check_deadline()
         if should_stop:
             stop_reason = "early_stopping"
             break

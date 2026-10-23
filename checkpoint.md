@@ -1,3 +1,76 @@
+# Usage stop and reviewed trainer hooks: 24 October 2026
+
+Latest usage17% five-hour/86% weekly remaining, after31/88 checkpoint trigger;
+stop now before10%. No reset used. Luna implementation interrupted; Astra narrow
+review finished. No experiment launched; pilot untouched; no calibration
+measurements, full projection, budget freeze or core matrix completed.
+
+Reviewed change: optional cooperative pretrain deadline/progress callbacks in
+src/chesslab/endgames/neural.py and tests/test_endgame_neural.py. Astra found no
+blocker; defaults retain scientific settings and exact training results. These
+two files and this checkpoint are the intended commit; inspect Git for hash/push.
+Five preexisting documents remain excluded and unchanged.
+
+UNFINISHED LOCAL draft files: scripts/run_endgame_calibration.py and
+tests/test_endgame_calibration.py. Do not launch or treat as accepted. Astra/root
+blockers: result['scales'] append without initialization; evaluation thread
+metadata not backed by setting/reading actual threads; setup failures precede
+durable manifest; missing probe/game-runtime/persistence/load/save accounting;
+duplicate acquisition verification; CLI can return success for failed/deadline
+manifest. Patience31 for30 epochs IS authorized solely for full-size timing
+surrogate, not a scientific setting change (Astra initially misflagged it).
+Acquisition provenance keys match pilot; root's initial suspicion was incorrect.
+Runner coverage remains inadequate:4 helper tests pass,1 optional test skipped
+in default environment; optional runner success test NOT verified by root.
+
+Exact final checks: optional neural17 passed10.79s; full default excluding draft
+449 passed5 skipped10.99s (elevated Windows UCI, artifacts/pytest-calibration-hooks-
+20261024-full-b); Ruff . passed; mypy src plus pilot passed49 files. Including
+draft mypy fails on unused type-ignore at script line23. Draft focused default
+4 passed1 skipped0.90s, artifacts/pytest-calibration-draft-20261024-final.
+Earlier full attempt had a draft test failure then stalled at sandbox Windows
+UCI; interrupted exit1, no passing full-suite claim. No Python process remained
+after that interruption. Initial89-character Ruff failure repaired. Whitespace
+check passed before final documentation. No production dependency added.
+
+Resume: fresh usage first, inspect Git/processes and these draft files. Repair
+bounded runner and test successful/failed/interrupted/deadline/persistence paths;
+verify optional neural runner and combined mypy, then narrow scientific review.
+Only then isolate evaluation and20000/2500 repeated-development30-epoch timing.
+Retain accepted cadence and all five seed blocks. Complete all resource costs
+and gate before orchestration/core. Reserve31 October–1 November reporting.
+Use workspace uv cache, explicit .venv/Scripts/python.exe and fresh basetemps;
+optional Torch uses artifacts/neural-env/Scripts/python.exe. Never rerun pilot.
+
+# Active calibration implementation: 24 October 2026
+
+Starting HEAD83fe0f2 on codex/opponent-dependence matches origin tracking.
+All required handovers/context read; five preexisting document changes preserved.
+Initial usage87% five-hour/97% weekly remaining; subsequent73/95,61/93,50/91.
+No reset credits used. Current date24 October Europe/London; reserve31 October–
+1 November for reporting/reproducibility. No Python process appeared at initial
+inspection. Pilot manifest SHA256 still matches3b4ae6defd8b0fad6b3c66380ab8c6681990deb7f8309ed3dc2142a109b3186c.
+
+GPT-6 Luna is implementing scripts/run_endgame_calibration.py and its tests;
+the draft is NOT reviewed or ready to run. Root inspection found wrong model
+inventory, unpaired model-specific RNG names, doubled game sample, latency order
+and deadline gaps, and incomplete failure/provenance accounting; corrections
+requested before scientific review. No calibration measurements, resource gate,
+budget freeze or core execution yet. Never restart or overwrite seed9001 pilot.
+
+Root added optional cooperative deadline/progress callbacks to neural.pretrain
+for bounded timing and completed-epoch persistence. Defaults retain scientific
+training behavior. Timeout/callback failures propagate; in-flight tensor work
+cannot be preempted. Focused optional neural suite17 passed in10.79s, exit0,
+artifacts/pytest-neural-calibration-hooks-20261024. Mypy src passed48 files.
+Initial Ruff flagged one89-character test line; repaired and focused Ruff passed.
+Full verification and independent review are still pending.
+
+Resume only from actual files/process/Git state and fresh usage. Finish runner
+tests/review, then isolated development evaluation and20000/2500 repeated-data
+30-epoch timing surrogate before complete projection. Accepted200 static/65 full
+bundle cadence remains fixed planning; no final labels accessed for calibration.
+
 # Documentation handover: 24 October 2026
 
 Start with docs/research/new-chat-handover-20261024.md in full, then its required
