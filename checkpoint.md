@@ -1,3 +1,20 @@
+# Documentation handover: 24 October 2026
+
+Start with docs/research/new-chat-handover-20261024.md in full, then its required
+prior handovers/context. User requested a new-chat prompt and commit/push only.
+Starting HEAD5849057 is pushed; evaluation primitives exist, calibration runner
+is absent. No source/test change or experiment made in this documentation turn.
+No Python process appeared in Get-Process python*. Five preexisting document
+changes remain preserved and excluded from commits. No reset credit used.
+Fresh initial usage96% five-hour/98% weekly remaining. The preceding implementation
+ended at13%/71%; earlier17% checkpoint was not its final reading.
+
+New handover consolidates current state, accepted cadence, API/accounting limits,
+precise next calibration work, complete resource gate and subsequent roadmap.
+It requires all original scientific context and preserves failures/check scope.
+Removed the extra checkpoint EOF blank line flagged on20 October. Documentation
+whitespace/diff checks are the relevant validation; no code tests needed or run.
+Inspect Git log/tracking for this documentation commit and push confirmation.
 ## Verified evaluation checkpoint: 20 October 2026
 
 Fixed-start evaluation primitives and tests are complete. Luna implemented;
@@ -397,4 +414,3 @@ No background experiment should be assumed from this file. At checkpoint creatio
 data-generation processes had finished and no pilot/training process was running.
 Subagent sessions are transient; resume from actual files and records, not an
 assumption that those sessions continue after the chat stops.
-
