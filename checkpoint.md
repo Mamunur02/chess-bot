@@ -1,3 +1,84 @@
+# Usage stop after lifecycle repair: 5 November 2026 (session began 4 November)
+
+Latest usage14% five-hour /86% weekly remaining; stop to protect10% reserve.
+Readings this turn62/94,51/92,39/90,30/89, then usage tool unavailable once,
+then14/86. No reset used. No experiment or calibration measurement launched.
+No complete projection, budget freeze or core execution. Pilot untouched.
+
+The two local calibration drafts now have a tested lifecycle repair slice:
+initial manifests before setup, setup error/deadline/interruption persistence,
+scales initialization, duplicate acquisition removal, actual Torch intra/inter-op
+configuration/readback, and nonzero CLI status for unsuccessful results.
+Astra narrow review identified invalid prediction stub and close-before-persist
+risk; root repaired both. Cleanup exceptions are recorded separately. This is
+NOT measurement approval: runner remains an unfinished draft.
+
+Actual gpt-6-luna introduced indentation damage and stopped without tests.
+Root repaired it; failed intermediate preserved in
+artifacts/calibration-repair-20261104/failed-luna-edit.py.txt.
+Actual gpt-6-astra reviewed lifecycle only. Optional first test failed because
+stub returned one prediction for many boards; corrected to batch length.
+Added setup failure/deadline/KeyboardInterrupt and CLI failure tests; optional
+success path exercises actual ValueNetwork/pretrain for30 epochs on mocked
+inputs with4/2 repeated examples. This is verification, not timing evidence.
+
+Final checks, exit0 each: full default462 passed6 skipped13.46s (elevated UCI,
+artifacts/pytest-calibration-full-20261104); optional calibration14 passed9.57s
+(artifacts/pytest-calibration-neural-20261104-b); Ruff . passed; combined mypy
+src plus pilot/calibration passed50 files. Initial optional failure retained at
+artifacts/pytest-calibration-neural-20261104-a. Broader optional neural suite
+was not rerun this turn. No production dependency changed.
+
+Next smallest task: finish and test attempted probe/predictor and exclusive
+wall-time accounting (including failures, games, persistence, setup, tensor
+construction, saves/loads), complete provenance and deadline checks including
+encoding and between static helpers; preserve partial latency/game records and
+classify deadline versus failed/capped games. Test persistence/cleanup failures,
+real evaluation integration, hashes and paired streams. Pretraining must verify
+complete pilot status and record surrogate/config/model/source provenance.
+Do not mistake current passing tests for completed runner requirements. Obtain
+focused scientific review before isolated development evaluation/full-size
+20000/2500 timing calibration, then complete projection/gate before core.
+Revised provisional schedule is below; preserve final two reporting days.
+
+Five original document changes remain excluded. Drafts were initially untracked;
+inspect Git status/log for whether this repair checkpoint was committed/pushed.
+No background continuation is implied. Check fresh usage FIRST on resume.
+# Active calibration lifecycle repair: 4 November 2026
+
+Usage checked first: 62% five-hour / 94% weekly remaining; after required
+context reads 51% / 92%. No reset credits used. HEAD af4b6cf on
+codex/opponent-dependence matches local origin tracking. Initial plain Git
+commands hit ownership protection; command-scoped safe.directory works.
+No Python process appeared in initial Get-Process python* inspection.
+All required handovers, guide, status, protocol, implementation, literature,
+pilot summaries and README read; checkpoint read newest first.
+
+Five preexisting document changes preserved; baseline hashes saved to
+artifacts/calibration-repair-20261104/preserved-document-hashes.json.
+Both untracked draft hashes match the 4 November handover, as does pilot.json
+(3b4ae6defd8b0fad6b3c66380ab8c6681990deb7f8309ed3dc2142a109b3186c).
+Development files, pilot checkpoints and eight tables are present. Pilot not
+restarted or overwritten; no final labels accessed, no measurements launched.
+
+Actual gpt-6-luna assigned only lifecycle/setup failure handling, CLI status,
+thread configuration, scales initialization, duplicate verification removal,
+and bounded success/failure tests in the two calibration drafts. Work is in
+progress, not accepted. Accounting, deadline/provenance completeness and focused
+Astra review remain required before any calibration measurement. No complete
+projection, budget freeze, orchestration or core execution has occurred.
+
+Revised provisional plan (not an external deadline or feasibility claim):
+5-8 November repair, tests, review, isolated calibration and full resource gate;
+9-12 November remaining orchestration/review and core execution ONLY if gates
+pass; 13-16 November paired analysis, overlap/missing-run sensitivity and audits;
+17-18 November reserved exclusively for reporting and reproducibility.
+If earlier gates slip, move completion and preserve the final two full reporting
+days; do not compress gates or drop seed blocks. Optional extensions are deferred
+until core reporting. No replacement external deadline has been supplied.
+
+Resume from current files and fresh usage, not this in-progress note. Inspect
+agent/process state and verification results before committing either draft.
 # Documentation handover: 4 November 2026
 
 Read docs/research/new-chat-handover-20261104.md in full and all required context
