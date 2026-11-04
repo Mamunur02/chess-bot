@@ -1,3 +1,23 @@
+# Documentation handover: 4 November 2026
+
+Read docs/research/new-chat-handover-20261104.md in full and all required context
+it lists. This turn is handover/commit/push only; no code repair or experiment.
+HEAD2ad7dd8 matches origin tracking; this documentation commit follows it.
+Two unfinished calibration drafts remain LOCAL UNTRACKED, excluded from this
+commit; their hashes, blockers and repair requirements are in the new handover.
+Five preexisting document changes remain preserved and excluded. No Python
+process appeared in Get-Process python*. Pilot manifest hash still matches.
+
+Fresh usage74% five-hour/96% weekly remaining. Previous implementation final
+reading was14%/86% after push, not the17% pre-finalization reading below.
+No reset used. Original31 October–1 November reporting reserve has now passed;
+reassess schedule without relaxing gates, with final two days of a revised plan
+reserved for reporting/reproduction. No replacement deadline supplied.
+
+No calibration measurements, complete projection, budget freeze or core matrix
+have occurred. No code tests rerun for this documentation-only change; validate
+whitespace and inspect staged diff. Inspect Git log/status for resulting push.
+
 # Usage stop and reviewed trainer hooks: 24 October 2026
 
 Latest usage17% five-hour/86% weekly remaining, after31/88 checkpoint trigger;
