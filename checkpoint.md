@@ -1,3 +1,28 @@
+# Documentation handover: 6 November 2026
+
+Read docs/research/new-chat-handover-20261106.md in full, then all required
+prior handovers/context it lists. This turn is documentation/commit/push only.
+Starting HEAD586b0d6 matches local origin tracking; its push succeeded in the
+previous chat. Both calibration files are now committed, superseding earlier
+untracked-file warnings, but the runner remains unfinished and unapproved for
+measurements. New handover distinguishes tested lifecycle repairs from remaining
+accounting/provenance/deadline/failure work and preserves exact check scope.
+
+Fresh initial usage86% five-hour /83% weekly remaining. Previous implementation's
+14/86 reading was before final checkpoint/commit/push, not a post-push check.
+No reset used. No Python process appeared in Get-Process python*. Pilot manifest
+SHA256 rechecked unchanged. Five preexisting document changes remain excluded.
+No code tests rerun or experiment launched; documentation whitespace, links and
+staged diff are the applicable checks. No calibration measurements, full resource
+projection, budget freeze or core matrix exists. Revised provisional schedule
+still reserves17-18 November for reporting, subject to reassessment and sliding
+completion to preserve two full reporting days. No external deadline supplied.
+Final documentation usage reading76% five-hour /81% weekly remaining.
+Whitespace check passed. File-reference check initially treated pilot.json as
+a root-relative path; corrected validation resolves its stated pilot directory
+and all references pass. No product/code failure was involved.
+Inspect Git log/status for this handover commit and push result.
+
 # Usage stop after lifecycle repair: 5 November 2026 (session began 4 November)
 
 Latest usage14% five-hour /86% weekly remaining; stop to protect10% reserve.
