@@ -1,3 +1,100 @@
+# Reviewed attempted-work checkpoint: 6 November 2026
+
+Stopping implementation for account headroom; latest reading 23% five-hour /
+73% weekly remaining. Earlier readings this turn: 68/80, 56/78, 41/76, 33/74.
+Checkpointing began early at41% because consumption was rapid. No reset used.
+No calibration measurement, complete resource projection, budget freeze or core
+matrix execution occurred. Runner remains UNAPPROVED for measurements.
+
+Changes: scripts/run_endgame_calibration.py retains cumulative attempted
+predictor calls/input boards/failures/seconds through phase resets, wraps
+WDL/DTZ probes with attempted counts/failures/seconds/raw exception text, and
+writes attempted_work during finalization in both runner modes. Times are
+nested diagnostics, NOT exclusive wall components to add to elapsed time.
+The original table object is closed once. Scientific behavior is unchanged.
+This is a narrow partial accounting repair, not full accounting completion.
+
+Actual gpt-6-luna implemented counters and initial tests; its follow-up added
+a labeling failure test but omitted requested evaluation/reset regressions.
+Root expanded tests to real selector/reference failures and KeyboardInterrupt
+with mocked setup and optional modules, and deterministic cumulative resets.
+Actual gpt-6-astra independently reviewed the final diff: no introduced blockers,
+safe to checkpoint this slice; explicitly NOT approval of the whole runner.
+Astra did not rerun tests. Backups of both original files are in
+artifacts/calibration-repair-20261106/. No dependencies changed.
+
+Checks (all observed exit0):
+- Focused root:21 passed,1 skipped in1.17s,
+  artifacts/pytest-accounting-root-20261106.
+- Full default:470 passed,6 skipped in15.57s, elevated Windows UCI,
+  artifacts/pytest-accounting-full-20261106.
+- Broader optional neural/interaction/targets/pilot/evaluation/calibration:
+  106 passed in21.12s, artifacts/pytest-accounting-neural-20261106.
+- Ruff check . passed. Combined mypy src plus pilot/calibration passed50 files.
+- Git diff --check passed before this final checkpoint text.
+Luna earlier focused runs:16 passed1 skipped, then17 passed1 skipped; Ruff
+passed. Tests are verification only, not isolated calibration timing evidence.
+No Python process appeared after tests; both test processes exited0.
+
+Starting HEAD8fbc2ff on codex/opponent-dependence matched origin tracking.
+Only this checkpoint and the two calibration files belong in the new commit.
+Five preexisting user documents remain excluded and matched their saved hashes;
+pilot manifest hash verified unchanged. Inspect Git log/status for this
+checkpoint commit and its push result. No background continuation is implied.
+
+Next smallest task: repair incremental latency/static/game accounting and
+persistence. Add exclusive game/setup/persistence/load/save/encoding/tensor/
+training/reporting wall components without adding nested diagnostics twice.
+Cumulative attempted_work currently reaches the final manifest; per-game work
+deltas and continuous durable counters still need implementation. Preserve the
+latest full game snapshot BEFORE writes; handle initial/progress/final write
+and cleanup failures without losing the original error. Add successful/failed
+orchestration regressions, model-hash rejection at all four checkpoints,
+data/acquisition mismatches, balanced colours and genuinely paired RNG streams.
+Complete deadline checks throughout setup, encoding and between static helpers;
+preserve partial latency; distinguish deadline/interruption/failure/ply cap.
+Complete provenance (including command-scoped Git safe.directory, full resolved
+config, hardware, hashes and surrogate disclosures), require complete pilot
+status in pretraining. Do not alter evaluation primitives or trainer defaults.
+
+Resume with fresh usage FIRST, read the6 November handover and required context,
+inspect actual Git/process/artifact state, then small tested repairs and focused
+review. Commands remain those in docs/research/new-chat-handover-20261106.md;
+use NEW unique basetemps. Only after full runner approval run isolated development
+evaluation and full-size20000/2500 repeated-development30-epoch timing. Never
+restart pilot or access final labels for tuning. Complete full projection/gate
+before reviewed core orchestration/execution; preserve all five seeds/cadence.
+Schedule remains provisional: substantial repairs remain on6 November;8 November
+gate target is uncertain. Preserve17-18 November reporting/reproducibility only
+if preceding gates fit, otherwise shift completion retaining two full days.
+No replacement external deadline was supplied.
+
+# Active attempted-work accounting repair: 6 November 2026
+
+Fresh account usage checked FIRST: 68% five-hour / 80% weekly remaining;
+after required context reads 56% / 78%. No reset credits used. Date confirmed
+6 November 2026 Europe/London. HEAD8fbc2ff matches origin tracking on
+codex/opponent-dependence. Bare Git hit ownership protection; repository-scoped
+safe.directory succeeds. No Python process appeared at initial inspection.
+All required handovers/context read, checkpoint newest first. Protected five
+user documents match saved hashes; pilot.json hash remains
+3b4ae6defd8b0fad6b3c66380ab8c6681990deb7f8309ed3dc2142a109b3186c.
+Development files, pilot checkpoints and eight local tables are present.
+
+Actual gpt-6-luna is assigned ONLY attempted predictor/probe accounting with
+failure-path tests in the calibration runner and its tests. Narrow Astra review
+will follow sequentially. No measurement authorization follows from this slice.
+Do not assume an agent or experiment remains active on resume: inspect actual
+state. No calibration measurements, complete projection, budget freeze or core
+execution has occurred. Pilot and final labels remain untouched.
+
+Schedule reassessment: 5-8 November repair/review/calibration/gate remains a
+provisional target with substantial runner repairs still pending on 6 November.
+9-12 November orchestration/core is conditional on those gates, not promised.
+13-16 November analysis/audits and 17-18 November exclusively reporting and
+reproducibility remain provisional; shift completion if gates slip and retain
+two full reporting days. No replacement external deadline or measured feasibility.
+
 # Documentation handover: 6 November 2026
 
 Read docs/research/new-chat-handover-20261106.md in full, then all required

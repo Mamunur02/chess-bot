@@ -4,7 +4,7 @@ import importlib.util
 import json
 import sys
 from pathlib import Path
-from types import SimpleNamespace
+from types import ModuleType, SimpleNamespace
 
 import chess
 import pytest
@@ -60,6 +60,132 @@ def test_timed_predictor_counts_failed_attempt_and_elapsed() -> None:
         predictor([object()], True)
     assert predictor.calls == predictor.boards == predictor.failures == 1
     assert predictor.seconds >= 0
+
+
+@pytest.mark.parametrize("error", [RuntimeError("probe failed"), KeyboardInterrupt()])
+def test_timed_tablebase_retains_failed_probe_and_elapsed(monkeypatch, error) -> None:
+    ticks = iter((1.0, 1.25))
+    monkeypatch.setattr(calibration.time, "perf_counter", lambda: next(ticks))
+
+    class Table:
+        def probe_wdl(self, _board):
+            raise error
+
+    timed = calibration._TimedTablebase(Table())
+    with pytest.raises(type(error)):
+        timed.probe_wdl(chess.Board())
+    assert timed.probes["probe_wdl"] == 1
+    assert timed.failures["probe_wdl"] == 1
+    assert timed.seconds["probe_wdl"] == pytest.approx(0.25)
+    if isinstance(error, RuntimeError):
+        assert timed.errors["probe_wdl"] == ["RuntimeError: probe failed"]
+
+
+def test_timed_tablebase_counts_success(monkeypatch) -> None:
+    ticks = iter((2.0, 2.5))
+    monkeypatch.setattr(calibration.time, "perf_counter", lambda: next(ticks))
+    timed = calibration._TimedTablebase(SimpleNamespace(probe_dtz=lambda _: 4))
+    assert timed.probe_dtz(chess.Board()) == 4
+    assert timed.probes["probe_dtz"] == 1
+    assert timed.seconds["probe_dtz"] == pytest.approx(0.5)
+
+
+@pytest.mark.parametrize("mode", ["pretraining", "evaluation"])
+@pytest.mark.parametrize("error", [RuntimeError("work failed"), KeyboardInterrupt()])
+def test_attempted_work_failure_survives_manifest(
+    tmp_path: Path, monkeypatch: pytest.MonkeyPatch, mode, error
+) -> None:
+    board = chess.Board("7k/8/8/8/8/8/8/KR6 w - - 0 1")
+    rows = [{"fen": board.fen()}]
+    pilot_manifest_path = tmp_path / "pilot" / "pilot.json"
+    pilot_manifest_path.parent.mkdir()
+    acquisition_path = tmp_path / "acquisition.json"
+    acquisition_path.write_text("{}", encoding="utf-8")
+    acquisition_hash = calibration._sha256(acquisition_path.read_bytes())
+    table = SimpleNamespace(close=lambda: setattr(table, "closed", table.closed + 1))
+    table.closed = 0
+    fake_pilot = SimpleNamespace(
+        _load_development=lambda _: (rows, "development-hash"),
+        DEV_SEED=1101,
+        verify_acquisition_manifest=lambda *_: {"table_sha256": {"tb": "hash"}},
+    )
+    pilot_manifest_path.write_text(
+        json.dumps(
+            {
+                "status": "complete",
+                "development": {
+                    "jsonl_sha256": "development-hash",
+                    "verified_seed": 1101,
+                },
+                "acquisition_manifest_sha256": acquisition_hash,
+                "table_hashes": {"tb": "hash"},
+            }
+        ),
+        encoding="utf-8",
+    )
+    monkeypatch.setattr(calibration, "_pilot_module", lambda: fake_pilot)
+    monkeypatch.setitem(sys.modules, "torch", SimpleNamespace())
+    fake_neural = ModuleType("chesslab.endgames.neural")
+    fake_neural.PretrainingConfig = object
+    fake_neural.ValueNetwork = object
+    fake_neural.pretrain = lambda *args, **kwargs: None
+    def fail(*_args):
+        raise error
+
+    fake_neural.BatchPredictor = lambda _model: fail
+    monkeypatch.setitem(sys.modules, "chesslab.endgames.neural", fake_neural)
+    monkeypatch.setattr(calibration, "_configure_torch", lambda _: {})
+    monkeypatch.setattr(calibration, "_models", lambda *_: [("pretrained", object())])
+    monkeypatch.setattr(calibration, "_provenance", lambda *_: {})
+    monkeypatch.setattr(calibration.chess.syzygy, "open_tablebase", lambda _: table)
+    monkeypatch.setattr(
+        table,
+        "probe_wdl",
+        fail,
+        raising=False,
+    )
+    output = tmp_path / "output"
+    output.mkdir()
+    args = SimpleNamespace(
+        output_dir=output,
+        pilot_dir=pilot_manifest_path.parent,
+        development_dir=tmp_path / "development",
+        acquisition_manifest=acquisition_path,
+        tablebase_dir=tmp_path / "tablebase",
+        deadline_seconds=60.0,
+        samples=1,
+    )
+    with pytest.raises(type(error)):
+        getattr(calibration, f"run_{mode}")(args)
+    saved = json.loads((output / "calibration.json").read_text(encoding="utf-8"))
+    assert saved["status"] == (
+        "interrupted" if isinstance(error, KeyboardInterrupt) else "failed"
+    )
+    work = saved["attempted_work"]
+    if mode == "pretraining":
+        assert work["tablebase"]["probes"]["probe_wdl"] == 1
+        assert work["tablebase"]["failures"]["probe_wdl"] == 1
+        assert work["tablebase"]["errors"]["probe_wdl"] == [
+            f"{type(error).__name__}: {error}"
+        ]
+    else:
+        assert work["predictors"]["pretrained"]["calls"] == 1
+        assert work["predictors"]["pretrained"]["failures"] == 1
+        assert work["predictors"]["pretrained"]["boards"] > 0
+    assert table.closed == 1
+
+
+def test_predictor_cumulative_work_survives_phase_reset(monkeypatch):
+    ticks = iter((1.0, 1.25, 2.0, 2.5))
+    monkeypatch.setattr(calibration.time, "perf_counter", lambda: next(ticks))
+    predictor = calibration._TimedPredictor(lambda boards, _: [0.0] * len(boards))
+    predictor([object()], True)
+    predictor.calls = predictor.boards = predictor.failures = 0
+    predictor.seconds = 0.0
+    predictor([object(), object()], False)
+    assert predictor.totals == {
+        "calls": 2, "boards": 3, "failures": 0, "seconds": 0.75
+    }
 
 
 def test_source_snapshot_records_calibration_script(tmp_path: Path) -> None:

@@ -103,24 +103,63 @@ def _models(
 
 
 class _TimedPredictor:
-    def __init__(self, predictor: Any) -> None:
+    """Time attempted predictor work, retaining totals across local resets."""
+
+    def __init__(self, predictor: Any, totals: dict[str, Any] | None = None) -> None:
         self.predictor = predictor
         self.calls = 0
         self.boards = 0
         self.seconds = 0.0
         self.failures = 0
+        self.totals = totals if totals is not None else {
+            "calls": 0, "boards": 0, "seconds": 0.0, "failures": 0
+        }
 
     def __call__(self, boards: Any, learner: chess.Color) -> Any:
         self.calls += 1
         self.boards += len(boards)
+        self.totals["calls"] += 1
+        self.totals["boards"] += len(boards)
         started = time.perf_counter()
         try:
             return self.predictor(boards, learner)
         except BaseException:
             self.failures += 1
+            self.totals["failures"] += 1
             raise
         finally:
-            self.seconds += time.perf_counter() - started
+            elapsed = time.perf_counter() - started
+            self.seconds += elapsed
+            self.totals["seconds"] += elapsed
+
+
+class _TimedTablebase:
+    """Measure attempted WDL/DTZ probes while preserving tablebase behavior."""
+
+    def __init__(self, table: Any) -> None:
+        self.table = table
+        self.probes = {"probe_wdl": 0, "probe_dtz": 0}
+        self.seconds = {"probe_wdl": 0.0, "probe_dtz": 0.0}
+        self.failures = {"probe_wdl": 0, "probe_dtz": 0}
+        self.errors: dict[str, list[str]] = {"probe_wdl": [], "probe_dtz": []}
+
+    def _probe(self, name: str, *args: Any, **kwargs: Any) -> Any:
+        self.probes[name] += 1
+        started = time.perf_counter()
+        try:
+            return getattr(self.table, name)(*args, **kwargs)
+        except BaseException as exc:
+            self.failures[name] += 1
+            self.errors[name].append(f"{type(exc).__name__}: {exc}")
+            raise
+        finally:
+            self.seconds[name] += time.perf_counter() - started
+
+    def probe_wdl(self, *args: Any, **kwargs: Any) -> Any:
+        return self._probe("probe_wdl", *args, **kwargs)
+
+    def probe_dtz(self, *args: Any, **kwargs: Any) -> Any:
+        return self._probe("probe_dtz", *args, **kwargs)
 
 
 def _record_game(path: Path, record: dict[str, Any], snapshot: Any) -> None:
@@ -224,6 +263,9 @@ def run_evaluation(args: argparse.Namespace) -> dict[str, Any]:
     output: dict[str, Any] = {"mode": "evaluation", "status": "running", "items": []}
     out_path = args.output_dir / "calibration.json"
     table = None
+    original_table = None
+    table_work = None
+    predictor_totals: dict[str, dict[str, Any]] = {}
     _atomic_json(out_path, output)
     try:
         pilot = _pilot_module()
@@ -268,7 +310,9 @@ def run_evaluation(args: argparse.Namespace) -> dict[str, Any]:
             raise ValueError(
                 "tablebase acquisition provenance does not match the pilot"
             )
-        table = chess.syzygy.open_tablebase(str(args.tablebase_dir))
+        original_table = chess.syzygy.open_tablebase(str(args.tablebase_dir))
+        table_work = _TimedTablebase(original_table)
+        table = table_work
         selected_rows = rows[: args.samples]
         boards = [chess.Board(str(row["fen"])) for row in selected_rows]
         output.update(
@@ -291,8 +335,13 @@ def run_evaluation(args: argparse.Namespace) -> dict[str, Any]:
             }
         )
         _atomic_json(out_path, output)
+        predictor_totals = {
+            name: {"calls": 0, "boards": 0, "seconds": 0.0, "failures": 0}
+            for name, _ in models
+        }
         predictors = {
-            name: _TimedPredictor(BatchPredictor(model)) for name, model in models
+            name: _TimedPredictor(BatchPredictor(model), predictor_totals[name])
+            for name, model in models
         }
         output["latency"] = {}
         latency_samples_by_model: dict[str, list[float]] = {
@@ -470,13 +519,27 @@ def run_evaluation(args: argparse.Namespace) -> dict[str, Any]:
         raise
     finally:
         try:
-            if table is not None:
-                table.close()
+            if original_table is not None:
+                original_table.close()
         except Exception as exc:
             output["cleanup_error"] = f"{type(exc).__name__}: {exc}"
             if output["status"] == "complete":
                 output["status"] = "failed"
         output["elapsed_seconds"] = time.perf_counter() - started
+        output["attempted_work"] = {
+            "predictors": predictor_totals,
+            "tablebase": (
+                {
+                    "probes": table_work.probes,
+                    "seconds": table_work.seconds,
+                    "failures": table_work.failures,
+                    "errors": table_work.errors,
+                }
+                if table_work is not None
+                else {"probes": {}, "seconds": {}, "failures": {}}
+            ),
+            "cost_accounting": "Nested operation times; do not add to elapsed_seconds.",
+        }
         _atomic_json(out_path, output)
     return output
 
@@ -488,6 +551,8 @@ def run_pretraining(args: argparse.Namespace) -> dict[str, Any]:
     result: dict[str, Any] = {"mode": "pretraining", "status": "running", "scales": []}
     out_path = args.output_dir / "calibration.json"
     table = None
+    original_table = None
+    table_work = None
     _atomic_json(out_path, result)
     try:
         pilot = _pilot_module()
@@ -519,7 +584,9 @@ def run_pretraining(args: argparse.Namespace) -> dict[str, Any]:
             raise ValueError(
                 "tablebase acquisition provenance does not match the pilot"
             )
-        table = chess.syzygy.open_tablebase(str(args.tablebase_dir))
+        original_table = chess.syzygy.open_tablebase(str(args.tablebase_dir))
+        table_work = _TimedTablebase(original_table)
+        table = table_work
         result.update(
             {
                 "data_sha256": data_hash,
@@ -609,13 +676,26 @@ def run_pretraining(args: argparse.Namespace) -> dict[str, Any]:
         raise
     finally:
         try:
-            if table is not None:
-                table.close()
+            if original_table is not None:
+                original_table.close()
         except Exception as exc:
             result["cleanup_error"] = f"{type(exc).__name__}: {exc}"
             if result["status"] == "complete":
                 result["status"] = "failed"
         result["elapsed_seconds"] = time.perf_counter() - started
+        result["attempted_work"] = {
+            "tablebase": (
+                {
+                    "probes": table_work.probes,
+                    "seconds": table_work.seconds,
+                    "failures": table_work.failures,
+                    "errors": table_work.errors,
+                }
+                if table_work is not None
+                else {"probes": {}, "seconds": {}, "failures": {}}
+            ),
+            "cost_accounting": "Nested operation times; do not add to elapsed_seconds.",
+        }
         _atomic_json(out_path, result)
     return result
 
