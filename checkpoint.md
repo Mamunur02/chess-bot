@@ -1,3 +1,30 @@
+# Documentation handover: 7 November 2026
+
+Read docs/research/new-chat-handover-20261107.md in full, then the6 November
+handover and all required prior context. This turn is documentation/commit/push
+only. Starting HEADfbf213e matches local origin tracking; its push succeeded in
+the prior implementation turn. New handover records the reviewed attempted-work
+slice and remaining accounting/persistence/deadline/provenance/test blockers.
+Runner remains UNAPPROVED for measurements. No calibration, complete projection,
+budget freeze or core matrix has occurred. No code tests rerun this turn.
+
+Correction/completion of usage history: prior implementation's VERIFIED post-push
+reading was14% five-hour /71% weekly remaining; its committed23/73 reading was
+before finalization. Fresh initial reading this documentation turn89% /67%.
+No reset used by this agent. No Python process appeared on7 November inspection.
+Pilot manifest hash and all five preserved document hashes rechecked unchanged.
+The five preexisting changes remain excluded from this documentation commit.
+
+Today7 November: substantial runner repairs remain, so8 November full-gate target
+is uncertain.17-18 November reporting/reproducibility remains provisional, not
+an external deadline or feasibility claim. If gates slip, shift completion and
+preserve the final two full reporting days. No replacement external deadline.
+Documentation reading-path validation and diff whitespace passed. Latest usage
+84% five-hour /67% weekly remaining before commit/push. No code tests needed.
+Applicable final checks are staged whitespace and scope;
+inspect Git log/status for this handover commit and push result. No experiment
+or automatic background continuation is implied.
+
 # Reviewed attempted-work checkpoint: 6 November 2026
 
 Stopping implementation for account headroom; latest reading 23% five-hour /
