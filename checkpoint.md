@@ -1,3 +1,104 @@
+# Reviewed persistence checkpoint: 7 November 2026
+
+Stopping new implementation at the 35% five-hour / 59% weekly checkpoint trigger.
+Initial usage80/66; later70/65,66/64,58/63,56/62,50/61,40/60,35/59.
+Pre-commit reading31/58. Final process check showed no Python process; pilot
+and all five protected document hashes rechecked unchanged. Staged scope and
+whitespace checks passed. Post-push reading will be reported separately.
+No reset credits, paid resources or experiments used. No calibration measurements,
+complete projection, budget freeze or core execution. Runner remains UNAPPROVED
+for measurements. Pilot/final labels untouched. Date checked23:54 UTC7 November.
+
+Reviewed slice changes scripts/run_endgame_calibration.py,
+src/chesslab/endgames/evaluation.py, tests/test_endgame_calibration.py:
+- Initial writes now participate in runner failure handling. Finalization retains
+  original work/deadline/interruption exceptions through cleanup and write failures.
+  Secondary errors are recorded separately; impossible durable writes expose the
+  latest in-memory state as exception.partial_manifest. This is accessible only
+  while the exception/process remains available; it is NOT guaranteed disk recovery.
+- Full active-game snapshot (start, perspective, p, moves, keys, choices and all
+  denominators) is installed before I/O. Game write failure aborts further work.
+  No unbounded historical snapshot list; cleanup occurs once; failed persistence
+  or cleanup cannot return success.
+- Evaluation failure callback now runs inside the active ordinary-exception
+  handler, allowing the runner to retain exception identity when writing fails.
+  A flag avoids duplicate callback during unwinding. Successful callbacks retain
+  the existing returned-game-failure contract; scientific selection/rules unchanged.
+
+Actual gpt-6-luna implemented initial helpers but omitted requested run-level
+fault tests. Root completed orchestration regressions and simplified recovery.
+Actual gpt-6-astra found the ordinary-error callback-boundary blocker; root fixed
+it and extended real-game tests for ValueError/TimeoutError/KeyboardInterrupt.
+Astra re-review approved ONLY this persistence slice for checkpointing; it did
+not run checks or approve measurements. No dependency changed. Original backups:
+artifacts/calibration-repair-20261107/ (*.before.py.txt, including evaluation).
+
+Final verification, each observed exit0:
+- Calibration+evaluation63 passed1 skipped2.94s:
+  artifacts/pytest-persistence-reviewfix-20261107.
+- Full default492 passed6 skipped13.70s (elevated Windows UCI):
+  artifacts/pytest-persistence-full-final-20261107.
+- Broader optional neural/interaction/targets/pilot/evaluation/calibration128
+  passed17.86s: artifacts/pytest-persistence-neural-final-20261107.
+- Ruff . passed; mypy src plus pilot/calibration passed50 files.
+- Git diff --check passed before final checkpoint text; staged scope/whitespace
+  checks follow. Earlier pre-review-fix full490/6 and optional126 passed; those
+  were superseded by final checks above. No failed test result concealed.
+
+Git starting HEADbeaa117, branch codex/opponent-dependence, existing origin
+https://github.com/Mamunur02/chess-bot.git. Only these three code/test files and
+checkpoint.md belong in this commit. Five preexisting document changes excluded.
+Inspect Git log/status for resulting commit/push. No background continuation or
+experiment implied; verify processes and fresh account limits before resuming.
+
+Next smallest slice: incremental latency/static accounting and deadline records,
+with partial attempted work durable between items and per-game deltas. Preserve
+this error-handling contract and full snapshot; no cumulative totals as per-game
+costs. Complete exclusive setup/game/persistence/load/save/encoding/tensor/train/
+reporting timings, distinguish nested diagnostics, finish setup/encoding/static/
+latency/game deadlines, provenance (safe.directory, resolved config/source/Git/
+hardware/seeds/hashes/surrogate and complete pilot status), all four model hash
+rejections, data/acquisition mismatches, paired RNG and balanced-colour tests.
+Then focused whole-runner review BEFORE isolated development evaluation and
+full-size20000/2500 repeated-development30-epoch timing. No full gate or candidate
+budget approved; retain cadence, all five seeds and scientific patience5 (31 only
+for timing surrogate). Do not restart seed9001 or access final labels for tuning.
+
+Schedule reassessment: with only this bounded slice completed late7 November,
+8 November full-gate completion is increasingly uncertain; 18 November delivery
+is not substantiated. Keep17-18 November reporting provisional, move completion
+if gates slip, and preserve final TWO FULL reporting/reproducibility days. No
+replacement external deadline supplied. Resume with7 November handover/context
+plus this newer checkpoint and actual source/artifact/process state. Use the
+handover verification commands with NEW basetemps. Measurements and complete
+resource gate must precede reviewed core orchestration/execution and analysis.
+
+# Active persistence repair: 7 November 2026
+
+Usage checked FIRST: 80% five-hour / 66% weekly remaining; after context
+70/65, before Luna delegation 66/64. No reset credits used. Required handovers
+and context read, checkpoint newest first. Starting HEAD beaa117 matches local
+origin tracking on codex/opponent-dependence. No Python process appeared at
+initial inspection. Five protected documents match the saved baseline hashes;
+pilot.json remains 3b4ae6defd8b0fad6b3c66380ab8c6681990deb7f8309ed3dc2142a109b3186c.
+Development files, pilot checkpoints and eight tables are present.
+
+Actual gpt-6-luna assigned a narrow persistence/error-preservation slice in
+scripts/run_endgame_calibration.py and tests/test_endgame_calibration.py, with
+initial/progress/final write and cleanup regressions. Backups are under
+artifacts/calibration-repair-20261107/ (*.before.py.txt). Work is in progress,
+not reviewed or measurement-ready. No experiment launched; no calibration,
+complete projection, budget freeze or core execution. Inspect agents/processes
+and actual changes on resume; do not assume continuation is running.
+
+Schedule: substantial repairs remain late on 7 November. The 8 November full
+gate is uncertain, and 18 November completion is not substantiated. Keep
+17-18 November reporting provisional; move completion if gates slip while
+preserving TWO FULL reporting/reproducibility days. No new external deadline.
+Next: finish this tested slice, focused actual Astra review, required checks;
+then remaining incremental accounting, latency, deadlines, provenance and
+orchestration tests before any isolated calibration. Pilot/final labels untouched.
+
 # Documentation handover: 7 November 2026
 
 Read docs/research/new-chat-handover-20261107.md in full, then the6 November
@@ -240,7 +341,7 @@ process appeared in Get-Process python*. Pilot manifest hash still matches.
 
 Fresh usage74% five-hour/96% weekly remaining. Previous implementation final
 reading was14%/86% after push, not the17% pre-finalization reading below.
-No reset used. Original31 October–1 November reporting reserve has now passed;
+No reset used. Original31 OctoberÃ¢â‚¬â€œ1 November reporting reserve has now passed;
 reassess schedule without relaxing gates, with final two days of a revised plan
 reserved for reporting/reproduction. No replacement deadline supplied.
 
@@ -288,7 +389,7 @@ bounded runner and test successful/failed/interrupted/deadline/persistence paths
 verify optional neural runner and combined mypy, then narrow scientific review.
 Only then isolate evaluation and20000/2500 repeated-development30-epoch timing.
 Retain accepted cadence and all five seed blocks. Complete all resource costs
-and gate before orchestration/core. Reserve31 October–1 November reporting.
+and gate before orchestration/core. Reserve31 OctoberÃ¢â‚¬â€œ1 November reporting.
 Use workspace uv cache, explicit .venv/Scripts/python.exe and fresh basetemps;
 optional Torch uses artifacts/neural-env/Scripts/python.exe. Never rerun pilot.
 
@@ -297,7 +398,7 @@ optional Torch uses artifacts/neural-env/Scripts/python.exe. Never rerun pilot.
 Starting HEAD83fe0f2 on codex/opponent-dependence matches origin tracking.
 All required handovers/context read; five preexisting document changes preserved.
 Initial usage87% five-hour/97% weekly remaining; subsequent73/95,61/93,50/91.
-No reset credits used. Current date24 October Europe/London; reserve31 October–
+No reset credits used. Current date24 October Europe/London; reserve31 OctoberÃ¢â‚¬â€œ
 1 November for reporting/reproducibility. No Python process appeared at initial
 inspection. Pilot manifest SHA256 still matches3b4ae6defd8b0fad6b3c66380ab8c6681990deb7f8309ed3dc2142a109b3186c.
 
@@ -716,7 +817,7 @@ electricity not estimated. No full training matrix or charged resources launched
    largest feasible common budget among 2000/5000/10000/20000 using full core
    projection <=36 machine-hours including30% contingency and GBP60. No full
    matrix before this gate. Keep all five seeds; final labels remain sealed.
-6. Continue protocol sequence; reserve 31 October–1 November for reporting.
+6. Continue protocol sequence; reserve 31 OctoberÃ¢â‚¬â€œ1 November for reporting.
 
 ## Commands
 

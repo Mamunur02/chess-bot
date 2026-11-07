@@ -63,6 +63,31 @@ def _atomic_json(path: Path, value: object) -> None:
     temporary.replace(path)
 
 
+def _persist_or_attach(
+    path: Path, value: dict[str, Any], active: BaseException | None
+) -> None:
+    """Persist a manifest, preserving an active failure and exposing its snapshot.
+
+    If persistence fails, ``partial_manifest`` exposes the latest in-memory state.
+    An active original exception also receives the secondary ``persistence_error``.
+    """
+    try:
+        _atomic_json(path, value)
+    except BaseException as persistence_error:
+        value.setdefault("persistence_errors", []).append(
+            f"{type(persistence_error).__name__}: {persistence_error}"
+        )
+        if active is not None:
+            setattr(active, "partial_manifest", value)
+            setattr(active, "persistence_error", persistence_error)
+            active.add_note(f"manifest persistence failed: {persistence_error}")
+            return
+        if value.get("status") in {"running", "complete"}:
+            value["status"] = "failed"
+        setattr(persistence_error, "partial_manifest", value)
+        raise
+
+
 def _models(
     pilot_dir: Path, torch: Any, neural: Any, manifest: dict[str, Any]
 ) -> list[tuple[str, Any]]:
@@ -111,9 +136,11 @@ class _TimedPredictor:
         self.boards = 0
         self.seconds = 0.0
         self.failures = 0
-        self.totals = totals if totals is not None else {
-            "calls": 0, "boards": 0, "seconds": 0.0, "failures": 0
-        }
+        self.totals = (
+            totals
+            if totals is not None
+            else {"calls": 0, "boards": 0, "seconds": 0.0, "failures": 0}
+        )
 
     def __call__(self, boards: Any, learner: chess.Color) -> Any:
         self.calls += 1
@@ -162,8 +189,11 @@ class _TimedTablebase:
         return self._probe("probe_dtz", *args, **kwargs)
 
 
-def _record_game(path: Path, record: dict[str, Any], snapshot: Any) -> None:
-    record["progress"] = {
+def _game_progress(snapshot: Any) -> dict[str, Any]:
+    return {
+        "start_fen": snapshot.start_fen,
+        "learner": snapshot.learner,
+        "p": snapshot.p,
         "plies": snapshot.plies,
         "moves": list(snapshot.moves),
         "reward": snapshot.reward,
@@ -180,11 +210,38 @@ def _record_game(path: Path, record: dict[str, Any], snapshot: Any) -> None:
         "encountered_keys": list(snapshot.encountered_keys),
         "choice_records": [asdict(choice) for choice in snapshot.choice_records],
     }
+
+
+def _record_game(path: Path, record: dict[str, Any], snapshot: Any) -> None:
+    record["progress"] = _game_progress(snapshot)
     _atomic_json(path, record)
 
 
-def _remember(snapshots: list[Any], snapshot: Any) -> None:
-    snapshots.append(snapshot)
+def _finalize(
+    path: Path, value: dict[str, Any], table: Any, original: BaseException | None
+) -> None:
+    """Keep the first work error authoritative through cleanup and final writes."""
+    cleanup_error = None
+    try:
+        if table is not None:
+            table.close()
+    except BaseException as exc:
+        cleanup_error = exc
+        value["cleanup_error"] = f"{type(exc).__name__}: {exc}"
+        if value["status"] in {"running", "complete"}:
+            value["status"] = (
+                "interrupted" if isinstance(exc, KeyboardInterrupt) else "failed"
+            )
+        if original is not None:
+            setattr(original, "cleanup_error", exc)
+            original.add_note(f"table cleanup failed: {exc}")
+    preferred = original if original is not None else cleanup_error
+    before = len(value.get("persistence_errors", []))
+    _persist_or_attach(path, value, preferred)
+    if cleanup_error is not None or len(value.get("persistence_errors", [])) > before:
+        assert preferred is not None
+        setattr(preferred, "partial_manifest", value)
+        raise preferred
 
 
 def _provenance(root: Path, output_dir: Path) -> dict[str, Any]:
@@ -266,8 +323,9 @@ def run_evaluation(args: argparse.Namespace) -> dict[str, Any]:
     original_table = None
     table_work = None
     predictor_totals: dict[str, dict[str, Any]] = {}
-    _atomic_json(out_path, output)
+    original_error: BaseException | None = None
     try:
+        _persist_or_attach(out_path, output, None)
         pilot = _pilot_module()
         pilot_path = args.pilot_dir / "pilot.json"
         pilot_manifest = json.loads(pilot_path.read_text(encoding="utf-8"))
@@ -449,6 +507,7 @@ def run_evaluation(args: argparse.Namespace) -> dict[str, Any]:
                         "model": name,
                         "p": p_value,
                         "start_index": start_index,
+                        "start_fen": str(row["fen"]),
                         "learner": "white" if color else "black",
                         "status": "running",
                     }
@@ -457,15 +516,29 @@ def run_evaluation(args: argparse.Namespace) -> dict[str, Any]:
                         / "games"
                         / f"{name}-p{p_value:.2f}-s{start_index:02d}.json"
                     )
-                    path.parent.mkdir(parents=True, exist_ok=True)
-                    _atomic_json(path, record)
-                    snapshot: list[Any] = []
+                    output["active_game"] = record
 
                     def persist_progress(game_snapshot: Any) -> None:
-                        _remember(snapshot, game_snapshot)
-                        _record_game(path, record, game_snapshot)
+                        active = sys.exception()
+                        # _record_game installs the complete snapshot before I/O.
+                        try:
+                            _record_game(path, record, game_snapshot)
+                        except BaseException as write_error:
+                            output.setdefault("persistence_errors", []).append(
+                                f"{type(write_error).__name__}: {write_error}"
+                            )
+                            preferred = active if active is not None else write_error
+                            setattr(preferred, "partial_manifest", output)
+                            if active is not None:
+                                setattr(active, "persistence_error", write_error)
+                                active.add_note(
+                                    f"game persistence failed: {write_error}"
+                                )
+                            raise preferred
 
                     try:
+                        path.parent.mkdir(parents=True, exist_ok=True)
+                        _atomic_json(path, record)
                         snap = evaluation.play_fixed_game(
                             chess.Board(str(row["fen"])),
                             color,
@@ -491,40 +564,31 @@ def run_evaluation(args: argparse.Namespace) -> dict[str, Any]:
                             or snap.truncation_reason is not None
                         )
                         _record_game(path, record, snap)
-                    except KeyboardInterrupt:
-                        record["status"] = "interrupted"
-                        if snapshot:
-                            _record_game(path, record, snapshot[-1])
-                        raise
                     except BaseException as exc:
                         record.update(
-                            status="failed", error=f"{type(exc).__name__}: {exc}"
+                            status="interrupted"
+                            if isinstance(exc, KeyboardInterrupt)
+                            else "failed",
+                            error=f"{type(exc).__name__}: {exc}",
                         )
-                        failed_games = True
-                        if snapshot:
-                            _record_game(path, record, snapshot[-1])
-                        else:
-                            _atomic_json(path, record)
+                        setattr(exc, "partial_manifest", output)
+                        raise
                 _atomic_json(out_path, output)
         output["status"] = "failed" if failed_games else "complete"
-    except KeyboardInterrupt:
+    except KeyboardInterrupt as exc:
+        original_error = exc
         output["status"] = "interrupted"
         raise
     except TimeoutError as exc:
+        original_error = exc
         output["status"] = "deadline"
         output["error"] = str(exc)
     except BaseException as exc:
+        original_error = exc
         output["status"] = "failed"
         output["error"] = f"{type(exc).__name__}: {exc}"
         raise
     finally:
-        try:
-            if original_table is not None:
-                original_table.close()
-        except Exception as exc:
-            output["cleanup_error"] = f"{type(exc).__name__}: {exc}"
-            if output["status"] == "complete":
-                output["status"] = "failed"
         output["elapsed_seconds"] = time.perf_counter() - started
         output["attempted_work"] = {
             "predictors": predictor_totals,
@@ -540,7 +604,7 @@ def run_evaluation(args: argparse.Namespace) -> dict[str, Any]:
             ),
             "cost_accounting": "Nested operation times; do not add to elapsed_seconds.",
         }
-        _atomic_json(out_path, output)
+        _finalize(out_path, output, original_table, original_error)
     return output
 
 
@@ -553,8 +617,9 @@ def run_pretraining(args: argparse.Namespace) -> dict[str, Any]:
     table = None
     original_table = None
     table_work = None
-    _atomic_json(out_path, result)
+    original_error: BaseException | None = None
     try:
+        _persist_or_attach(out_path, result, None)
         pilot = _pilot_module()
         rows, data_hash = pilot._load_development(args.development_dir)
         pilot_manifest = json.loads(
@@ -665,23 +730,19 @@ def run_pretraining(args: argparse.Namespace) -> dict[str, Any]:
         _atomic_json(out_path, result)
         result["status"] = "complete"
     except TimeoutError as exc:
+        original_error = exc
         result["status"] = "deadline"
         result["error"] = str(exc)
-    except KeyboardInterrupt:
+    except KeyboardInterrupt as exc:
+        original_error = exc
         result["status"] = "interrupted"
         raise
     except BaseException as exc:
+        original_error = exc
         result["status"] = "failed"
         result["error"] = f"{type(exc).__name__}: {exc}"
         raise
     finally:
-        try:
-            if original_table is not None:
-                original_table.close()
-        except Exception as exc:
-            result["cleanup_error"] = f"{type(exc).__name__}: {exc}"
-            if result["status"] == "complete":
-                result["status"] = "failed"
         result["elapsed_seconds"] = time.perf_counter() - started
         result["attempted_work"] = {
             "tablebase": (
@@ -696,7 +757,7 @@ def run_pretraining(args: argparse.Namespace) -> dict[str, Any]:
             ),
             "cost_accounting": "Nested operation times; do not add to elapsed_seconds.",
         }
-        _atomic_json(out_path, result)
+        _finalize(out_path, result, original_table, original_error)
     return result
 
 

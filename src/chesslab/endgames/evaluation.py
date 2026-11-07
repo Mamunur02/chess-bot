@@ -194,6 +194,7 @@ def play_fixed_game(
         )
 
     while reward is None:
+        progress_reported = False
         try:
             if deadline_check is not None and deadline_check():
                 truncated, reason = True, "deadline"
@@ -248,9 +249,14 @@ def play_fixed_game(
             reward = terminal_reward(board, learner)
         except Exception as exc:
             failure = f"{type(exc).__name__}: {exc}"
+            if progress_callback is not None:
+                # Keep the original exception active while persistence runs.
+                # The callback can preserve it if recording also fails.
+                progress_reported = True
+                progress_callback(snapshot())
             break
         finally:
-            if progress_callback is not None:
+            if progress_callback is not None and not progress_reported:
                 progress_callback(snapshot())
     result = snapshot()
     if progress_callback is not None:

@@ -30,6 +30,9 @@ def test_game_progress_persists_partial_snapshot(tmp_path: Path) -> None:
     record = {"status": "running"}
     snapshot = SimpleNamespace(
         plies=3,
+        start_fen="start",
+        learner=True,
+        p=0.5,
         moves=("a1a2",),
         reward=None,
         truncated=True,
@@ -49,6 +52,35 @@ def test_game_progress_persists_partial_snapshot(tmp_path: Path) -> None:
     saved = json.loads(path.read_text(encoding="utf-8"))
     assert saved["progress"]["plies"] == 3
     assert saved["progress"]["truncation_reason"] == "deadline"
+    assert saved["progress"]["start_fen"] == "start"
+
+
+def test_manifest_write_failure_attaches_complete_snapshot(monkeypatch, tmp_path):
+    error = OSError("disk full")
+    manifest = {"status": "failed", "active_game": {"progress": {"moves": ["a2a4"]}}}
+
+    def fail(*_args):
+        raise error
+
+    monkeypatch.setattr(calibration, "_atomic_json", fail)
+    with pytest.raises(OSError) as raised:
+        calibration._persist_or_attach(tmp_path / "manifest.json", manifest, None)
+    assert raised.value is error
+    assert raised.value.partial_manifest["active_game"]["progress"]["moves"] == ["a2a4"]
+
+
+def test_final_manifest_failure_preserves_active_exception(monkeypatch, tmp_path):
+    persistence_error = OSError("disk full")
+    original = KeyboardInterrupt()
+    manifest = {"status": "interrupted"}
+
+    def fail(*_args):
+        raise persistence_error
+
+    monkeypatch.setattr(calibration, "_atomic_json", fail)
+    calibration._persist_or_attach(tmp_path / "manifest.json", manifest, original)
+    assert original.persistence_error is persistence_error
+    assert original.partial_manifest is manifest
 
 
 def test_timed_predictor_counts_failed_attempt_and_elapsed() -> None:
@@ -129,6 +161,7 @@ def test_attempted_work_failure_survives_manifest(
     fake_neural.PretrainingConfig = object
     fake_neural.ValueNetwork = object
     fake_neural.pretrain = lambda *args, **kwargs: None
+
     def fail(*_args):
         raise error
 
@@ -183,9 +216,7 @@ def test_predictor_cumulative_work_survives_phase_reset(monkeypatch):
     predictor.calls = predictor.boards = predictor.failures = 0
     predictor.seconds = 0.0
     predictor([object(), object()], False)
-    assert predictor.totals == {
-        "calls": 2, "boards": 3, "failures": 0, "seconds": 0.75
-    }
+    assert predictor.totals == {"calls": 2, "boards": 3, "failures": 0, "seconds": 0.75}
 
 
 def test_source_snapshot_records_calibration_script(tmp_path: Path) -> None:
@@ -357,3 +388,292 @@ def test_cli_rejects_unsuccessful_manifest(tmp_path, monkeypatch, status):
     with pytest.raises(SystemExit) as exc:
         calibration.main()
     assert exc.value.code == 1
+
+
+@pytest.fixture
+def runner_setup(tmp_path, monkeypatch):
+    """Exercise real orchestration without Torch or local research artifacts."""
+    board = chess.Board("7k/8/8/8/8/8/8/KR6 w - - 0 1")
+    rows = [{"fen": board.fen(), "canonical_position": str(i)} for i in range(2000)]
+    acquisition = tmp_path / "acquisition.json"
+    acquisition.write_text("{}")
+    (tmp_path / "pilot.json").write_text(
+        json.dumps(
+            {
+                "status": "complete",
+                "development": {"jsonl_sha256": "data", "verified_seed": 1101},
+                "acquisition_manifest_sha256": calibration._sha256(
+                    acquisition.read_bytes()
+                ),
+                "table_hashes": {},
+            }
+        )
+    )
+    pilot = SimpleNamespace(
+        DEV_SEED=1101,
+        _load_development=lambda _: (rows, "data"),
+        verify_acquisition_manifest=lambda *_: {"table_sha256": {}},
+    )
+    table = SimpleNamespace(closed=0)
+
+    def close():
+        table.closed += 1
+
+    table.close = close
+    neural = ModuleType("chesslab.endgames.neural")
+    neural.BatchPredictor = lambda _: lambda boards, color: [0.0] * len(boards)
+    neural.ValueNetwork = lambda **_: object()
+    neural.PretrainingConfig = lambda **_: object()
+
+    def pretrain(*args, **kwargs):
+        kwargs["progress_callback"](SimpleNamespace(epoch=1))
+        return SimpleNamespace(epochs=[1])
+
+    neural.pretrain = pretrain
+    monkeypatch.setitem(sys.modules, "torch", SimpleNamespace())
+    monkeypatch.setitem(sys.modules, "chesslab.endgames.neural", neural)
+    monkeypatch.setattr(calibration, "_pilot_module", lambda: pilot)
+    monkeypatch.setattr(calibration, "_configure_torch", lambda _: {})
+    monkeypatch.setattr(calibration, "_models", lambda *_: [("pretrained", object())])
+    monkeypatch.setattr(calibration, "_provenance", lambda *_: {})
+    monkeypatch.setattr(calibration.chess.syzygy, "open_tablebase", lambda _: table)
+    monkeypatch.setattr(calibration, "TRAINING_COUNT", 2)
+    monkeypatch.setattr(calibration, "VALIDATION_COUNT", 2)
+    monkeypatch.setattr(
+        calibration, "evaluate_reference", lambda *_: SimpleNamespace(value=0)
+    )
+    monkeypatch.setattr(
+        calibration.evaluation,
+        "evaluate_predictions",
+        lambda *_: SimpleNamespace(mse=0),
+    )
+    monkeypatch.setattr(
+        calibration.evaluation,
+        "evaluate_choices",
+        lambda *_: SimpleNamespace(loss_rate=0),
+    )
+    choice = calibration.evaluation.ChoiceRecord("key", True, "b1b2", 0, 1, True, 0.5)
+    snapshot = calibration.evaluation.GameEvaluation(
+        board.fen(),
+        True,
+        0.5,
+        None,
+        True,
+        "ply_cap",
+        None,
+        1,
+        ("b1b2",),
+        1,
+        1,
+        1,
+        5,
+        1,
+        0,
+        5,
+        ("key",),
+        (choice,),
+    )
+
+    def play(*args, **kwargs):
+        kwargs["progress_callback"](snapshot)
+        return snapshot
+
+    monkeypatch.setattr(calibration.evaluation, "play_fixed_game", play)
+    output = tmp_path / "out"
+    output.mkdir()
+    args = SimpleNamespace(
+        output_dir=output,
+        pilot_dir=tmp_path,
+        development_dir=tmp_path,
+        tablebase_dir=tmp_path,
+        acquisition_manifest=acquisition,
+        samples=1,
+        deadline_seconds=60,
+    )
+    return args, table, neural, snapshot
+
+
+@pytest.mark.parametrize("mode", ["evaluation", "pretraining"])
+@pytest.mark.parametrize("phase", ["initial", "progress", "final"])
+def test_runner_manifest_write_failures(runner_setup, monkeypatch, mode, phase):
+    args, table, _, _ = runner_setup
+    write = calibration._atomic_json
+    error = OSError(f"{phase} write")
+    calls = 0
+
+    def inject(path, value):
+        nonlocal calls
+        if path.name == "calibration.json":
+            calls += 1
+            fail = (
+                phase == "initial"
+                and calls == 1
+                or phase == "progress"
+                and calls == 2
+                or phase == "final"
+                and "elapsed_seconds" in value
+            )
+            if fail:
+                raise error
+        write(path, value)
+
+    monkeypatch.setattr(calibration, "_atomic_json", inject)
+    with pytest.raises(OSError) as raised:
+        getattr(calibration, f"run_{mode}")(args)
+    assert raised.value is error
+    if phase == "final":
+        assert error.partial_manifest["status"] != "complete"
+    else:
+        saved = json.loads((args.output_dir / "calibration.json").read_text())
+        assert saved["status"] == "failed"
+        assert str(error) in saved["error"]
+    assert table.closed == (0 if phase == "initial" else 1)
+
+
+@pytest.mark.parametrize("mode", ["evaluation", "pretraining"])
+@pytest.mark.parametrize("kind", [ValueError, KeyboardInterrupt, TimeoutError])
+def test_original_work_error_survives_cleanup_and_final_write(
+    runner_setup, monkeypatch, mode, kind
+):
+    args, table, _, _ = runner_setup
+    original = kind("original work")
+    cleanup = RuntimeError("cleanup failed")
+    write_error = OSError("final write failed")
+
+    def work(*_args, **_kwargs):
+        raise original
+
+    def close():
+        table.closed += 1
+        raise cleanup
+
+    table.close = close
+    monkeypatch.setattr(calibration, "select_learner_move", work)
+    monkeypatch.setattr(calibration, "evaluate_reference", work)
+    write = calibration._atomic_json
+
+    def inject(path, value):
+        if "elapsed_seconds" in value:
+            raise write_error
+        write(path, value)
+
+    monkeypatch.setattr(calibration, "_atomic_json", inject)
+    with pytest.raises(kind) as raised:
+        getattr(calibration, f"run_{mode}")(args)
+    assert raised.value is original
+    assert original.cleanup_error is cleanup
+    assert original.persistence_error is write_error
+    assert "cleanup failed" in original.partial_manifest["cleanup_error"]
+    assert table.closed == 1
+
+
+@pytest.mark.parametrize("mode", ["evaluation", "pretraining"])
+def test_cleanup_failure_after_work_cannot_return_success(
+    runner_setup, monkeypatch, mode
+):
+    args, table, _, _ = runner_setup
+    error = OSError("close failed")
+
+    def close():
+        table.closed += 1
+        raise error
+
+    table.close = close
+    # Evaluation can finish all games without a failure or cap.
+    from dataclasses import replace
+
+    snap = replace(runner_setup[3], reward=0.0, truncated=False, truncation_reason=None)
+    monkeypatch.setattr(calibration.evaluation, "play_fixed_game", lambda *a, **k: snap)
+    with pytest.raises(OSError) as raised:
+        getattr(calibration, f"run_{mode}")(args)
+    assert raised.value is error
+    saved = json.loads((args.output_dir / "calibration.json").read_text())
+    assert saved["status"] == "failed"
+    assert table.closed == 1
+
+
+@pytest.mark.parametrize("phase", ["initial", "progress", "final"])
+def test_game_write_failure_aborts_with_full_latest_state(
+    runner_setup, monkeypatch, phase
+):
+    args, table, _, snap = runner_setup
+    write = calibration._atomic_json
+    error = OSError("game write failed")
+    calls = 0
+
+    def inject(path, value):
+        nonlocal calls
+        if path.parent.name == "games":
+            calls += 1
+            if calls == {"initial": 1, "progress": 2, "final": 3}[phase]:
+                raise error
+        write(path, value)
+
+    monkeypatch.setattr(calibration, "_atomic_json", inject)
+    with pytest.raises(OSError) as raised:
+        calibration.run_evaluation(args)
+    assert raised.value is error
+    saved = json.loads((args.output_dir / "calibration.json").read_text())
+    assert saved["status"] == "failed"
+    if phase != "initial":
+        assert saved["active_game"]["progress"] == calibration._game_progress(snap)
+        assert saved["active_game"]["progress"]["reward"] is None
+    assert table.closed == 1
+
+
+@pytest.mark.parametrize("kind", [KeyboardInterrupt, ValueError, TimeoutError])
+def test_real_game_error_survives_progress_and_final_write_failure(
+    runner_setup, monkeypatch, kind
+):
+    args, table, _, _ = runner_setup
+    # Restore the real primitive captured from a separate module load.
+    spec = importlib.util.spec_from_file_location(
+        "real_evaluation_persistence", Path(calibration.evaluation.__file__)
+    )
+    module = importlib.util.module_from_spec(spec)
+    monkeypatch.setitem(sys.modules, spec.name, module)
+    spec.loader.exec_module(module)
+    monkeypatch.setattr(
+        calibration.evaluation, "play_fixed_game", module.play_fixed_game
+    )
+    original = kind("game failed")
+
+    def interrupt(*_args, **_kwargs):
+        raise original
+
+    monkeypatch.setattr(module, "select_learner_move", interrupt)
+    monkeypatch.setattr(module, "choose_action", interrupt)
+    write = calibration._atomic_json
+
+    def fail(path, value):
+        if path.parent.name == "games" and "progress" in value:
+            raise OSError("game disk failure")
+        if "elapsed_seconds" in value:
+            raise OSError("manifest disk failure")
+        write(path, value)
+
+    monkeypatch.setattr(calibration, "_atomic_json", fail)
+    with pytest.raises(kind) as raised:
+        calibration.run_evaluation(args)
+    assert raised.value is original
+    manifest = original.partial_manifest
+    expected_status = (
+        "interrupted"
+        if kind is KeyboardInterrupt
+        else "deadline"
+        if kind is TimeoutError
+        else "failed"
+    )
+    assert manifest["status"] == expected_status
+    progress = manifest["active_game"]["progress"]
+    assert progress["reward"] is None
+    assert progress["moves"] == []
+    assert progress["encountered_keys"]
+    assert progress["reference_evaluated_decisions"] == 0
+    assert manifest["active_game"]["status"] == (
+        "interrupted" if kind is KeyboardInterrupt else "failed"
+    )
+    if kind is not KeyboardInterrupt:
+        assert progress["failure"] == f"{kind.__name__}: game failed"
+    assert len(manifest["persistence_errors"]) == 2
+    assert table.closed == 1
