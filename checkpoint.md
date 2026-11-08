@@ -1,3 +1,26 @@
+# Documentation handover: 8 November 2026
+
+Read docs/research/new-chat-handover-20261108.md in full, then7 November and
+all required prior context. This turn is documentation/commit/push only.
+Starting HEAD3550b13 matches local origin tracking; its push succeeded.
+New handover records reviewed persistence/error/full-game recovery and remaining
+accounting/deadline/provenance/orchestration-test blockers. Runner remains
+UNAPPROVED for measurements. No calibration, full projection, budget freeze or
+core execution. No code tests rerun for documentation-only changes.
+
+Prior implementation VERIFIED post-push usage29% five-hour /58% weekly;
+committed checkpoint31/58 was pre-commit. Fresh documentation reading27/58.
+No reset used. No Python process appeared on8 November initial inspection.
+Five preexisting document changes remain excluded. Current schedule is
+unsubstantiated: substantial repairs remain on8 November, so neither today's
+full gate nor18 November completion is established.17-18 November reporting
+remains provisional; shift completion if gates slip, preserving two full days.
+No replacement external deadline supplied. Documentation validation passed23
+file references and diff whitespace; protected documents and pilot hash unchanged.
+Latest pre-commit usage23% five-hour /57% weekly. No code tests needed or run.
+Inspect log/status for this handover
+commit and push; no automatic background continuation is implied.
+
 # Reviewed persistence checkpoint: 7 November 2026
 
 Stopping new implementation at the 35% five-hour / 59% weekly checkpoint trigger.
@@ -341,7 +364,7 @@ process appeared in Get-Process python*. Pilot manifest hash still matches.
 
 Fresh usage74% five-hour/96% weekly remaining. Previous implementation final
 reading was14%/86% after push, not the17% pre-finalization reading below.
-No reset used. Original31 OctoberÃ¢â‚¬â€œ1 November reporting reserve has now passed;
+No reset used. Original31 OctoberÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Å“1 November reporting reserve has now passed;
 reassess schedule without relaxing gates, with final two days of a revised plan
 reserved for reporting/reproduction. No replacement deadline supplied.
 
@@ -389,7 +412,7 @@ bounded runner and test successful/failed/interrupted/deadline/persistence paths
 verify optional neural runner and combined mypy, then narrow scientific review.
 Only then isolate evaluation and20000/2500 repeated-development30-epoch timing.
 Retain accepted cadence and all five seed blocks. Complete all resource costs
-and gate before orchestration/core. Reserve31 OctoberÃ¢â‚¬â€œ1 November reporting.
+and gate before orchestration/core. Reserve31 OctoberÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Å“1 November reporting.
 Use workspace uv cache, explicit .venv/Scripts/python.exe and fresh basetemps;
 optional Torch uses artifacts/neural-env/Scripts/python.exe. Never rerun pilot.
 
@@ -398,7 +421,7 @@ optional Torch uses artifacts/neural-env/Scripts/python.exe. Never rerun pilot.
 Starting HEAD83fe0f2 on codex/opponent-dependence matches origin tracking.
 All required handovers/context read; five preexisting document changes preserved.
 Initial usage87% five-hour/97% weekly remaining; subsequent73/95,61/93,50/91.
-No reset credits used. Current date24 October Europe/London; reserve31 OctoberÃ¢â‚¬â€œ
+No reset credits used. Current date24 October Europe/London; reserve31 OctoberÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Å“
 1 November for reporting/reproducibility. No Python process appeared at initial
 inspection. Pilot manifest SHA256 still matches3b4ae6defd8b0fad6b3c66380ab8c6681990deb7f8309ed3dc2142a109b3186c.
 
@@ -817,7 +840,7 @@ electricity not estimated. No full training matrix or charged resources launched
    largest feasible common budget among 2000/5000/10000/20000 using full core
    projection <=36 machine-hours including30% contingency and GBP60. No full
    matrix before this gate. Keep all five seeds; final labels remain sealed.
-6. Continue protocol sequence; reserve 31 OctoberÃ¢â‚¬â€œ1 November for reporting.
+6. Continue protocol sequence; reserve 31 OctoberÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Å“1 November for reporting.
 
 ## Commands
 
