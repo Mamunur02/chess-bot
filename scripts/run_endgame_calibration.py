@@ -402,17 +402,88 @@ def run_evaluation(args: argparse.Namespace) -> dict[str, Any]:
             for name, model in models
         }
         output["latency"] = {}
+        output["latency_attempts"] = {name: [] for name, _ in models}
         latency_samples_by_model: dict[str, list[float]] = {
             name: [] for name, _ in models
         }
         latency_inputs = boards[:30]
+
+        def persist_attempted_work() -> None:
+            output["attempted_work"] = {
+                "predictors": predictor_totals,
+                "tablebase": {
+                    "probes": table_work.probes,
+                    "seconds": table_work.seconds,
+                    "failures": table_work.failures,
+                    "errors": table_work.errors,
+                },
+                "cost_accounting": (
+                    "Nested operation times; do not add to elapsed_seconds."
+                ),
+            }
+            _persist_or_attach(out_path, output, sys.exception())
+
+        def record_latency(
+            name: str, phase: str, board: Any, seed: int, pass_index: int, index: int
+        ) -> None:
+            attempt: dict[str, Any] = {
+                "phase": phase,
+                "status": "attempted",
+                "fen": board.fen(),
+                "pass_index": pass_index,
+                "index": index,
+                "seconds": None,
+            }
+            output["latency_attempts"][name].append(attempt)
+            started_attempt = time.perf_counter()
+            try:
+                select_learner_move(
+                    board,
+                    board.turn,
+                    predictors[name],
+                    random.Random(seed),
+                    0.0,
+                )
+            except BaseException as exc:
+                attempt["status"] = (
+                    "interrupted"
+                    if isinstance(exc, KeyboardInterrupt)
+                    else "deadline"
+                    if isinstance(exc, TimeoutError)
+                    else "failed"
+                )
+                attempt["error"] = f"{type(exc).__name__}: {exc}"
+                raise
+            else:
+                attempt["status"] = "complete"
+            finally:
+                attempt["seconds"] = time.perf_counter() - started_attempt
+                if phase == "sample" and attempt["status"] == "complete":
+                    latency_samples_by_model[name].append(attempt["seconds"])
+                output["latency"][name] = {
+                    "warmup_count": sum(
+                        a["phase"] == "warmup" and a["status"] == "complete"
+                        for a in output["latency_attempts"][name]
+                    ),
+                    "sample_count": len(latency_samples_by_model[name]),
+                    "seconds": list(latency_samples_by_model[name]),
+                    "mean_seconds": (
+                        sum(latency_samples_by_model[name])
+                        / len(latency_samples_by_model[name])
+                        if latency_samples_by_model[name]
+                        else None
+                    ),
+                    "predictor_calls": predictors[name].calls,
+                    "predictor_seconds": predictors[name].seconds,
+                    "predictor_failures": predictors[name].failures,
+                }
+                persist_attempted_work()
+
         for name, _ in models:
-            for board in latency_inputs[:10]:
+            for warmup_index, board in enumerate(latency_inputs[:10]):
                 if deadline():
                     raise TimeoutError("calibration deadline exceeded during warmup")
-                select_learner_move(
-                    board, board.turn, predictors[name], random.Random(0), 0.0
-                )
+                record_latency(name, "warmup", board, 0, -1, warmup_index)
         for pass_index in range(3):
             ordered = [
                 models[(offset + pass_index) % len(models)][0]
@@ -424,19 +495,21 @@ def run_evaluation(args: argparse.Namespace) -> dict[str, Any]:
                         raise TimeoutError(
                             "calibration deadline exceeded during latency samples"
                         )
-                    t = time.perf_counter()
-                    select_learner_move(
+                    record_latency(
+                        name,
+                        "sample",
                         board,
-                        board.turn,
-                        predictors[name],
-                        random.Random(pass_index * 30 + index),
-                        0.0,
+                        pass_index * 30 + index,
+                        pass_index,
+                        index,
                     )
-                    latency_samples_by_model[name].append(time.perf_counter() - t)
         for name, _ in models:
             samples = latency_samples_by_model[name]
             output["latency"][name] = {
-                "warmup_count": min(10, len(boards)),
+                "warmup_count": sum(
+                    a["phase"] == "warmup" and a["status"] == "complete"
+                    for a in output["latency_attempts"][name]
+                ),
                 "sample_count": len(samples),
                 "seconds": samples,
                 "mean_seconds": sum(samples) / len(samples) if samples else None,
@@ -458,24 +531,48 @@ def run_evaluation(args: argparse.Namespace) -> dict[str, Any]:
             for index, board in enumerate(boards):
                 if deadline():
                     raise TimeoutError("calibration deadline exceeded")
-                t = time.perf_counter()
-                prediction = evaluation.evaluate_predictions([board], predictor, table)
-                prediction_seconds = time.perf_counter() - t
-                t = time.perf_counter()
-                choice = evaluation.evaluate_choices([board], predictor, table)
-                choice_seconds = time.perf_counter() - t
-                output["items"].append(
-                    {
-                        "model": name,
-                        "index": index,
-                        "fen": board.fen(),
-                        "prediction_mse": prediction.mse,
-                        "choice_loss_rate": choice.loss_rate,
-                        "prediction_seconds": prediction_seconds,
-                        "choice_seconds": choice_seconds,
-                    }
-                )
-                _atomic_json(out_path, output)
+                item = {
+                    "model": name,
+                    "index": index,
+                    "fen": board.fen(),
+                    "prediction_status": "not_started",
+                    "choice_status": "not_started",
+                    "prediction_seconds": None,
+                    "choice_seconds": None,
+                }
+                output["items"].append(item)
+                for phase in ("prediction", "choice"):
+                    if phase == "choice" and deadline():
+                        raise TimeoutError(
+                            "calibration deadline exceeded before choice"
+                        )
+                    item[f"{phase}_status"] = "attempted"
+                    phase_started = time.perf_counter()
+                    try:
+                        if phase == "prediction":
+                            prediction = evaluation.evaluate_predictions(
+                                [board], predictor, table
+                            )
+                            item["prediction_mse"] = prediction.mse
+                        else:
+                            choice = evaluation.evaluate_choices(
+                                [board], predictor, table
+                            )
+                            item["choice_loss_rate"] = choice.loss_rate
+                        item[f"{phase}_status"] = "complete"
+                    except BaseException as exc:
+                        item[f"{phase}_status"] = (
+                            "interrupted"
+                            if isinstance(exc, KeyboardInterrupt)
+                            else "deadline"
+                            if isinstance(exc, TimeoutError)
+                            else "failed"
+                        )
+                        item[f"{phase}_error"] = f"{type(exc).__name__}: {exc}"
+                        raise
+                    finally:
+                        item[f"{phase}_seconds"] = time.perf_counter() - phase_started
+                        persist_attempted_work()
             output.setdefault("static", {})[name] = {
                 "prediction_seconds": sum(
                     i["prediction_seconds"]
@@ -587,6 +684,7 @@ def run_evaluation(args: argparse.Namespace) -> dict[str, Any]:
         original_error = exc
         output["status"] = "failed"
         output["error"] = f"{type(exc).__name__}: {exc}"
+        setattr(exc, "partial_manifest", output)
         raise
     finally:
         output["elapsed_seconds"] = time.perf_counter() - started

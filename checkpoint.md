@@ -1,3 +1,69 @@
+# Reviewed incremental latency/static checkpoint: 9 November 2026
+
+Actual gpt-6-luna implemented incremental latency/static records in the calibration
+runner and four orchestration tests. Root corrected the warmup boundary fixture,
+strengthened intermediate-write assertions, factored repeated persistence, added
+static TimeoutError status and ten failure/timing regressions. Actual gpt-6-astra
+read-only review found no blocker and approved ONLY this slice for checkpointing;
+it did not independently run tests or approve measurements.
+
+Completed latency attempts retain phase/pass/index/FEN/status/duration/error,
+partial summaries and cumulative attempted predictor/probe work. Static prediction
+results persist before choice/deadline, with separate not-started/completed/failed/
+interrupted/deadline phase status and attempted duration. Selection durations stop
+before persistence. Nested probe/predictor diagnostics are not exclusive costs.
+Original errors survive simultaneous phase/write errors; previous full active-game
+snapshot/cleanup contracts retained. partial_manifest is in-memory recovery only.
+
+Verification, observed exit0: focused calibration/evaluation77 passed1 skipped3.64s
+(artifacts/pytest-incremental-root-20261109); full default506 passed6 skipped14.30s
+(elevated Windows UCI, artifacts/pytest-incremental-full-20261109); optional broader
+neural suite142 passed21.11s (artifacts/pytest-incremental-neural-20261109); Ruff .
+passed; combined mypy src/pilot/calibration passed50 files. Root's first Ruff found
+two long lines; both fixed and Ruff rerun passed. Luna reported47 passed1 skipped
+before root expansions. No calibration measurement or final-label access.
+
+Usage98/55 initially,86/53 after context,75/51,69/50,62/49,56/48 latest before
+checkpoint (five-hour/weekly remaining). No reset credits used. Starting HEAD
+is a7bd829; inspect log/status for reviewed commit/push. Five preexisting documents
+excluded. Artifact integrity audit and backups are in calibration-repair-20261109.
+
+Next smallest slice: per-game subtraction-based attempted deltas, including newly
+appended probe errors; prove two-game isolation from static and previous-game work.
+Remaining exclusive wall accounting, setup/pretraining deadlines, provenance and
+hash/pairing regressions require whole-runner review before any measurements.
+No full projection, budget freeze or core execution. Schedule gate has slipped;
+18 November completion unsubstantiated; retain final TWO FULL reporting days.
+
+# Active incremental accounting repair: 9 November 2026
+
+Usage checked FIRST: 98% five-hour / 55% weekly remaining; after context
+86/53. No reset credit used. HEAD a7bd829 on codex/opponent-dependence matches
+local origin tracking. Bare Git initially failed ownership checks; command-scoped
+safe.directory succeeded without global changes. Initial Get-Process python*
+showed no Python process. Required handovers/context read; checkpoint newest first.
+Five protected documents match the 4 November baseline. Pilot manifest, all four
+model checkpoints, 2,000 development rows and acquisition/eight table hashes
+verified against the completed pilot. Audit: artifacts/calibration-repair-20261109/
+artifact-audit.json. No pilot restart, final-label access or measurement.
+
+Actual gpt-6-luna assigned only incremental evaluation latency/static records,
+attempted-work persistence and the prediction-to-choice deadline boundary, with
+real orchestration regressions. Backups: artifacts/calibration-repair-20261109/
+runner.before.py.txt and tests.before.py.txt. Work is in progress, not reviewed.
+Preserve original errors/full active-game snapshots and cumulative attempted work.
+No calibration, complete projection, budget freeze or core execution. Whole runner
+remains UNAPPROVED for measurements. Inspect actual files/agents/processes on resume.
+
+Schedule: today 9 November; the 8 November full gate was not completed. Thus
+9-12 November core execution and 18 November completion are not established.
+Completion must move if needed, preserving TWO FULL final reporting/reproducibility
+days after execution and analysis. 17-18 November is only a provisional reserve,
+not a promised delivery or external deadline. No replacement deadline supplied.
+Next: complete/review/test this slice; then per-game deltas, exclusive wall time,
+remaining deadlines/provenance/hash/pairing regressions and focused whole-runner
+review before isolated calibration and the complete resource gate.
+
 # Documentation handover: 8 November 2026
 
 Read docs/research/new-chat-handover-20261108.md in full, then7 November and
@@ -364,7 +430,7 @@ process appeared in Get-Process python*. Pilot manifest hash still matches.
 
 Fresh usage74% five-hour/96% weekly remaining. Previous implementation final
 reading was14%/86% after push, not the17% pre-finalization reading below.
-No reset used. Original31 OctoberÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Å“1 November reporting reserve has now passed;
+No reset used. Original31 OctoberÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â€šÂ¬Ã…â€œ1 November reporting reserve has now passed;
 reassess schedule without relaxing gates, with final two days of a revised plan
 reserved for reporting/reproduction. No replacement deadline supplied.
 
@@ -412,7 +478,7 @@ bounded runner and test successful/failed/interrupted/deadline/persistence paths
 verify optional neural runner and combined mypy, then narrow scientific review.
 Only then isolate evaluation and20000/2500 repeated-development30-epoch timing.
 Retain accepted cadence and all five seed blocks. Complete all resource costs
-and gate before orchestration/core. Reserve31 OctoberÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Å“1 November reporting.
+and gate before orchestration/core. Reserve31 OctoberÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â€šÂ¬Ã…â€œ1 November reporting.
 Use workspace uv cache, explicit .venv/Scripts/python.exe and fresh basetemps;
 optional Torch uses artifacts/neural-env/Scripts/python.exe. Never rerun pilot.
 
@@ -421,7 +487,7 @@ optional Torch uses artifacts/neural-env/Scripts/python.exe. Never rerun pilot.
 Starting HEAD83fe0f2 on codex/opponent-dependence matches origin tracking.
 All required handovers/context read; five preexisting document changes preserved.
 Initial usage87% five-hour/97% weekly remaining; subsequent73/95,61/93,50/91.
-No reset credits used. Current date24 October Europe/London; reserve31 OctoberÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Å“
+No reset credits used. Current date24 October Europe/London; reserve31 OctoberÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â€šÂ¬Ã…â€œ
 1 November for reporting/reproducibility. No Python process appeared at initial
 inspection. Pilot manifest SHA256 still matches3b4ae6defd8b0fad6b3c66380ab8c6681990deb7f8309ed3dc2142a109b3186c.
 
@@ -840,7 +906,7 @@ electricity not estimated. No full training matrix or charged resources launched
    largest feasible common budget among 2000/5000/10000/20000 using full core
    projection <=36 machine-hours including30% contingency and GBP60. No full
    matrix before this gate. Keep all five seeds; final labels remain sealed.
-6. Continue protocol sequence; reserve 31 OctoberÃƒÂ¢Ã¢â€šÂ¬Ã¢â‚¬Å“1 November for reporting.
+6. Continue protocol sequence; reserve 31 OctoberÃƒÆ’Ã‚Â¢ÃƒÂ¢Ã¢â‚¬Å¡Ã‚Â¬ÃƒÂ¢Ã¢â€šÂ¬Ã…â€œ1 November for reporting.
 
 ## Commands
 

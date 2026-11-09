@@ -677,3 +677,238 @@ def test_real_game_error_survives_progress_and_final_write_failure(
         assert progress["failure"] == f"{kind.__name__}: game failed"
     assert len(manifest["persistence_errors"]) == 2
     assert table.closed == 1
+
+
+def _finish_latency(monkeypatch):
+    monkeypatch.setattr(
+        calibration,
+        "select_learner_move",
+        lambda board, learner, predictor, *_args: predictor([board], learner),
+    )
+
+
+def test_evaluation_deadline_between_prediction_and_choice_keeps_prediction(
+    runner_setup, monkeypatch
+):
+    args, table, _, _ = runner_setup
+    _finish_latency(monkeypatch)
+    checks = 0
+
+    def deadline():
+        nonlocal checks
+        checks += 1
+        return checks == 8  # Setup, warmup, three samples, model, item, then choice.
+
+    monkeypatch.setattr(calibration, "_deadline", lambda *_: deadline)
+    monkeypatch.setattr(
+        calibration.evaluation,
+        "evaluate_predictions",
+        lambda boards, predictor, *_: (
+            predictor(boards, boards[0].turn),
+            SimpleNamespace(mse=0.25),
+        )[1],
+    )
+    choice_calls = []
+    monkeypatch.setattr(
+        calibration.evaluation,
+        "evaluate_choices",
+        lambda *_: choice_calls.append(True),
+    )
+    snapshots = []
+    atomic_write = calibration._atomic_json
+
+    def capture(path, value):
+        if path.name == "calibration.json":
+            snapshots.append(json.loads(json.dumps(value)))
+        atomic_write(path, value)
+
+    monkeypatch.setattr(calibration, "_atomic_json", capture)
+    result = calibration.run_evaluation(args)
+    item = result["items"][0]
+    assert result["status"] == "deadline"
+    assert item["prediction_status"] == "complete"
+    assert item["prediction_mse"] == 0.25
+    assert item["choice_status"] == "not_started"
+    assert choice_calls == []
+    saved = json.loads((args.output_dir / "calibration.json").read_text())
+    assert saved["items"] == result["items"]
+    assert saved["attempted_work"]["predictors"]["pretrained"]["calls"] > 0
+    assert any(
+        snapshot["status"] == "running"
+        and snapshot["items"][0].get("prediction_status") == "complete"
+        and snapshot["attempted_work"]["predictors"]["pretrained"]["calls"] > 0
+        for snapshot in snapshots
+        if snapshot.get("items")
+    )
+
+
+def test_evaluation_choice_error_keeps_prediction_and_attempted_work(
+    runner_setup, monkeypatch
+):
+    args, _, _, _ = runner_setup
+    _finish_latency(monkeypatch)
+    monkeypatch.setattr(calibration, "_deadline", lambda *_: lambda: False)
+    monkeypatch.setattr(
+        calibration.evaluation,
+        "evaluate_predictions",
+        lambda boards, predictor, *_: (
+            predictor(boards, boards[0].turn),
+            SimpleNamespace(mse=0.5),
+        )[1],
+    )
+    error = RuntimeError("choice broke")
+
+    def fail(*_args):
+        raise error
+
+    monkeypatch.setattr(calibration.evaluation, "evaluate_choices", fail)
+    with pytest.raises(RuntimeError) as raised:
+        calibration.run_evaluation(args)
+    assert raised.value is error
+    item = error.partial_manifest["items"][0]
+    assert item["prediction_status"] == "complete"
+    assert item["prediction_mse"] == 0.5
+    assert item["choice_status"] == "failed"
+    assert item["choice_seconds"] is not None
+    assert (
+        error.partial_manifest["attempted_work"]["predictors"]["pretrained"]["calls"]
+        > 0
+    )
+
+
+def test_latency_failure_keeps_successful_samples_and_failed_attempt(
+    runner_setup, monkeypatch
+):
+    args, _, _, _ = runner_setup
+    calls = 0
+
+    def select(*_args, **_kwargs):
+        nonlocal calls
+        calls += 1
+        if calls == 3:  # One warmup, one successful sample, then failure.
+            raise RuntimeError("latency failed")
+        _args[2]([_args[0]], _args[1])
+
+    monkeypatch.setattr(calibration, "select_learner_move", select)
+    with pytest.raises(RuntimeError) as raised:
+        calibration.run_evaluation(args)
+    manifest = raised.value.partial_manifest
+    assert len(manifest["latency"]["pretrained"]["seconds"]) == 1
+    attempts = manifest["latency_attempts"]["pretrained"]
+    assert [a["status"] for a in attempts] == ["complete", "complete", "failed"]
+    assert attempts[-1]["seconds"] is not None
+    assert manifest["attempted_work"]["predictors"]["pretrained"]["failures"] == 0
+
+
+def test_warmup_deadline_keeps_partial_warmup_and_work_snapshot(
+    runner_setup, monkeypatch
+):
+    args, _, _, _ = runner_setup
+    args.samples = 2
+    monkeypatch.setattr(
+        calibration,
+        "select_learner_move",
+        lambda board, learner, predictor, *_args: predictor([board], learner),
+    )
+    checks = 0
+
+    def deadline():
+        nonlocal checks
+        checks += 1
+        return checks == 3  # Initial checkpoint check then between warmup attempts.
+
+    monkeypatch.setattr(calibration, "_deadline", lambda *_: deadline)
+    result = calibration.run_evaluation(args)
+    assert result["status"] == "deadline"
+    assert len(result["latency_attempts"]["pretrained"]) == 1
+    assert result["latency_attempts"]["pretrained"][0]["phase"] == "warmup"
+    saved = json.loads((args.output_dir / "calibration.json").read_text())
+    assert saved["attempted_work"] == result["attempted_work"]
+
+@pytest.mark.parametrize("phase", ["latency", "prediction", "choice"])
+@pytest.mark.parametrize("kind", [ValueError, TimeoutError, KeyboardInterrupt])
+def test_incremental_error_survives_write_failure(
+    runner_setup, monkeypatch, phase, kind
+):
+    args, table, _, _ = runner_setup
+    _finish_latency(monkeypatch)
+    error = kind("operation failed")
+    disk_error = OSError("progress write failed")
+    failing = False
+    original_write = calibration._atomic_json
+
+    def fail(*_args):
+        nonlocal failing
+        failing = True
+        raise error
+
+    def write(path, value):
+        if failing and path.name == "calibration.json":
+            raise disk_error
+        original_write(path, value)
+
+    if phase == "latency":
+        monkeypatch.setattr(calibration, "select_learner_move", fail)
+    else:
+        helper = "evaluate_predictions" if phase == "prediction" else "evaluate_choices"
+        monkeypatch.setattr(calibration.evaluation, helper, fail)
+    monkeypatch.setattr(calibration, "_atomic_json", write)
+    with pytest.raises(kind) as raised:
+        calibration.run_evaluation(args)
+    assert raised.value is error
+    assert error.persistence_error is disk_error
+    manifest = error.partial_manifest
+    expected = (
+        "deadline" if kind is TimeoutError
+        else "interrupted" if kind is KeyboardInterrupt else "failed"
+    )
+    assert manifest["status"] == expected
+    if phase == "latency":
+        record = manifest["latency_attempts"]["pretrained"][0]
+        assert record["status"] == expected
+        assert record["seconds"] >= 0
+        assert manifest["latency"]["pretrained"]["warmup_count"] == 0
+    else:
+        record = manifest["items"][0]
+        assert record[f"{phase}_status"] == expected
+        assert record[f"{phase}_seconds"] >= 0
+        if phase == "choice":
+            assert record["prediction_status"] == "complete"
+            assert record["prediction_mse"] == 0
+    assert "attempted_work" in manifest
+    assert table.closed == 1
+
+
+def test_latency_seconds_exclude_incremental_persistence(runner_setup, monkeypatch):
+    args, _, _, _ = runner_setup
+    now = 0.0
+    calls = 0
+    original_write = calibration._atomic_json
+
+    def clock():
+        return now
+
+    def write(path, value):
+        nonlocal now
+        original_write(path, value)
+        now += 10.0
+
+    def select(board, learner, predictor, *_args):
+        nonlocal now, calls
+        calls += 1
+        now += 2.0
+        predictor([board], learner)
+        if calls == 3:
+            raise ValueError("stop after one sample")
+
+    monkeypatch.setattr(calibration.time, "perf_counter", clock)
+    monkeypatch.setattr(calibration, "_deadline", lambda *_: lambda: False)
+    monkeypatch.setattr(calibration, "_atomic_json", write)
+    monkeypatch.setattr(calibration, "select_learner_move", select)
+    with pytest.raises(ValueError):
+        calibration.run_evaluation(args)
+    saved = json.loads((args.output_dir / "calibration.json").read_text())
+    assert saved["latency"]["pretrained"]["seconds"] == [2.0]
+    assert [a["seconds"] for a in saved["latency_attempts"]["pretrained"]] == [2.0] * 3
+    assert saved["attempted_work"]["predictors"]["pretrained"]["calls"] == 3
+    assert saved["attempted_work"]["predictors"]["pretrained"]["failures"] == 0
