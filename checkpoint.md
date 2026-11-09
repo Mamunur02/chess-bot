@@ -1,3 +1,68 @@
+# Reviewed per-game accounting checkpoint: 9 November 2026
+
+Checkpointing early at37% five-hour /45% weekly remaining; no further implementation
+slice started. First slice deeb305 was pushed to the existing origin. Its VERIFIED
+post-push usage was53/48. Subsequent readings50/47,47/47,41/46,37/45. No reset credit,
+paid resource, calibration measurement, full projection, budget freeze or core run.
+Five protected documents match baseline and pilot manifest hash remains unchanged;
+no Python process appeared after checks. Both agents finished. No background work
+or automatic continuation is implied. Inspect Git log/status for this slice's hash.
+
+Actual gpt-6-luna implemented per-game attempted-work deltas in the calibration
+runner and two orchestration tests. Root identified a mocked callback re-raise
+that concealed a manifest-failure swallowing risk; corrected progress persistence
+to put direct game and manifest writes inside the same original-error-preserving
+handler. Root expanded REAL game error regressions to both progress write targets
+for ValueError/TimeoutError/KeyboardInterrupt, and two-game raw probe-error isolation.
+Actual gpt-6-astra read-only review found no blocker and approved ONLY this slice
+for checkpointing. It did not independently rerun tests or approve measurements.
+
+Each game baselines copied cumulative predictor/WDL/DTZ work before play. Progress,
+completion and failure install subtraction-based attempted counts/boards/seconds/
+failures/new probe errors before I/O. Full active-game snapshots and original errors
+survive simultaneous write failures; cumulative attempted_work persists during game
+progress. Times remain NESTED diagnostics, not extra exclusive wall components.
+In-memory partial_manifest does NOT guarantee durable recovery after termination.
+
+Exact checks observed exit0:
+- Focused calibration/evaluation82 passed1 skipped4.26s before the final probe-error
+  assertions, artifacts/pytest-game-deltas-root-20261109.
+- Full default511 passed6 skipped14.41s, elevated Windows UCI,
+  artifacts/pytest-game-deltas-full-20261109.
+- Optional neural/interaction/targets/pilot/evaluation/calibration147 passed18.49s,
+  artifacts/pytest-game-deltas-neural-20261109.
+- Ruff . passed; combined mypy src plus pilot/calibration passed50 files.
+- git diff --check passed; staged scope/whitespace checked before commit.
+Luna reported59 passed1 skipped before root expansions. No failed test run was
+observed in this slice; the earlier root Ruff two-line failure is recorded below.
+Backups before deltas: artifacts/calibration-repair-20261109/*before-deltas.py.txt.
+
+Resume: fresh usage FIRST, then8 November handover and this newer checkpoint.
+The completed incremental latency/static and per-game delta slices supersede those
+specific pending items in the handover. Retain all cumulative/error/full-snapshot
+contracts and resolved evaluation cadence. Runner STILL UNAPPROVED for measurements.
+Next smallest implementation: exclusive wall accounting for setup, game runtime,
+persistence, model loading/saving, encoding/tensor/training/reporting and finalization.
+Separate nested diagnostics; never add them twice. Add deterministic timing-delta
+assertions and real deadline/interruption delta assertions as useful test hardening.
+Then remaining cooperative setup/labeling/encoding/pretraining deadlines, complete
+provenance (command-scoped safe.directory, config/Git/source/packages/hardware/seeds/
+hashes/surrogate disclosure, complete pilot status in pretraining), all four model
+hash rejection paths, development/acquisition mismatches, truly paired RNG streams
+and balanced colours. Artifact integrity audit already passed all four checkpoints,
+2,000 development rows and all8 tables; this is not orchestration-test coverage.
+Use NEW basetemps and the8 November handover commands for required verification.
+
+Only after focused WHOLE-RUNNER review run isolated development evaluation and
+full-size20000/2500 repeated-development30-epoch timing surrogate. Then complete
+projection/budget gate before implementing/reviewing remaining core orchestration
+and executing core. Preserve all five seed blocks, scientific patience5 (31 ONLY
+for timing), final-label isolation, resource ceilings and later analysis/reporting.
+Today9 November:8 November full gate missed;18 November completion unsubstantiated.
+Replan completion after measured gates; preserve TWO FULL final reporting days
+following execution/analysis.17-18 November remains provisional, not a commitment.
+No replacement external deadline was supplied. Calendar pressure changes no gate.
+
 # Reviewed incremental latency/static checkpoint: 9 November 2026
 
 Actual gpt-6-luna implemented incremental latency/static records in the calibration

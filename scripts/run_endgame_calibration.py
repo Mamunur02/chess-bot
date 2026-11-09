@@ -217,6 +217,32 @@ def _record_game(path: Path, record: dict[str, Any], snapshot: Any) -> None:
     _atomic_json(path, record)
 
 
+def _work_delta(before: dict[str, Any], after: dict[str, Any]) -> dict[str, Any]:
+    """Return cumulative attempted-work changes since a game baseline."""
+    predictors: dict[str, Any] = {}
+    for name, current in after["predictors"].items():
+        previous = before["predictors"][name]
+        predictors[name] = {
+            key: current[key] - previous[key]
+            for key in ("calls", "boards", "seconds", "failures")
+        }
+    tablebase: dict[str, Any] = {}
+    for section in ("probes", "seconds", "failures"):
+        tablebase[section] = {
+            name: value - before["tablebase"][section][name]
+            for name, value in after["tablebase"][section].items()
+        }
+    tablebase["errors"] = {
+        name: errors[len(before["tablebase"]["errors"].get(name, [])) :]
+        for name, errors in after["tablebase"]["errors"].items()
+    }
+    return {
+        "predictors": predictors,
+        "tablebase": tablebase,
+        "cost_accounting": "Nested operation times; do not add to elapsed_seconds.",
+    }
+
+
 def _finalize(
     path: Path, value: dict[str, Any], table: Any, original: BaseException | None
 ) -> None:
@@ -408,7 +434,7 @@ def run_evaluation(args: argparse.Namespace) -> dict[str, Any]:
         }
         latency_inputs = boards[:30]
 
-        def persist_attempted_work() -> None:
+        def install_attempted_work() -> None:
             output["attempted_work"] = {
                 "predictors": predictor_totals,
                 "tablebase": {
@@ -421,7 +447,25 @@ def run_evaluation(args: argparse.Namespace) -> dict[str, Any]:
                     "Nested operation times; do not add to elapsed_seconds."
                 ),
             }
+
+        def persist_attempted_work() -> None:
+            install_attempted_work()
             _persist_or_attach(out_path, output, sys.exception())
+
+        def current_attempted_work() -> dict[str, Any]:
+            return {
+                "predictors": {
+                    name: dict(values) for name, values in predictor_totals.items()
+                },
+                "tablebase": {
+                    "probes": dict(table_work.probes),
+                    "seconds": dict(table_work.seconds),
+                    "failures": dict(table_work.failures),
+                    "errors": {
+                        name: list(errors) for name, errors in table_work.errors.items()
+                    },
+                },
+            }
 
         def record_latency(
             name: str, phase: str, board: Any, seed: int, pass_index: int, index: int
@@ -614,12 +658,24 @@ def run_evaluation(args: argparse.Namespace) -> dict[str, Any]:
                         / f"{name}-p{p_value:.2f}-s{start_index:02d}.json"
                     )
                     output["active_game"] = record
+                    game_work_baseline: dict[str, Any] | None = None
+
+                    def refresh_game_work() -> None:
+                        assert game_work_baseline is not None
+                        record["attempted_work_delta"] = _work_delta(
+                            game_work_baseline, current_attempted_work()
+                        )
+                        output["active_game"] = record
+                        install_attempted_work()
 
                     def persist_progress(game_snapshot: Any) -> None:
                         active = sys.exception()
+                        record["progress"] = _game_progress(game_snapshot)
+                        refresh_game_work()
                         # _record_game installs the complete snapshot before I/O.
                         try:
                             _record_game(path, record, game_snapshot)
+                            _atomic_json(out_path, output)
                         except BaseException as write_error:
                             output.setdefault("persistence_errors", []).append(
                                 f"{type(write_error).__name__}: {write_error}"
@@ -636,6 +692,7 @@ def run_evaluation(args: argparse.Namespace) -> dict[str, Any]:
                     try:
                         path.parent.mkdir(parents=True, exist_ok=True)
                         _atomic_json(path, record)
+                        game_work_baseline = current_attempted_work()
                         snap = evaluation.play_fixed_game(
                             chess.Board(str(row["fen"])),
                             color,
@@ -656,11 +713,14 @@ def run_evaluation(args: argparse.Namespace) -> dict[str, Any]:
                             if snap.failure
                             else (snap.truncation_reason or "completed")
                         )
+                        record["progress"] = _game_progress(snap)
+                        refresh_game_work()
                         failed_games |= (
                             snap.failure is not None
                             or snap.truncation_reason is not None
                         )
                         _record_game(path, record, snap)
+                        persist_attempted_work()
                     except BaseException as exc:
                         record.update(
                             status="interrupted"
@@ -668,7 +728,23 @@ def run_evaluation(args: argparse.Namespace) -> dict[str, Any]:
                             else "failed",
                             error=f"{type(exc).__name__}: {exc}",
                         )
+                        if game_work_baseline is not None:
+                            record["attempted_work_delta"] = _work_delta(
+                                game_work_baseline, current_attempted_work()
+                            )
+                        output["active_game"] = record
                         setattr(exc, "partial_manifest", output)
+                        if not hasattr(exc, "persistence_error"):
+                            try:
+                                _atomic_json(path, record)
+                            except BaseException as write_error:
+                                output.setdefault("persistence_errors", []).append(
+                                    f"{type(write_error).__name__}: {write_error}"
+                                )
+                                setattr(exc, "persistence_error", write_error)
+                                exc.add_note(
+                                    f"game failure record write failed: {write_error}"
+                                )
                         raise
                 _atomic_json(out_path, output)
         output["status"] = "failed" if failed_games else "complete"

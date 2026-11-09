@@ -622,8 +622,9 @@ def test_game_write_failure_aborts_with_full_latest_state(
 
 
 @pytest.mark.parametrize("kind", [KeyboardInterrupt, ValueError, TimeoutError])
+@pytest.mark.parametrize("write_target", ["game", "manifest"])
 def test_real_game_error_survives_progress_and_final_write_failure(
-    runner_setup, monkeypatch, kind
+    runner_setup, monkeypatch, kind, write_target
 ):
     args, table, _, _ = runner_setup
     # Restore the real primitive captured from a separate module load.
@@ -646,8 +647,14 @@ def test_real_game_error_survives_progress_and_final_write_failure(
     write = calibration._atomic_json
 
     def fail(path, value):
-        if path.parent.name == "games" and "progress" in value:
+        if (
+            write_target == "game"
+            and path.parent.name == "games"
+            and "progress" in value
+        ):
             raise OSError("game disk failure")
+        if write_target == "manifest" and value.get("active_game", {}).get("progress"):
+            raise OSError("progress manifest disk failure")
         if "elapsed_seconds" in value:
             raise OSError("manifest disk failure")
         write(path, value)
@@ -825,6 +832,7 @@ def test_warmup_deadline_keeps_partial_warmup_and_work_snapshot(
     saved = json.loads((args.output_dir / "calibration.json").read_text())
     assert saved["attempted_work"] == result["attempted_work"]
 
+
 @pytest.mark.parametrize("phase", ["latency", "prediction", "choice"])
 @pytest.mark.parametrize("kind", [ValueError, TimeoutError, KeyboardInterrupt])
 def test_incremental_error_survives_write_failure(
@@ -859,8 +867,11 @@ def test_incremental_error_survives_write_failure(
     assert error.persistence_error is disk_error
     manifest = error.partial_manifest
     expected = (
-        "deadline" if kind is TimeoutError
-        else "interrupted" if kind is KeyboardInterrupt else "failed"
+        "deadline"
+        if kind is TimeoutError
+        else "interrupted"
+        if kind is KeyboardInterrupt
+        else "failed"
     )
     assert manifest["status"] == expected
     if phase == "latency":
@@ -912,3 +923,130 @@ def test_latency_seconds_exclude_incremental_persistence(runner_setup, monkeypat
     assert [a["seconds"] for a in saved["latency_attempts"]["pretrained"]] == [2.0] * 3
     assert saved["attempted_work"]["predictors"]["pretrained"]["calls"] == 3
     assert saved["attempted_work"]["predictors"]["pretrained"]["failures"] == 0
+
+
+def test_consecutive_games_have_isolated_attempted_work_deltas(
+    runner_setup, monkeypatch
+):
+    args, table, _, snapshot = runner_setup
+    monkeypatch.setattr(calibration, "P_VALUES", (0.1,))
+    table.probe_wdl = lambda *_: 1
+    table.probe_dtz = lambda *_: 2
+    monkeypatch.setattr(
+        calibration.evaluation,
+        "evaluate_predictions",
+        lambda boards, predictor, tb: (
+            predictor(boards, boards[0].turn),
+            tb.probe_wdl(boards[0]),
+            SimpleNamespace(mse=0.0),
+        )[2],
+    )
+    monkeypatch.setattr(
+        calibration.evaluation,
+        "evaluate_choices",
+        lambda boards, predictor, tb: (
+            predictor(boards, boards[0].turn),
+            tb.probe_dtz(boards[0]),
+            SimpleNamespace(loss_rate=0.0),
+        )[2],
+    )
+
+    game_index = 0
+
+    def play(_board, _color, predictor, tb, *_args, **kwargs):
+        nonlocal game_index
+        game_index += 1
+        for _ in range(game_index):
+            predictor([snapshot], True)
+        tb.probe_wdl(snapshot)
+        successful_probe = table.probe_wdl
+
+        def probe_failure(*_args):
+            raise ValueError(f"probe error game {game_index}")
+
+        table.probe_wdl = probe_failure
+        try:
+            with pytest.raises(ValueError):
+                tb.probe_wdl(snapshot)
+        finally:
+            table.probe_wdl = successful_probe
+        if game_index > 1:
+            tb.probe_dtz(snapshot)
+        kwargs["progress_callback"](snapshot)
+        return snapshot
+
+    monkeypatch.setattr(calibration.evaluation, "play_fixed_game", play)
+    result = calibration.run_evaluation(args)
+    games = sorted((args.output_dir / "games").glob("*.json"))
+    first, second = [
+        json.loads(path.read_text())["attempted_work_delta"] for path in games[:2]
+    ]
+    # Static work is cumulative before game one, but excluded from both deltas.
+    assert first["predictors"]["pretrained"]["calls"] == 1
+    assert second["predictors"]["pretrained"]["calls"] == 2
+    assert first["tablebase"]["probes"] == {"probe_wdl": 2, "probe_dtz": 0}
+    assert second["tablebase"]["probes"] == {"probe_wdl": 2, "probe_dtz": 1}
+    for index, delta in enumerate((first, second), 1):
+        assert delta["predictors"]["pretrained"]["boards"] == index
+        assert delta["tablebase"]["failures"]["probe_wdl"] == 1
+        assert delta["tablebase"]["errors"]["probe_wdl"] == [
+            f"ValueError: probe error game {index}"
+        ]
+    assert result["attempted_work"]["predictors"]["pretrained"]["calls"] > 3
+
+
+def test_second_game_progress_write_failure_keeps_delta_and_original_error(
+    runner_setup, monkeypatch
+):
+    args, table, _, snapshot = runner_setup
+    monkeypatch.setattr(calibration, "P_VALUES", (0.1,))
+    table.probe_wdl = lambda *_: 1
+    game_index = 0
+    original = RuntimeError("second game failed")
+
+    def play(_board, _color, predictor, tb, *_args, **kwargs):
+        nonlocal game_index
+        game_index += 1
+        if game_index == 2:
+            predictor.predictor = lambda *_: (_ for _ in ()).throw(original)
+            try:
+                predictor([snapshot], True)
+            except RuntimeError:
+                tb.probe_wdl(snapshot)
+                try:
+                    raise original
+                except RuntimeError:
+                    kwargs["progress_callback"](snapshot)
+                    return snapshot
+        else:
+            predictor([snapshot], True)
+            tb.probe_wdl(snapshot)
+        kwargs["progress_callback"](snapshot)
+        return snapshot
+
+    monkeypatch.setattr(calibration.evaluation, "play_fixed_game", play)
+    atomic_write = calibration._atomic_json
+    failed_once = False
+
+    # Trigger manifest failure while the second game's original exception is active.
+    def inject(path, value):
+        nonlocal failed_once
+        if path.name == "calibration.json" and game_index == 2 and not failed_once:
+            if value.get("active_game", {}).get("progress"):
+                failed_once = True
+                raise OSError("second progress manifest failure")
+        atomic_write(path, value)
+
+    monkeypatch.setattr(calibration, "_atomic_json", inject)
+    with pytest.raises(RuntimeError) as raised:
+        calibration.run_evaluation(args)
+    assert raised.value is original
+    manifest = original.partial_manifest
+    delta = manifest["active_game"]["attempted_work_delta"]
+    assert delta["predictors"]["pretrained"]["calls"] == 1
+    assert delta["predictors"]["pretrained"]["failures"] == 1
+    assert delta["tablebase"]["probes"]["probe_wdl"] == 1
+    assert manifest["active_game"]["progress"] == calibration._game_progress(snapshot)
+    assert manifest["attempted_work"]["predictors"]["pretrained"]["calls"] > 1
+    assert manifest["persistence_errors"]
+    assert table.closed == 1
