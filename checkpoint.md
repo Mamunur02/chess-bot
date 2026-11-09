@@ -1,3 +1,24 @@
+# Documentation handover: 9 November 2026
+
+Read docs/research/new-chat-handover-20261109.md in full, then8 November and all
+required prior context. This turn is documentation/commit/push only. Starting
+HEADec979be matches local origin tracking; both ec979be and deeb305 were pushed.
+New handover records reviewed incremental latency/static and per-game accounting,
+remaining exclusive timing/deadline/provenance/test gates and complete roadmap.
+Whole runner remains UNAPPROVED for measurements. No calibration, complete
+projection, budget freeze or core execution. No code tests rerun this turn.
+
+Prior implementation VERIFIED post-push usage34% five-hour /45% weekly; committed
+checkpoint37/45 was earlier. Fresh documentation reading31/44. No reset used.
+No Python process appeared at initial inspection. Five preexisting document
+changes remain excluded. Today9 November:8 November gate missed;18 November
+completion unsubstantiated. Move completion if gates slip, preserving TWO FULL
+final reporting days. No replacement external deadline supplied.
+Documentation validation passed21 file references and whitespace; all five
+protected document hashes and pilot hash unchanged. Latest pre-commit usage27%
+five-hour /44% weekly. No code tests needed or run. Inspect log/status for this
+handover commit/push; no automatic continuation is implied.
+
 # Reviewed per-game accounting checkpoint: 9 November 2026
 
 Checkpointing early at37% five-hour /45% weekly remaining; no further implementation
