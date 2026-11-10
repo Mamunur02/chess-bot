@@ -1,3 +1,27 @@
+# Documentation handover: 10 November 2026
+
+Read docs/research/new-chat-handover-20261110.md in full, then9 November and
+all prior required context. Documentation/commit/push only this turn. Starting
+HEAD abe4756 is pushed and matches local origin tracking. New handover records
+coarse exclusive lifecycle timing, precise final-write boundaries and remaining
+detailed timing/deadline/provenance/tests/whole-runner gates and full roadmap.
+Whole runner remains UNAPPROVED; no measurements, full projection, budget freeze
+or core execution. No code tests rerun for documentation-only changes.
+
+Previous implementation VERIFIED post-push usage42% five-hour /33% weekly;
+committed checkpoint48/34 was earlier. Fresh documentation reading40/33.
+No reset credits used. Five preexisting documents remain excluded. Today10 November:
+8 November gate missed;18 November completion unsupported. Completion must move
+as needed with TWO FULL final reporting/reproducibility days after execution and
+analysis. No replacement external deadline. Inspect log/status for this handover
+commit and push; no background continuation is implied.
+
+Documentation validation passed 18 existing handover/summary/test-artifact
+references and whitespace; five protected hashes and pilot hash unchanged.
+No Python process appeared at inspection. Initial reference validation wrongly
+included future NEW-UNIQUE output placeholders; corrected exclusion passed.
+Latest pre-commit usage36% five-hour /32% weekly remaining. No code tests run.
+
 # Reviewed coarse lifecycle timing checkpoint: 10 November 2026
 
 Stopping new slices after weekly35% checkpoint trigger. Latest usage48%
