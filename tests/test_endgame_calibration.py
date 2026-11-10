@@ -925,6 +925,136 @@ def test_latency_seconds_exclude_incremental_persistence(runner_setup, monkeypat
     assert saved["attempted_work"]["predictors"]["pretrained"]["failures"] == 0
 
 
+@pytest.mark.parametrize("mode", ["evaluation", "pretraining"])
+def test_runner_wall_time_ledger_separates_phases_and_final_write(
+    runner_setup, monkeypatch, mode
+):
+    args, table, neural, _ = runner_setup
+    now = 0.0
+    writes = 0
+    real_write = calibration._atomic_json
+
+    def write(path, value):
+        nonlocal now, writes
+        writes += 1
+        real_write(path, value)
+        now += 3.0
+
+    def close():
+        nonlocal now
+        table.closed += 1
+        now += 5.0
+
+    def work(*_args, **_kwargs):
+        nonlocal now
+        now += 7.0
+        return SimpleNamespace(mse=0.0)
+
+    fit = neural.pretrain
+
+    def train(*args, **kwargs):
+        work()
+        return fit(*args, **kwargs)
+
+    finalize = calibration._finalize
+
+    def finalization(*args):
+        nonlocal now
+        now += 2.0
+        return finalize(*args)
+
+    table.close = close
+    monkeypatch.setattr(calibration, "_finalize", finalization)
+    monkeypatch.setattr(calibration.time, "perf_counter", lambda: now)
+    monkeypatch.setattr(calibration, "_deadline", lambda *_: lambda: False)
+    monkeypatch.setattr(calibration, "_atomic_json", write)
+    monkeypatch.setattr(calibration.evaluation, "evaluate_predictions", work)
+    monkeypatch.setattr(neural, "pretrain", train)
+    result = getattr(calibration, f"run_{mode}")(args)
+    saved = json.loads((args.output_dir / "calibration.json").read_text())
+    disk = saved["wall_time"]
+    returned = result["wall_time"]
+    assert disk["schema_version"] == returned["schema_version"] == 1
+    assert disk["boundary"] == "pre-final-write"
+    assert disk["final_write_included"] is False
+    assert returned["boundary"] == "post-final-write"
+    assert returned["final_write_included"] is True
+    assert returned["seconds"] == {
+        "work": 7.0,
+        "persistence": writes * 3.0,
+        "cleanup": 5.0,
+        "finalization": 2.0,
+    }
+    assert disk["seconds"]["persistence"] == (writes - 1) * 3.0
+    assert disk["seconds"]["cleanup"] == 5.0
+    assert sum(disk["seconds"].values()) == disk["elapsed_seconds"] == now - 3.0
+    assert sum(returned["seconds"].values()) == returned["elapsed_seconds"] == now
+    assert result["legacy_timing_boundary"].startswith(
+        "elapsed_seconds ends before cleanup and final manifest write"
+    )
+    if mode == "evaluation":
+        assert len(list((args.output_dir / "games").glob("*.json"))) == 30
+    else:
+        assert result["scales"][0]["training_seconds"] == 10.0
+
+
+@pytest.mark.parametrize("mode", ["evaluation", "pretraining"])
+@pytest.mark.parametrize("kind", [ValueError, KeyboardInterrupt])
+def test_failed_final_write_is_charged_to_attached_wall_time(
+    runner_setup, monkeypatch, mode, kind
+):
+    args, table, _, _ = runner_setup
+    original = kind("work failed")
+    cleanup = RuntimeError("close failed")
+    persistence = OSError("final write")
+    now = 0.0
+    writes = 0
+
+    def fail(*_args):
+        nonlocal now
+        now += 7.0
+        raise original
+
+    def close():
+        nonlocal now
+        now += 5.0
+        table.closed += 1
+        raise cleanup
+
+    table.close = close
+    monkeypatch.setattr(calibration, "evaluate_reference", fail)
+    monkeypatch.setattr(calibration.evaluation, "evaluate_predictions", fail)
+    monkeypatch.setattr(calibration.time, "perf_counter", lambda: now)
+    monkeypatch.setattr(calibration, "_deadline", lambda *_: lambda: False)
+    write = calibration._atomic_json
+
+    def inject(path, value):
+        nonlocal now, writes
+        writes += 1
+        now += 3.0
+        if "wall_time" in value:
+            raise persistence
+        write(path, value)
+
+    monkeypatch.setattr(calibration, "_atomic_json", inject)
+    with pytest.raises(kind) as raised:
+        getattr(calibration, f"run_{mode}")(args)
+    assert raised.value is original
+    assert original.cleanup_error is cleanup
+    assert original.persistence_error is persistence
+    wall = original.partial_manifest["wall_time"]
+    assert wall["boundary"] == "post-final-write-attempt"
+    assert wall["final_write_included"] is True
+    assert wall["seconds"] == {
+        "work": 7.0,
+        "persistence": writes * 3.0,
+        "cleanup": 5.0,
+        "finalization": 0.0,
+    }
+    assert sum(wall["seconds"].values()) == wall["elapsed_seconds"] == now
+    assert table.closed == 1
+
+
 def test_consecutive_games_have_isolated_attempted_work_deltas(
     runner_setup, monkeypatch
 ):

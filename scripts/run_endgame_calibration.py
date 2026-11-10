@@ -37,6 +37,49 @@ PRETRAIN_MAX_EPOCHS = 30
 PRETRAIN_PATIENCE = 31
 
 
+class _RunTiming:
+    """Per-run monotonic ledger with exclusive coarse phase accounting."""
+
+    def __init__(self) -> None:
+        self.started = time.perf_counter()
+        self.phase = "work"
+        self.mark = self.started
+        self.seconds = {
+            name: 0.0 for name in ("work", "persistence", "cleanup", "finalization")
+        }
+
+    def switch(self, phase: str) -> None:
+        now = time.perf_counter()
+        self.seconds[self.phase] += now - self.mark
+        self.phase = phase
+        self.mark = now
+
+    def snapshot(self, phase: str | None = None) -> dict[str, Any]:
+        now = time.perf_counter()
+        values = dict(self.seconds)
+        values[self.phase] += now - self.mark
+        return {
+            "schema_version": 1,
+            "seconds": values,
+            "elapsed_seconds": now - self.started,
+            "boundary": phase or self.phase,
+            "scope": "Coarse exclusive lifecycle; detailed work phases not separated.",
+            "diagnostics": "Legacy and predictor/probe times overlap; do not add them.",
+        }
+
+
+def _write_json(path: Path, value: dict[str, Any], timing: _RunTiming | None) -> None:
+    if timing is None:
+        _atomic_json(path, value)
+        return
+    prior = timing.phase
+    timing.switch("persistence")
+    try:
+        _atomic_json(path, value)
+    finally:
+        timing.switch(prior)
+
+
 def _pilot_module() -> Any:
     path = Path(__file__).with_name("run_endgame_pilot.py")
     spec = importlib.util.spec_from_file_location("run_endgame_pilot", path)
@@ -64,7 +107,10 @@ def _atomic_json(path: Path, value: object) -> None:
 
 
 def _persist_or_attach(
-    path: Path, value: dict[str, Any], active: BaseException | None
+    path: Path,
+    value: dict[str, Any],
+    active: BaseException | None,
+    timing: _RunTiming | None = None,
 ) -> None:
     """Persist a manifest, preserving an active failure and exposing its snapshot.
 
@@ -72,7 +118,7 @@ def _persist_or_attach(
     An active original exception also receives the secondary ``persistence_error``.
     """
     try:
-        _atomic_json(path, value)
+        _write_json(path, value, timing)
     except BaseException as persistence_error:
         value.setdefault("persistence_errors", []).append(
             f"{type(persistence_error).__name__}: {persistence_error}"
@@ -212,9 +258,11 @@ def _game_progress(snapshot: Any) -> dict[str, Any]:
     }
 
 
-def _record_game(path: Path, record: dict[str, Any], snapshot: Any) -> None:
+def _record_game(
+    path: Path, record: dict[str, Any], snapshot: Any, timing: _RunTiming | None = None
+) -> None:
     record["progress"] = _game_progress(snapshot)
-    _atomic_json(path, record)
+    _write_json(path, record, timing)
 
 
 def _work_delta(before: dict[str, Any], after: dict[str, Any]) -> dict[str, Any]:
@@ -244,10 +292,16 @@ def _work_delta(before: dict[str, Any], after: dict[str, Any]) -> dict[str, Any]
 
 
 def _finalize(
-    path: Path, value: dict[str, Any], table: Any, original: BaseException | None
+    path: Path,
+    value: dict[str, Any],
+    table: Any,
+    original: BaseException | None,
+    timing: _RunTiming | None = None,
 ) -> None:
     """Keep the first work error authoritative through cleanup and final writes."""
     cleanup_error = None
+    if timing is not None:
+        timing.switch("cleanup")
     try:
         if table is not None:
             table.close()
@@ -261,9 +315,30 @@ def _finalize(
         if original is not None:
             setattr(original, "cleanup_error", exc)
             original.add_note(f"table cleanup failed: {exc}")
+    if timing is not None:
+        timing.switch("finalization")
+        value["wall_time"] = {
+            **timing.snapshot("pre-final-write"),
+            "final_write_included": False,
+        }
     preferred = original if original is not None else cleanup_error
     before = len(value.get("persistence_errors", []))
-    _persist_or_attach(path, value, preferred)
+    try:
+        _persist_or_attach(path, value, preferred, timing)
+    except BaseException:
+        if timing is not None:
+            value["wall_time"] = {
+                **timing.snapshot("post-final-write-attempt"),
+                "final_write_included": True,
+            }
+        raise
+    if timing is not None:
+        boundary = (
+            "post-final-write-attempt"
+            if len(value.get("persistence_errors", [])) > before
+            else "post-final-write"
+        )
+        value["wall_time"] = {**timing.snapshot(boundary), "final_write_included": True}
     if cleanup_error is not None or len(value.get("persistence_errors", [])) > before:
         assert preferred is not None
         setattr(preferred, "partial_manifest", value)
@@ -341,6 +416,7 @@ def _configure_torch(torch: Any) -> dict[str, int]:
 
 
 def run_evaluation(args: argparse.Namespace) -> dict[str, Any]:
+    timing = _RunTiming()
     started = time.perf_counter()
     deadline = _deadline(started, args.deadline_seconds)
     output: dict[str, Any] = {"mode": "evaluation", "status": "running", "items": []}
@@ -351,7 +427,7 @@ def run_evaluation(args: argparse.Namespace) -> dict[str, Any]:
     predictor_totals: dict[str, dict[str, Any]] = {}
     original_error: BaseException | None = None
     try:
-        _persist_or_attach(out_path, output, None)
+        _persist_or_attach(out_path, output, None, timing)
         pilot = _pilot_module()
         pilot_path = args.pilot_dir / "pilot.json"
         pilot_manifest = json.loads(pilot_path.read_text(encoding="utf-8"))
@@ -418,7 +494,7 @@ def run_evaluation(args: argparse.Namespace) -> dict[str, Any]:
                 "table_hashes": acquisition.get("table_sha256"),
             }
         )
-        _atomic_json(out_path, output)
+        _write_json(out_path, output, timing)
         predictor_totals = {
             name: {"calls": 0, "boards": 0, "seconds": 0.0, "failures": 0}
             for name, _ in models
@@ -450,7 +526,7 @@ def run_evaluation(args: argparse.Namespace) -> dict[str, Any]:
 
         def persist_attempted_work() -> None:
             install_attempted_work()
-            _persist_or_attach(out_path, output, sys.exception())
+            _persist_or_attach(out_path, output, sys.exception(), timing)
 
         def current_attempted_work() -> dict[str, Any]:
             return {
@@ -631,7 +707,7 @@ def run_evaluation(args: argparse.Namespace) -> dict[str, Any]:
                 "predictor_seconds": predictor.seconds,
                 "predictor_failures": predictor.failures,
             }
-            _atomic_json(out_path, output)
+            _write_json(out_path, output, timing)
             # SHA-derived fixed starts are shared across methods and p values.
             starts = sorted(
                 rows,
@@ -674,8 +750,8 @@ def run_evaluation(args: argparse.Namespace) -> dict[str, Any]:
                         refresh_game_work()
                         # _record_game installs the complete snapshot before I/O.
                         try:
-                            _record_game(path, record, game_snapshot)
-                            _atomic_json(out_path, output)
+                            _record_game(path, record, game_snapshot, timing)
+                            _write_json(out_path, output, timing)
                         except BaseException as write_error:
                             output.setdefault("persistence_errors", []).append(
                                 f"{type(write_error).__name__}: {write_error}"
@@ -691,7 +767,7 @@ def run_evaluation(args: argparse.Namespace) -> dict[str, Any]:
 
                     try:
                         path.parent.mkdir(parents=True, exist_ok=True)
-                        _atomic_json(path, record)
+                        _write_json(path, record, timing)
                         game_work_baseline = current_attempted_work()
                         snap = evaluation.play_fixed_game(
                             chess.Board(str(row["fen"])),
@@ -719,7 +795,7 @@ def run_evaluation(args: argparse.Namespace) -> dict[str, Any]:
                             snap.failure is not None
                             or snap.truncation_reason is not None
                         )
-                        _record_game(path, record, snap)
+                        _record_game(path, record, snap, timing)
                         persist_attempted_work()
                     except BaseException as exc:
                         record.update(
@@ -736,7 +812,7 @@ def run_evaluation(args: argparse.Namespace) -> dict[str, Any]:
                         setattr(exc, "partial_manifest", output)
                         if not hasattr(exc, "persistence_error"):
                             try:
-                                _atomic_json(path, record)
+                                _write_json(path, record, timing)
                             except BaseException as write_error:
                                 output.setdefault("persistence_errors", []).append(
                                     f"{type(write_error).__name__}: {write_error}"
@@ -746,7 +822,7 @@ def run_evaluation(args: argparse.Namespace) -> dict[str, Any]:
                                     f"game failure record write failed: {write_error}"
                                 )
                         raise
-                _atomic_json(out_path, output)
+                _write_json(out_path, output, timing)
         output["status"] = "failed" if failed_games else "complete"
     except KeyboardInterrupt as exc:
         original_error = exc
@@ -763,7 +839,11 @@ def run_evaluation(args: argparse.Namespace) -> dict[str, Any]:
         setattr(exc, "partial_manifest", output)
         raise
     finally:
+        timing.switch("finalization")
         output["elapsed_seconds"] = time.perf_counter() - started
+        output["legacy_timing_boundary"] = (
+            "elapsed_seconds ends before cleanup and final manifest write."
+        )
         output["attempted_work"] = {
             "predictors": predictor_totals,
             "tablebase": (
@@ -778,12 +858,13 @@ def run_evaluation(args: argparse.Namespace) -> dict[str, Any]:
             ),
             "cost_accounting": "Nested operation times; do not add to elapsed_seconds.",
         }
-        _finalize(out_path, output, original_table, original_error)
+        _finalize(out_path, output, original_table, original_error, timing)
     return output
 
 
 def run_pretraining(args: argparse.Namespace) -> dict[str, Any]:
     """Time fitting on development data without changing scientific patience."""
+    timing = _RunTiming()
     started = time.perf_counter()
     deadline = _deadline(started, args.deadline_seconds)
     result: dict[str, Any] = {"mode": "pretraining", "status": "running", "scales": []}
@@ -793,7 +874,7 @@ def run_pretraining(args: argparse.Namespace) -> dict[str, Any]:
     table_work = None
     original_error: BaseException | None = None
     try:
-        _persist_or_attach(out_path, result, None)
+        _persist_or_attach(out_path, result, None, timing)
         pilot = _pilot_module()
         rows, data_hash = pilot._load_development(args.development_dir)
         pilot_manifest = json.loads(
@@ -874,7 +955,7 @@ def run_pretraining(args: argparse.Namespace) -> dict[str, Any]:
                 "validation_count": validation_count,
                 "completed_epochs": list(epochs),
             }
-            _atomic_json(out_path, result)
+            _write_json(out_path, result, timing)
 
         t = time.perf_counter()
         training_result = pretrain(
@@ -901,7 +982,7 @@ def run_pretraining(args: argparse.Namespace) -> dict[str, Any]:
                 "status": "completed",
             }
         )
-        _atomic_json(out_path, result)
+        _write_json(out_path, result, timing)
         result["status"] = "complete"
     except TimeoutError as exc:
         original_error = exc
@@ -917,7 +998,12 @@ def run_pretraining(args: argparse.Namespace) -> dict[str, Any]:
         result["error"] = f"{type(exc).__name__}: {exc}"
         raise
     finally:
+        timing.switch("finalization")
         result["elapsed_seconds"] = time.perf_counter() - started
+        result["legacy_timing_boundary"] = (
+            "elapsed_seconds ends before cleanup and final manifest write; "
+            "scales training_seconds includes tensor setup and progress writes."
+        )
         result["attempted_work"] = {
             "tablebase": (
                 {
@@ -931,7 +1017,7 @@ def run_pretraining(args: argparse.Namespace) -> dict[str, Any]:
             ),
             "cost_accounting": "Nested operation times; do not add to elapsed_seconds.",
         }
-        _finalize(out_path, result, original_table, original_error)
+        _finalize(out_path, result, original_table, original_error, timing)
     return result
 
 

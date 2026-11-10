@@ -1,3 +1,100 @@
+# Reviewed coarse lifecycle timing checkpoint: 10 November 2026
+
+Stopping new slices after weekly35% checkpoint trigger. Latest usage48%
+five-hour /34% weekly remaining; earlier93/41,79/39,68/37,62/36,56/35.
+No reset credits, measurements, final-label access, paid resources or pilot restart.
+Whole runner remains UNAPPROVED for measurements. No full projection, budget
+freeze or core execution. Five protected document hashes and pilot hash unchanged.
+No Python process appeared after verification. Both agents finished.
+
+Actual gpt-6-astra planned and reviewed this bounded slice; actual gpt-6-luna
+implemented per-run exclusive coarse work/persistence/cleanup/finalization timing.
+Root added elapsed/boundary/scope disclosures, moved finalization start before
+snapshot preparation, and strengthened exact fake-clock runner assertions.
+All runner JSON writes (including failed attempts) suspend the caller phase.
+Saved wall_time ends before its own final write; returned/attached in-memory
+wall_time includes the final attempted write. These boundaries are explicit.
+Legacy elapsed_seconds excludes cleanup/final write; legacy training_seconds
+includes tensor setup/progress writes. Nested predictor/probe timings and
+per-game deltas are preserved; never add them to exclusive wall time.
+In-memory partial_manifest still does NOT guarantee recovery after termination.
+
+Astra found no blocker and approved ONLY this slice for checkpointing, not the
+whole runner or measurements. It inspected source without rerunning tests;
+its Git diff command reported Not a git repository, so it compared current
+source with its earlier inspection. Root inspected the actual Git diff.
+Astra noted zero injected finalization time; root then added nonzero timing
+assertions, verified by final focused tests. No production code changed after
+full checks. No observed test/lint/type failures in this slice.
+
+Observed exit0 checks:
+- Focused calibration/evaluation88 passed1 skipped6.51s:
+  artifacts/pytest-lifecycle-timing-root-20261110.
+- Full default517 passed6 skipped21.31s, elevated Windows UCI:
+  artifacts/pytest-lifecycle-timing-full-20261110.
+- Optional neural/interaction/targets/pilot/evaluation/calibration153 passed30.56s:
+  artifacts/pytest-lifecycle-timing-neural-20261110.
+- Ruff . passed; combined mypy src plus pilot/calibration passed50 files.
+- After final test-only strengthening: calibration68 passed1 skipped5.92s,
+  artifacts/pytest-lifecycle-timing-final-20261110; Ruff . passed again.
+- Diff whitespace passed before this checkpoint; staged scope/check follows.
+Luna reported66 passed1 skipped and focused Ruff before root expansions.
+Tests ran concurrently for verification; their runtimes are NOT calibration.
+
+Changed files: scripts/run_endgame_calibration.py, tests/test_endgame_calibration.py,
+checkpoint.md. Backups and hash audit: artifacts/calibration-repair-20261110/.
+Starting HEAD f49c235; branch codex/opponent-dependence, existing origin
+https://github.com/Mamunur02/chess-bot.git. Inspect log/status for resulting commit
+and push. Five preexisting document changes excluded. No background continuation.
+
+Resume with usage FIRST and docs/research/new-chat-handover-20261109.md plus all
+required context. Next smallest slice: split coarse work into exclusive setup,
+model load/save, labeling, encoding, tensor construction, training, latency,
+static evaluation, games/reporting; preserve failure accounting and avoid double
+counting callbacks. Incremental manifests currently lack lifecycle timing until
+finalization; add tested snapshots before claiming continuous durable timing.
+Then remaining cooperative deadlines, full provenance (command-scoped safe.directory,
+complete pilot requirement in pretraining), four checkpoint rejection paths,
+development/acquisition mismatches, genuinely paired RNG streams/balanced colours,
+and deterministic per-game seconds/deadline/interruption deltas. Required checks
+and focused WHOLE-RUNNER review precede isolated development evaluation/full-size
+repeated-development pretraining timing. Use handover commands with NEW basetemps.
+Complete resource projection/gate precedes reviewed orchestration and core execution;
+preserve cadence, five seed blocks and all scientific/resource invariants.
+
+Schedule: today10 November;8 November gate missed,18 November completion remains
+unsupported. No replacement external deadline. Set completion after actual gates
+and measured runtimes, preserving TWO FULL reporting/reproducibility days after
+execution and analysis. No calendar claim justifies weakening scientific gates.
+
+# Active exclusive lifecycle accounting: 10 November 2026
+
+Usage checked FIRST: 93% five-hour / 41% weekly remaining; after context
+79/39, before implementation 68/37. No reset credits used. Required handovers
+and context read, checkpoint newest first. HEAD f49c235 matches local origin
+tracking on codex/opponent-dependence. No Python process appeared at inspection.
+Five protected documents match baseline; pilot manifest and four checkpoints,
+development JSONL, acquisition manifest and eight tables match saved audit hashes.
+Pilot not restarted; final labels untouched. Backups:
+artifacts/calibration-repair-20261110/runner.before.py.txt and tests.before.py.txt.
+
+Actual gpt-6-astra read-only planning recommends a bounded coarse exclusive
+lifecycle ledger: work, persistence, cleanup, finalization. Actual gpt-6-luna is
+implementing this slice with runner-level fake-clock regressions. NOT reviewed
+or verified yet. Saved timing must disclose its pre-final-write boundary;
+returned/in-memory timing may include that last attempted write. No recursive
+rewrite can persist its own completed write duration. Nested predictor/probe
+work and legacy timing remain distinct. Detailed phase decomposition is deferred.
+
+Whole runner remains UNAPPROVED for measurements. No calibration, complete
+projection, budget freeze or core execution. Next finish/review/test this slice;
+then detailed exclusive phases, deadlines/provenance/hash/pairing regressions,
+whole-runner review and isolated calibration before full resource gate/core.
+Today 10 November: 8 November gate missed; 18 November completion unsupported.
+Completion date remains uncommitted pending measured gates; reserve TWO FULL
+reporting/reproducibility days after execution and analysis. No replacement
+external deadline supplied. Inspect actual agents/processes/Git on resume.
+
 # Documentation handover: 9 November 2026
 
 Read docs/research/new-chat-handover-20261109.md in full, then8 November and all
