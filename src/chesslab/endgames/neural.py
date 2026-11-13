@@ -332,6 +332,7 @@ def pretrain(
     config: PretrainingConfig = PretrainingConfig(),
     deadline_check: Callable[[], bool] | None = None,
     progress_callback: Callable[[EpochRecord], None] | None = None,
+    phase_callback: Callable[[Literal["tensor_setup", "training"]], None] | None = None,
 ) -> PretrainingResult:
     """Train with protocol MSE/Adam settings and restore the earliest best model.
 
@@ -343,6 +344,8 @@ def pretrain(
     Optional cooperative deadlines raise TimeoutError between bounded operations;
     an in-flight tensor operation cannot be preempted. Completed epochs are sent
     to the callback for caller-owned persistence. Callback exceptions propagate.
+    The optional phase callback marks tensor conversion and optimizer/training
+    setup boundaries; callback exceptions propagate without changing training.
     Interrupted training does not restore a checkpoint or return a success result.
     """
 
@@ -350,6 +353,8 @@ def pretrain(
         if deadline_check is not None and deadline_check():
             raise TimeoutError("pretraining deadline exceeded")
 
+    if phase_callback is not None:
+        phase_callback("tensor_setup")
     check_deadline()
     device = next(model.parameters()).device
     train_x = _matrix(training_features, device)
@@ -361,6 +366,8 @@ def pretrain(
     if len(train_x) != len(train_y) or len(validation_x) != len(validation_y):
         raise ValueError("feature and label counts must match")
 
+    if phase_callback is not None:
+        phase_callback("training")
     shuffle_generator = torch.Generator(device="cpu")
     shuffle_generator.manual_seed(derive_torch_seed(seed, "pretraining-shuffle"))
     optimizer = torch.optim.Adam(model.parameters(), lr=config.learning_rate)

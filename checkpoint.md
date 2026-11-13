@@ -1,3 +1,125 @@
+# Reviewed detailed timing checkpoint: 13 November 2026
+
+Session began12 November, crossed midnight Europe/London. Stopping new slices
+for usage headroom: latest31% five-hour /87% weekly remaining, after98/98,
+83/95,70/93,63/92,50/90,39/88. Checkpoint began before implementation; no reset
+credits used. No experiments, pilot restart, final-label access or paid resources.
+Whole calibration runner remains UNFINISHED and UNAPPROVED for measurements.
+
+Actual gpt-6-astra planned and independently reviewed this instrumentation slice;
+actual gpt-6-luna implemented it. Root corrected phase attribution, retained legacy
+training_seconds unchanged, excluded reporting callbacks from game/training time,
+and added nonzero detailed-phase/incremental snapshot and real trainer failure
+orchestration regressions. Astra found no blocker and approved ONLY this slice
+for checkpointing, without independently running tests. Its cosmetic indentation
+note was fixed; a test fixture import correction followed review, with full checks.
+
+Changes: scripts/run_endgame_calibration.py, src/chesslab/endgames/neural.py,
+tests/test_endgame_calibration.py, tests/test_endgame_neural.py, checkpoint.md.
+Schema-v2 exclusive phases replace coarse work: setup/model_setup/labeling/
+encoding/tensor_setup/training/warmup/latency/prediction/choice/games/reporting,
+plus persistence/cleanup/finalization. Phases include driver overhead; reporting
+includes provenance/source copies, model_setup includes loads/construction.
+These runners perform NO model checkpoint saves; do not infer save calibration.
+Optional trainer phase callback separates tensor conversion/validation from
+optimizer/training, preserving default scientific behavior and exact results.
+Existing JSON writes now carry incremental lifecycle snapshots, including initial
+and game writes. Each saved snapshot excludes its own write and includes earlier
+attempts; final disk boundary remains pre-final-write. Returned/attached final
+snapshot includes the final attempted write. Original errors, full active-game
+snapshots, cumulative attempted work and isolated per-game deltas are retained.
+Nested diagnostics/legacy times overlap the ledger: NEVER add them to it.
+No new write cadence; setup/labeling/encoding still need finer progress/deadline
+coverage. Failed writes and partial_manifest do NOT guarantee durable recovery
+after termination. This slice is instrumentation, not whole-runner completion.
+
+Verification independently observed exit0:
+- Full default519 passed10 skipped31.47s, elevated Windows UCI:
+  artifacts/pytest-detailed-full-20261113.
+- Broader optional neural/interaction/targets/pilot/evaluation/calibration161
+  passed25.61s: artifacts/pytest-detailed-neural-full-20261113.
+- Focused optional calibration/neural94 passed14.23s:
+  artifacts/pytest-detailed-root-neural-20261113-b.
+- Focused default70 passed5 skipped6.28s:
+  artifacts/pytest-detailed-root-20261113.
+- Ruff check . passed; combined mypy src plus pilot/calibration passed50 files.
+Tests overlapped for verification; durations are NOT isolated calibration.
+Luna reported68 passed1 skipped calibration and19 passed neural before root tests.
+
+Failures preserved: both virtual environments initially could not launch because
+their Python3.12.14 home was missing. Sandbox runtime download failed DNS; elevated
+uv download restored exactly3.12.14 under artifacts/python-runtime/. Existing
+pyvenv.cfg home paths were repointed, with backups in calibration-repair-20261112/.
+uv warned an existing external python3.12 executable was not managed; it was NOT
+force-replaced. Existing Torch2.7.0+cpu imports successfully; no project dependency
+or lockfile changed. First root Ruff found11 long lines, corrected. First optional
+root test run FAILED11/passed83 in15.29s: reimporting Torch in a new test caused
+duplicate namespace registration and downstream tensor-layout failures. Fixed
+fixture captures/reuses real modules before fake setup;94-test rerun and full161
+suite passed. Failed output directory: pytest-detailed-root-neural-20261113.
+
+Starting HEADa81cb97, branch codex/opponent-dependence, origin
+https://github.com/Mamunur02/chess-bot.git. Backups/hash audit:
+artifacts/calibration-repair-20261112/. Protected five documents excluded; pilot,
+four checkpoints, development JSONL, acquisition/eight tables matched saved hashes
+at start (loader not rerun). Final hash/process/staged checks and normal commit/push
+follow this entry; inspect Git log/status for resulting commit. No background
+experiment or automatic continuation implied; both agents finished.
+
+Resume: usage FIRST,10 November handover plus this newer checkpoint and its prior
+required context. Inspect actual Git/process/artifacts. Next smallest task is
+remaining cooperative setup/labeling/encoding/pretraining deadlines and partial
+progress, followed by provenance (safe.directory, complete pilot status, resolved
+config/source/hardware/seeds/hashes/surrogate), all FOUR model hash rejection paths,
+development/acquisition mismatches, paired model-independent RNG/balanced colours
+and deterministic per-game timing/deadline/interruption delta coverage. Focused
+WHOLE-RUNNER review BEFORE isolated development evaluation/full-size timing.
+Then complete resource projection/budget gate, remaining reviewed orchestration,
+core execution/analysis/reporting. Preserve cadence and all five seed blocks.
+Use existing handover check commands with NEW basetemps and explicit interpreters;
+local runtime restoration must also be preserved/restored in a fresh environment.
+
+Schedule reassessed13 November:8 November gate and9-12 November core window missed.
+18 November completion is unestablished; no replacement external deadline.
+Completion date remains uncommitted until measured gates and execution/analysis
+finish. Reserve TWO FULL reporting/reproducibility days AFTER those stages; move
+completion as required rather than compressing scientific gates or dropping seeds.
+
+# Active detailed timing slice: 12 November 2026
+
+Usage checked FIRST: 98% five-hour /98% weekly remaining; after context83/95,
+before implementation70/93. No reset credits used. Required handovers/context
+read; latest checkpoint entries take precedence over historical instructions.
+HEAD a81cb97 matches local origin tracking on codex/opponent-dependence.
+Bare Git ownership checks failed; command-scoped safe.directory succeeded.
+Exactly five preexisting document changes remain protected and excluded.
+No Python process appeared at inspection. Pilot manifest/four checkpoints,
+development JSONL, acquisition and eight table hashes match saved audit values;
+development loader not rerun. Audit/backups: artifacts/calibration-repair-20261112/.
+No pilot restart, final-label access, calibration measurement or paid resources.
+
+Actual gpt-6-astra completed narrow read-only timing planning; actual gpt-6-luna
+is implementing detailed exclusive phases and incremental lifecycle snapshots,
+including optional trainer tensor/training phase callbacks and real orchestration
+regressions. Work IN PROGRESS, not reviewed or verified. Preserve original errors,
+attempted-work/per-game deltas and full active-game snapshots before I/O. Saved
+timing excludes its own write; final returned/attached timing includes attempted
+final write. Nested diagnostics/legacy times overlap and must not be added.
+In-memory partial_manifest is not guaranteed durable recovery after termination.
+
+Today12 November:8 November gate missed;9-12 November core window not achieved.
+18 November completion remains unestablished. No replacement external deadline.
+Completion date stays uncommitted until measured gates, execution and analysis;
+reserve TWO FULL reporting/reproducibility days afterward. Do not compress gates.
+
+Next finish/root-check/Astra-review/test this slice; then remaining cooperative
+deadlines, provenance, four checkpoint rejection paths, development/acquisition
+mismatches, paired RNG/balanced colours and per-game timing/deadline regressions.
+Whole-runner review remains required BEFORE isolated development evaluation and
+full-size pretraining timing. Full projection/budget gate and reviewed remaining
+orchestration precede core execution. Preserve all five seed blocks and cadence.
+On resume inspect actual agents/processes/Git; no background continuity assumed.
+
 # Documentation handover: 10 November 2026
 
 Read docs/research/new-chat-handover-20261110.md in full, then9 November and

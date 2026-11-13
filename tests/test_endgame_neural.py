@@ -217,6 +217,38 @@ def test_pretraining_progress_preserves_exact_training_result() -> None:
         )
 
 
+def test_pretraining_phase_callback_order_and_equivalence() -> None:
+    features = torch.zeros((2, 775))
+    labels = [0.0, 0.5]
+    config = neural.PretrainingConfig(batch_size=1, max_epochs=1)
+    baseline = neural.pretrain(
+        neural.ValueNetwork(221), features, labels, features, labels,
+        seed=221, config=config,
+    )
+    phases: list[str] = []
+    observed = neural.pretrain(
+        neural.ValueNetwork(221), features, labels, features, labels,
+        seed=221, config=config, phase_callback=phases.append,
+    )
+    assert phases == ["tensor_setup", "training"]
+    assert observed.epochs == baseline.epochs
+    for name, value in baseline.best_state_dict.items():
+        torch.testing.assert_close(
+            value, observed.best_state_dict[name], rtol=0, atol=0
+        )
+
+
+def test_pretraining_tensor_validation_failure_stays_in_setup_phase() -> None:
+    phases: list[str] = []
+    with pytest.raises(ValueError, match="features must have shape"):
+        neural.pretrain(
+            neural.ValueNetwork(222), torch.zeros((1, 3)), [0.0],
+            torch.zeros((1, 3)), [0.0], seed=222,
+            phase_callback=phases.append,
+        )
+    assert phases == ["tensor_setup"]
+
+
 @pytest.mark.parametrize("stop_at", [1, 4, 5, 6, 7])
 def test_pretraining_deadline_preserves_completed_epoch_progress(stop_at: int) -> None:
     checks = 0

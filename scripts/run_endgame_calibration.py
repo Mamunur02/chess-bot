@@ -12,7 +12,8 @@ import random
 import subprocess
 import sys
 import time
-from collections.abc import Callable
+from collections.abc import Callable, Iterator
+from contextlib import contextmanager
 from dataclasses import asdict
 from pathlib import Path
 from typing import Any
@@ -38,14 +39,19 @@ PRETRAIN_PATIENCE = 31
 
 
 class _RunTiming:
-    """Per-run monotonic ledger with exclusive coarse phase accounting."""
+    """Per-run monotonic ledger with exclusive phase accounting."""
 
     def __init__(self) -> None:
         self.started = time.perf_counter()
-        self.phase = "work"
+        self.phase = "setup"
         self.mark = self.started
         self.seconds = {
-            name: 0.0 for name in ("work", "persistence", "cleanup", "finalization")
+            name: 0.0
+            for name in (
+                "setup", "model_setup", "labeling", "encoding", "tensor_setup",
+                "training", "warmup", "latency", "prediction", "choice", "games",
+                "reporting", "persistence", "cleanup", "finalization",
+            )
         }
 
     def switch(self, phase: str) -> None:
@@ -59,25 +65,51 @@ class _RunTiming:
         values = dict(self.seconds)
         values[self.phase] += now - self.mark
         return {
-            "schema_version": 1,
+            "schema_version": 2,
             "seconds": values,
             "elapsed_seconds": now - self.started,
             "boundary": phase or self.phase,
-            "scope": "Coarse exclusive lifecycle; detailed work phases not separated.",
+            "scope": (
+                "Exclusive runner phases including driver overhead; model_setup covers "
+                "loads/construction, reporting includes provenance/source copies. "
+                "No model checkpoint save is performed by these runners."
+            ),
             "diagnostics": "Legacy and predictor/probe times overlap; do not add them.",
         }
 
 
-def _write_json(path: Path, value: dict[str, Any], timing: _RunTiming | None) -> None:
+@contextmanager
+def _suspended(timing: _RunTiming | None, phase: str) -> Iterator[None]:
+    if timing is None:
+        yield
+        return
+    prior = timing.phase
+    timing.switch(phase)
+    try:
+        yield
+    finally:
+        timing.switch(prior)
+
+
+def _write_json(
+    path: Path,
+    value: dict[str, Any],
+    timing: _RunTiming | None,
+    *,
+    boundary: str = "pre-progress-write",
+) -> None:
     if timing is None:
         _atomic_json(path, value)
         return
-    prior = timing.phase
-    timing.switch("persistence")
-    try:
+    value["wall_time"] = {
+        **timing.snapshot(boundary),
+        "active_phase": timing.phase,
+        "boundary": boundary,
+        "final_write_included": False,
+        "current_write_included": False,
+    }
+    with _suspended(timing, "persistence"):
         _atomic_json(path, value)
-    finally:
-        timing.switch(prior)
 
 
 def _pilot_module() -> Any:
@@ -111,6 +143,8 @@ def _persist_or_attach(
     value: dict[str, Any],
     active: BaseException | None,
     timing: _RunTiming | None = None,
+    *,
+    boundary: str = "pre-progress-write",
 ) -> None:
     """Persist a manifest, preserving an active failure and exposing its snapshot.
 
@@ -118,7 +152,7 @@ def _persist_or_attach(
     An active original exception also receives the secondary ``persistence_error``.
     """
     try:
-        _write_json(path, value, timing)
+        _write_json(path, value, timing, boundary=boundary)
     except BaseException as persistence_error:
         value.setdefault("persistence_errors", []).append(
             f"{type(persistence_error).__name__}: {persistence_error}"
@@ -261,8 +295,9 @@ def _game_progress(snapshot: Any) -> dict[str, Any]:
 def _record_game(
     path: Path, record: dict[str, Any], snapshot: Any, timing: _RunTiming | None = None
 ) -> None:
-    record["progress"] = _game_progress(snapshot)
-    _write_json(path, record, timing)
+    with _suspended(timing, "reporting"):
+        record["progress"] = _game_progress(snapshot)
+        _write_json(path, record, timing)
 
 
 def _work_delta(before: dict[str, Any], after: dict[str, Any]) -> dict[str, Any]:
@@ -319,17 +354,23 @@ def _finalize(
         timing.switch("finalization")
         value["wall_time"] = {
             **timing.snapshot("pre-final-write"),
+            "active_phase": timing.phase,
+            "boundary": "pre-final-write",
             "final_write_included": False,
+            "current_write_included": False,
         }
     preferred = original if original is not None else cleanup_error
     before = len(value.get("persistence_errors", []))
     try:
-        _persist_or_attach(path, value, preferred, timing)
+        _persist_or_attach(path, value, preferred, timing, boundary="pre-final-write")
     except BaseException:
         if timing is not None:
             value["wall_time"] = {
                 **timing.snapshot("post-final-write-attempt"),
+                "active_phase": timing.phase,
+                "boundary": "post-final-write-attempt",
                 "final_write_included": True,
+                "current_write_included": True,
             }
         raise
     if timing is not None:
@@ -338,7 +379,12 @@ def _finalize(
             if len(value.get("persistence_errors", [])) > before
             else "post-final-write"
         )
-        value["wall_time"] = {**timing.snapshot(boundary), "final_write_included": True}
+        value["wall_time"] = {
+            **timing.snapshot(boundary),
+            "active_phase": timing.phase,
+            "final_write_included": True,
+            "current_write_included": True,
+        }
     if cleanup_error is not None or len(value.get("persistence_errors", [])) > before:
         assert preferred is not None
         setattr(preferred, "partial_manifest", value)
@@ -428,6 +474,7 @@ def run_evaluation(args: argparse.Namespace) -> dict[str, Any]:
     original_error: BaseException | None = None
     try:
         _persist_or_attach(out_path, output, None, timing)
+        timing.switch("setup")
         pilot = _pilot_module()
         pilot_path = args.pilot_dir / "pilot.json"
         pilot_manifest = json.loads(pilot_path.read_text(encoding="utf-8"))
@@ -447,6 +494,7 @@ def run_evaluation(args: argparse.Namespace) -> dict[str, Any]:
         from chesslab.endgames.neural import BatchPredictor
 
         output["threads"] = _configure_torch(torch)
+        timing.switch("model_setup")
         models = _models(
             args.pilot_dir,
             torch,
@@ -457,7 +505,9 @@ def run_evaluation(args: argparse.Namespace) -> dict[str, Any]:
             raise TimeoutError(
                 "calibration deadline exceeded while loading checkpoints"
             )
+        timing.switch("reporting")
         provenance = _provenance(Path(__file__).resolve().parents[1], args.output_dir)
+        timing.switch("setup")
         acquisition = pilot.verify_acquisition_manifest(
             args.acquisition_manifest, args.tablebase_dir
         )
@@ -525,8 +575,9 @@ def run_evaluation(args: argparse.Namespace) -> dict[str, Any]:
             }
 
         def persist_attempted_work() -> None:
-            install_attempted_work()
-            _persist_or_attach(out_path, output, sys.exception(), timing)
+            with _suspended(timing, "reporting"):
+                install_attempted_work()
+                _persist_or_attach(out_path, output, sys.exception(), timing)
 
         def current_attempted_work() -> dict[str, Any]:
             return {
@@ -578,32 +629,35 @@ def run_evaluation(args: argparse.Namespace) -> dict[str, Any]:
                 attempt["status"] = "complete"
             finally:
                 attempt["seconds"] = time.perf_counter() - started_attempt
-                if phase == "sample" and attempt["status"] == "complete":
-                    latency_samples_by_model[name].append(attempt["seconds"])
-                output["latency"][name] = {
-                    "warmup_count": sum(
-                        a["phase"] == "warmup" and a["status"] == "complete"
-                        for a in output["latency_attempts"][name]
-                    ),
-                    "sample_count": len(latency_samples_by_model[name]),
-                    "seconds": list(latency_samples_by_model[name]),
-                    "mean_seconds": (
-                        sum(latency_samples_by_model[name])
-                        / len(latency_samples_by_model[name])
-                        if latency_samples_by_model[name]
-                        else None
-                    ),
-                    "predictor_calls": predictors[name].calls,
-                    "predictor_seconds": predictors[name].seconds,
-                    "predictor_failures": predictors[name].failures,
-                }
-                persist_attempted_work()
+                with _suspended(timing, "reporting"):
+                    if phase == "sample" and attempt["status"] == "complete":
+                        latency_samples_by_model[name].append(attempt["seconds"])
+                    output["latency"][name] = {
+                        "warmup_count": sum(
+                            a["phase"] == "warmup" and a["status"] == "complete"
+                            for a in output["latency_attempts"][name]
+                        ),
+                        "sample_count": len(latency_samples_by_model[name]),
+                        "seconds": list(latency_samples_by_model[name]),
+                        "mean_seconds": (
+                            sum(latency_samples_by_model[name])
+                            / len(latency_samples_by_model[name])
+                            if latency_samples_by_model[name]
+                            else None
+                        ),
+                        "predictor_calls": predictors[name].calls,
+                        "predictor_seconds": predictors[name].seconds,
+                        "predictor_failures": predictors[name].failures,
+                    }
+                    persist_attempted_work()
 
+        timing.switch("warmup")
         for name, _ in models:
             for warmup_index, board in enumerate(latency_inputs[:10]):
                 if deadline():
                     raise TimeoutError("calibration deadline exceeded during warmup")
                 record_latency(name, "warmup", board, 0, -1, warmup_index)
+        timing.switch("latency")
         for pass_index in range(3):
             ordered = [
                 models[(offset + pass_index) % len(models)][0]
@@ -623,6 +677,7 @@ def run_evaluation(args: argparse.Namespace) -> dict[str, Any]:
                         pass_index,
                         index,
                     )
+        timing.switch("reporting")
         for name, _ in models:
             samples = latency_samples_by_model[name]
             output["latency"][name] = {
@@ -641,6 +696,7 @@ def run_evaluation(args: argparse.Namespace) -> dict[str, Any]:
                 name
             ].failures = 0
             predictors[name].seconds = 0.0
+        timing.switch("prediction")
         failed_games = False
         for name, model in models:
             if deadline():
@@ -662,6 +718,7 @@ def run_evaluation(args: argparse.Namespace) -> dict[str, Any]:
                 }
                 output["items"].append(item)
                 for phase in ("prediction", "choice"):
+                    timing.switch(phase)
                     if phase == "choice" and deadline():
                         raise TimeoutError(
                             "calibration deadline exceeded before choice"
@@ -693,6 +750,7 @@ def run_evaluation(args: argparse.Namespace) -> dict[str, Any]:
                     finally:
                         item[f"{phase}_seconds"] = time.perf_counter() - phase_started
                         persist_attempted_work()
+            timing.switch("reporting")
             output.setdefault("static", {})[name] = {
                 "prediction_seconds": sum(
                     i["prediction_seconds"]
@@ -708,6 +766,7 @@ def run_evaluation(args: argparse.Namespace) -> dict[str, Any]:
                 "predictor_failures": predictor.failures,
             }
             _write_json(out_path, output, timing)
+            timing.switch("setup")
             # SHA-derived fixed starts are shared across methods and p values.
             starts = sorted(
                 rows,
@@ -717,6 +776,7 @@ def run_evaluation(args: argparse.Namespace) -> dict[str, Any]:
             )[:10]
             for p_value in P_VALUES:
                 for start_index, row in enumerate(starts):
+                    timing.switch("setup")
                     color = chess.WHITE if start_index % 2 == 0 else chess.BLACK
                     if deadline():
                         raise TimeoutError("calibration deadline exceeded")
@@ -746,44 +806,49 @@ def run_evaluation(args: argparse.Namespace) -> dict[str, Any]:
 
                     def persist_progress(game_snapshot: Any) -> None:
                         active = sys.exception()
-                        record["progress"] = _game_progress(game_snapshot)
-                        refresh_game_work()
-                        # _record_game installs the complete snapshot before I/O.
-                        try:
-                            _record_game(path, record, game_snapshot, timing)
-                            _write_json(out_path, output, timing)
-                        except BaseException as write_error:
-                            output.setdefault("persistence_errors", []).append(
-                                f"{type(write_error).__name__}: {write_error}"
-                            )
-                            preferred = active if active is not None else write_error
-                            setattr(preferred, "partial_manifest", output)
-                            if active is not None:
-                                setattr(active, "persistence_error", write_error)
-                                active.add_note(
-                                    f"game persistence failed: {write_error}"
+                        with _suspended(timing, "reporting"):
+                            record["progress"] = _game_progress(game_snapshot)
+                            refresh_game_work()
+                            try:
+                                _record_game(path, record, game_snapshot, timing)
+                                _write_json(out_path, output, timing)
+                            except BaseException as write_error:
+                                output.setdefault("persistence_errors", []).append(
+                                    f"{type(write_error).__name__}: {write_error}"
                                 )
-                            raise preferred
+                                preferred = (
+                                    active if active is not None else write_error
+                                )
+                                setattr(preferred, "partial_manifest", output)
+                                if active is not None:
+                                    setattr(active, "persistence_error", write_error)
+                                    active.add_note(
+                                        f"game persistence failed: {write_error}"
+                                    )
+                                raise preferred
 
                     try:
                         path.parent.mkdir(parents=True, exist_ok=True)
                         _write_json(path, record, timing)
                         game_work_baseline = current_attempted_work()
-                        snap = evaluation.play_fixed_game(
-                            chess.Board(str(row["fen"])),
-                            color,
-                            predictor,
-                            table,
-                            make_rng(
-                                CALIBRATION_SEED, f"explore|{p_value}|{start_index}"
-                            ),
-                            make_rng(
-                                CALIBRATION_SEED, f"opponent|{p_value}|{start_index}"
-                            ),
-                            p_value,
-                            deadline_check=deadline,
-                            progress_callback=persist_progress,
-                        )
+                        with _suspended(timing, "games"):
+                            snap = evaluation.play_fixed_game(
+                                chess.Board(str(row["fen"])),
+                                color,
+                                predictor,
+                                table,
+                                make_rng(
+                                    CALIBRATION_SEED, f"explore|{p_value}|{start_index}"
+                                ),
+                                make_rng(
+                                    CALIBRATION_SEED,
+                                    f"opponent|{p_value}|{start_index}",
+                                ),
+                                p_value,
+                                deadline_check=deadline,
+                                progress_callback=persist_progress,
+                            )
+                        timing.switch("reporting")
                         record["status"] = (
                             "failed"
                             if snap.failure
@@ -798,6 +863,7 @@ def run_evaluation(args: argparse.Namespace) -> dict[str, Any]:
                         _record_game(path, record, snap, timing)
                         persist_attempted_work()
                     except BaseException as exc:
+                        timing.switch("reporting")
                         record.update(
                             status="interrupted"
                             if isinstance(exc, KeyboardInterrupt)
@@ -915,18 +981,22 @@ def run_pretraining(args: argparse.Namespace) -> dict[str, Any]:
                 "validation_count": VALIDATION_COUNT,
                 "acquisition_manifest_sha256": acquisition_hash,
                 "table_hashes": acquisition.get("table_sha256"),
-                "provenance": _provenance(
-                    Path(__file__).resolve().parents[1], args.output_dir
-                ),
                 "started_at": time.time(),
             }
         )
+        timing.switch("reporting")
+        result["provenance"] = _provenance(
+            Path(__file__).resolve().parents[1], args.output_dir
+        )
+        timing.switch("setup")
         boards = [chess.Board(str(row["fen"])) for row in rows]
         labels = []
+        timing.switch("labeling")
         for board in boards:
             if deadline():
                 raise TimeoutError("calibration deadline exceeded while labeling")
             labels.append(-float(evaluate_reference(board, table).value))
+        timing.switch("setup")
         training = list(zip(boards[:1600], labels[:1600], strict=True))
         validation = list(zip(boards[1600:], labels[1600:], strict=True))
         result["threads"] = _configure_torch(torch)
@@ -937,6 +1007,7 @@ def run_pretraining(args: argparse.Namespace) -> dict[str, Any]:
         validation_pairs = [
             validation[i % len(validation)] for i in range(validation_count)
         ]
+        timing.switch("encoding")
         t = time.perf_counter()
         train_x = [encode_board(board, not board.turn) for board, _ in train_pairs]
         validation_x = [
@@ -945,18 +1016,21 @@ def run_pretraining(args: argparse.Namespace) -> dict[str, Any]:
         encoding_seconds = time.perf_counter() - t
         train_y = [label for _, label in train_pairs]
         validation_y = [label for _, label in validation_pairs]
+        timing.switch("model_setup")
         model = ValueNetwork(root_seed=CALIBRATION_SEED)
         epochs: list[int] = []
 
         def progress(record: Any) -> None:
-            epochs.append(record.epoch)
-            result["current"] = {
-                "training_count": train_count,
-                "validation_count": validation_count,
-                "completed_epochs": list(epochs),
-            }
-            _write_json(out_path, result, timing)
+            with _suspended(timing, "reporting"):
+                epochs.append(record.epoch)
+                result["current"] = {
+                    "training_count": train_count,
+                    "validation_count": validation_count,
+                    "completed_epochs": list(epochs),
+                }
+                _write_json(out_path, result, timing)
 
+        timing.switch("setup")
         t = time.perf_counter()
         training_result = pretrain(
             model,
@@ -970,7 +1044,9 @@ def run_pretraining(args: argparse.Namespace) -> dict[str, Any]:
             ),
             deadline_check=deadline,
             progress_callback=progress,
+            phase_callback=timing.switch,
         )
+        timing.switch("reporting")
         training_seconds = time.perf_counter() - t
         result["scales"].append(
             {

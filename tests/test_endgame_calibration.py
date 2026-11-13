@@ -426,6 +426,8 @@ def runner_setup(tmp_path, monkeypatch):
     neural.PretrainingConfig = lambda **_: object()
 
     def pretrain(*args, **kwargs):
+        kwargs["phase_callback"]("tensor_setup")
+        kwargs["phase_callback"]("training")
         kwargs["progress_callback"](SimpleNamespace(epoch=1))
         return SimpleNamespace(epochs=[1])
 
@@ -511,7 +513,7 @@ def test_runner_manifest_write_failures(runner_setup, monkeypatch, mode, phase):
                 or phase == "progress"
                 and calls == 2
                 or phase == "final"
-                and "elapsed_seconds" in value
+                and value.get("wall_time", {}).get("boundary") == "pre-final-write"
             )
             if fail:
                 raise error
@@ -950,11 +952,12 @@ def test_runner_wall_time_ledger_separates_phases_and_final_write(
         now += 7.0
         return SimpleNamespace(mse=0.0)
 
-    fit = neural.pretrain
-
     def train(*args, **kwargs):
+        kwargs["phase_callback"]("tensor_setup")
+        kwargs["phase_callback"]("training")
         work()
-        return fit(*args, **kwargs)
+        kwargs["progress_callback"](SimpleNamespace(epoch=1))
+        return SimpleNamespace(epochs=[1])
 
     finalize = calibration._finalize
 
@@ -974,17 +977,23 @@ def test_runner_wall_time_ledger_separates_phases_and_final_write(
     saved = json.loads((args.output_dir / "calibration.json").read_text())
     disk = saved["wall_time"]
     returned = result["wall_time"]
-    assert disk["schema_version"] == returned["schema_version"] == 1
+    assert disk["schema_version"] == returned["schema_version"] == 2
     assert disk["boundary"] == "pre-final-write"
     assert disk["final_write_included"] is False
+    assert disk["current_write_included"] is False
+    assert disk["active_phase"] == "finalization"
     assert returned["boundary"] == "post-final-write"
     assert returned["final_write_included"] is True
-    assert returned["seconds"] == {
-        "work": 7.0,
-        "persistence": writes * 3.0,
-        "cleanup": 5.0,
-        "finalization": 2.0,
+    assert returned["current_write_included"] is True
+    assert set(returned["seconds"]) == {
+        "setup", "model_setup", "labeling", "encoding", "tensor_setup",
+        "training", "warmup", "latency", "prediction", "choice", "games",
+        "reporting", "persistence", "cleanup", "finalization",
     }
+    expected = {name: 0.0 for name in calibration._RunTiming().seconds}
+    expected.update({"persistence": writes * 3.0, "cleanup": 5.0, "finalization": 2.0})
+    expected["prediction" if mode == "evaluation" else "training"] = 7.0
+    assert returned["seconds"] == expected
     assert disk["seconds"]["persistence"] == (writes - 1) * 3.0
     assert disk["seconds"]["cleanup"] == 5.0
     assert sum(disk["seconds"].values()) == disk["elapsed_seconds"] == now - 3.0
@@ -1032,7 +1041,7 @@ def test_failed_final_write_is_charged_to_attached_wall_time(
         nonlocal now, writes
         writes += 1
         now += 3.0
-        if "wall_time" in value:
+        if value.get("wall_time", {}).get("boundary") == "pre-final-write":
             raise persistence
         write(path, value)
 
@@ -1045,12 +1054,10 @@ def test_failed_final_write_is_charged_to_attached_wall_time(
     wall = original.partial_manifest["wall_time"]
     assert wall["boundary"] == "post-final-write-attempt"
     assert wall["final_write_included"] is True
-    assert wall["seconds"] == {
-        "work": 7.0,
-        "persistence": writes * 3.0,
-        "cleanup": 5.0,
-        "finalization": 0.0,
-    }
+    expected = {name: 0.0 for name in calibration._RunTiming().seconds}
+    expected.update({"persistence": writes * 3.0, "cleanup": 5.0})
+    expected["prediction" if mode == "evaluation" else "labeling"] = 7.0
+    assert wall["seconds"] == expected
     assert sum(wall["seconds"].values()) == wall["elapsed_seconds"] == now
     assert table.closed == 1
 
@@ -1179,4 +1186,179 @@ def test_second_game_progress_write_failure_keeps_delta_and_original_error(
     assert manifest["active_game"]["progress"] == calibration._game_progress(snapshot)
     assert manifest["attempted_work"]["predictors"]["pretrained"]["calls"] > 1
     assert manifest["persistence_errors"]
+    assert table.closed == 1
+
+
+@pytest.mark.parametrize("mode", ["evaluation", "pretraining"])
+def test_detailed_runner_phases_and_incremental_snapshots(
+    runner_setup, monkeypatch, mode
+):
+    args, table, neural, snapshot = runner_setup
+    now = 0.0
+    writes = []
+    expected = {name: 0.0 for name in calibration._RunTiming().seconds}
+    real_write = calibration._atomic_json
+
+    def charge(phase, amount, function):
+        def call(*args, **kwargs):
+            nonlocal now
+            now += amount
+            expected[phase] += amount
+            return function(*args, **kwargs)
+        return call
+
+    def write(path, value):
+        nonlocal now
+        # Copy at I/O, before later mutation of the shared active-game record.
+        writes.append((path, json.loads(json.dumps(value)), now))
+        real_write(path, value)
+        now += 3.0
+        expected["persistence"] += 3.0
+
+    pilot = calibration._pilot_module()
+    pilot._load_development = charge("setup", 2, pilot._load_development)
+    monkeypatch.setattr(
+        calibration, "_models",
+        charge("model_setup", 5, calibration._models),
+    )
+    monkeypatch.setattr(
+        neural, "ValueNetwork",
+        charge("model_setup", 5, neural.ValueNetwork),
+    )
+    monkeypatch.setattr(
+        calibration, "_provenance",
+        charge("reporting", 7, calibration._provenance),
+    )
+    monkeypatch.setattr(
+        calibration, "encode_board",
+        charge("encoding", 11, calibration.encode_board),
+    )
+    monkeypatch.setattr(
+        calibration, "evaluate_reference",
+        charge("labeling", 13, calibration.evaluate_reference),
+    )
+    monkeypatch.setattr(
+        calibration.evaluation, "evaluate_predictions",
+        charge("prediction", 17, calibration.evaluation.evaluate_predictions),
+    )
+    monkeypatch.setattr(
+        calibration.evaluation, "evaluate_choices",
+        charge("choice", 19, calibration.evaluation.evaluate_choices),
+    )
+    monkeypatch.setattr(
+        calibration, "_game_progress",
+        charge("reporting", 23, calibration._game_progress),
+    )
+    select_calls = 0
+
+    def select(*_args):
+        nonlocal select_calls
+        phase = "warmup" if select_calls == 0 else "latency"
+        select_calls += 1
+        charge(phase, 29, lambda: None)()
+
+    def play(*_args, **kwargs):
+        charge("games", 31, lambda: None)()
+        kwargs["progress_callback"](snapshot)
+        charge("games", 37, lambda: None)()
+        return snapshot
+
+    def train(*_args, **kwargs):
+        kwargs["phase_callback"]("tensor_setup")
+        charge("tensor_setup", 41, lambda: None)()
+        kwargs["phase_callback"]("training")
+        charge("training", 43, lambda: None)()
+        kwargs["progress_callback"](SimpleNamespace(epoch=1))
+        charge("training", 47, lambda: None)()
+        return SimpleNamespace(epochs=[1])
+
+    monkeypatch.setattr(calibration, "select_learner_move", select)
+    monkeypatch.setattr(calibration.evaluation, "play_fixed_game", play)
+    monkeypatch.setattr(neural, "pretrain", train)
+    table.close = charge("cleanup", 53, table.close)
+    monkeypatch.setattr(
+        calibration, "_finalize",
+        charge("finalization", 59, calibration._finalize),
+    )
+    monkeypatch.setattr(calibration.time, "perf_counter", lambda: now)
+    monkeypatch.setattr(calibration, "_deadline", lambda *_: lambda: False)
+    monkeypatch.setattr(calibration, "_atomic_json", write)
+    result = getattr(calibration, f"run_{mode}")(args)
+    assert result["wall_time"]["seconds"] == expected
+    assert sum(expected.values()) == now == result["wall_time"]["elapsed_seconds"]
+    assert writes[0][1]["status"] == "running"
+    assert writes[0][1]["wall_time"]["elapsed_seconds"] == 0
+    previous = 0.0
+    for path, value, at_write in writes:
+        wall = value["wall_time"]
+        assert wall["elapsed_seconds"] == at_write >= previous
+        assert sum(wall["seconds"].values()) == at_write
+        assert not wall["current_write_included"]
+        assert not wall["final_write_included"]
+        previous = at_write
+        if path.parent.name == "games" and "progress" in value:
+            assert value["progress"]["moves"] == list(snapshot.moves)
+            assert "attempted_work_delta" in value
+            assert wall["active_phase"] == "reporting"
+    assert writes[-1][1]["wall_time"]["boundary"] == "pre-final-write"
+    assert result["wall_time"]["elapsed_seconds"] == previous + 3
+
+
+@pytest.mark.parametrize("failed_phase", ["tensor_setup", "training"])
+@pytest.mark.parametrize("error_kind", [ValueError, KeyboardInterrupt])
+def test_real_pretrainer_phase_failure_survives_secondary_errors(
+    request, monkeypatch, failed_phase, error_kind
+):
+    # Capture real optional modules before the orchestration fixture replaces them.
+    torch = pytest.importorskip("torch")
+    import importlib
+    real_neural = importlib.import_module("chesslab.endgames.neural")
+    args, table, _, _ = request.getfixturevalue("runner_setup")
+    monkeypatch.setitem(sys.modules, "torch", torch)
+    monkeypatch.setitem(sys.modules, "chesslab.endgames.neural", real_neural)
+    original = error_kind("real trainer boundary failure")
+    cleanup = RuntimeError("cleanup failure")
+    persistence = OSError("final write failure")
+    now = 0.0
+    writes = 0
+    real_write = calibration._atomic_json
+
+    def fail(*_args, **_kwargs):
+        nonlocal now
+        now += 7
+        raise original
+
+    def close():
+        nonlocal now
+        table.closed += 1
+        now += 5
+        raise cleanup
+
+    def write(path, value):
+        nonlocal now, writes
+        writes += 1
+        now += 3
+        if value["wall_time"]["boundary"] == "pre-final-write":
+            raise persistence
+        real_write(path, value)
+
+    if failed_phase == "tensor_setup":
+        monkeypatch.setattr(real_neural, "_matrix", fail)
+    else:
+        monkeypatch.setattr(torch.optim, "Adam", fail)
+    table.close = close
+    monkeypatch.setattr(calibration.time, "perf_counter", lambda: now)
+    monkeypatch.setattr(calibration, "_deadline", lambda *_: lambda: False)
+    monkeypatch.setattr(calibration, "_atomic_json", write)
+    with pytest.raises(error_kind) as raised:
+        calibration.run_pretraining(args)
+    assert raised.value is original
+    assert original.cleanup_error is cleanup
+    assert original.persistence_error is persistence
+    wall = original.partial_manifest["wall_time"]
+    expected = {name: 0.0 for name in calibration._RunTiming().seconds}
+    expected.update({failed_phase: 7, "cleanup": 5, "persistence": writes * 3})
+    assert wall["seconds"] == expected
+    assert wall["elapsed_seconds"] == sum(expected.values()) == now
+    assert wall["boundary"] == "post-final-write-attempt"
     assert table.closed == 1
